@@ -6,7 +6,7 @@ HOOD = 5
 
 # capacitor constants
 FREQ = 1            # endogenous frequency in Hz
-BUMP = 0.01         # capacitor bump amount when neighbor flashes
+BUMP = 0.013        # capacitor bump amount when neighbor flashes
 REST = 0.1          # percent of cycle to be unresponsive after flash
 TICK = 1            # cycle resolution in ms
 
@@ -21,23 +21,26 @@ start_wifi()
 
 class Cricket():
 
-    def __init__(self):
-        self.phase = random()
-        self.capacitor = f(self.phase)
-
     def run(self):
-        t_previous = 0
-        self.look()
         while True:
-            t = ticks_ms() / 1000.0
-            t_elapsed = t - t_previous
-            self.listen()
-            self.phase = min(self.phase + (t_elapsed * FREQ), 1.0)
+            t_previous = 0
+            self.look()
+            self.phase = random()
             self.capacitor = f(self.phase)
-            if self.capacitor >= 1.0:
-                self.flash()
-            t_previous = t
-            sleep_ms(TICK)
+            while True:
+                t = ticks_ms() / 1000.0
+                t_elapsed = t - t_previous
+                # if PIR.value():
+                #     print("MOTION!")
+                #     LED.off()
+                #     break
+                self.listen()
+                self.phase = min(self.phase + (t_elapsed * FREQ), 1.0)
+                self.capacitor = f(self.phase)
+                if self.capacitor >= 1.0:
+                    self.flash()
+                t_previous = t
+                sleep_ms(TICK)
 
     def look(self):
         print("Looking for neighbors...")
@@ -57,12 +60,16 @@ class Cricket():
 
     def listen(self):
         # receive messages
-        sender, in_message = receive()
-        if in_message is not None:
-            print("Received", in_message, "from", sender)
-            if in_message == "flash":
-                self.bump()
-            # setting messages
+        try:
+            sender, in_message = receive()
+        except ValueError:
+            pass
+        else:
+            if in_message is not None:
+                print("Received", in_message, "from", sender)
+                if in_message == "flash":
+                    self.bump()
+                # setting messages
 
     def bump(self):
         if self.phase <= REST:

@@ -86,7 +86,7 @@ def add_peer(mac):
 def clear_peers():
     try:
         for peer in peers:
-            mesh.del_peer(peer)
+            mesh.del_peer(hex_to_bin(peer))
         peers.clear()
     except NameError:
         raise Exception("Wifi not started")
