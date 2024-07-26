@@ -1,7 +1,8 @@
 from esp_helper import *
 
 # connection constants
-RANGE = -40
+RANGE = -100
+HOOD = 5
 
 # capacitor constants
 FREQ = 1            # endogenous frequency in Hz
@@ -11,36 +12,48 @@ TICK = 1            # cycle resolution in ms
 
 # automatic constants
 PITCH = randint(3500, 4500)
-PHASE = random()
 
 
 # have a mode for just PIR testing
 
 start_wifi()
-#https://github.com/glenn20/micropython-espnow-utils/blob/main/src/espnow_scan.py
-
-## hmm. previous version looked for APs. 
-## make a function in esp_helper for scanning
 
 
 class Cricket():
 
     def __init__(self):
-        self.phase = PHASE
+        self.phase = random()
         self.capacitor = f(self.phase)
 
     def run(self):
         t_previous = 0
+        self.look()
         while True:
             t = ticks_ms() / 1000.0
             t_elapsed = t - t_previous
+            self.listen()
             self.phase = min(self.phase + (t_elapsed * FREQ), 1.0)
             self.capacitor = f(self.phase)
             if self.capacitor >= 1.0:
-                self.flash()       
+                self.flash()
             t_previous = t
             sleep_ms(TICK)
-#            self.listen()
+
+    def look(self):
+        print("Looking for neighbors...")
+        clear_peers()
+        neighbors = scan()
+        neighbors.sort(key=lambda n: n['rssi'], reverse=True)
+        count = 0
+        for neighbor in neighbors:
+            if neighbor['ssid'].split("_")[0] == "ESP" and \
+                    neighbor['rssi'] > RANGE:
+                mac = ap_to_peer(neighbor['mac'])
+                print(neighbor['rssi'], neighbor['ssid'], mac)
+                add_peer(mac)
+                count += 1
+                if count == HOOD:
+                    break
 
     def listen(self):
         # receive messages
@@ -49,7 +62,7 @@ class Cricket():
             print("Received", in_message, "from", sender)
             if in_message == "flash":
                 self.bump()
-            # setting messages                
+            # setting messages
 
     def bump(self):
         if self.phase <= REST:
@@ -71,18 +84,17 @@ class Cricket():
         SND.duty(0)
         sleep_ms(50)
         LED.off()
-        send("flash")  
+        send("flash")
 
 
 def f(x):
     return math.sin((math.pi / 2) * x)
 
+
 def f_inv(y):
-  return (2 / math.pi) * math.asin(y)
+    return (2 / math.pi) * math.asin(y)
 
 
 cricket = Cricket()
-cricket.run()      
-
-
+cricket.run()
 
