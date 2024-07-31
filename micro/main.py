@@ -12,11 +12,7 @@ TICK = 1            # cycle resolution in ms
 
 # automatic constants
 PITCH = randint(3500, 4500)
-
-
-# have a mode for just PIR testing
-
-start_wifi()
+HUM = randint(10, 20)
 
 
 class Cricket():
@@ -30,10 +26,10 @@ class Cricket():
             while True:
                 t = ticks_ms() / 1000.0
                 t_elapsed = t - t_previous
-                # if PIR.value():
-                #     print("MOTION!")
-                #     LED.off()
-                #     break
+                if PIR.value():
+                    print("MOTION!")
+                    LED.off()
+                    break
                 self.listen()
                 self.phase = min(self.phase + (t_elapsed * FREQ), 1.0)
                 self.capacitor = f(self.phase)
@@ -44,6 +40,8 @@ class Cricket():
 
     def look(self):
         print("Looking for neighbors...")
+        SND.duty(512)
+        SND.freq(HUM)
         clear_peers()
         neighbors = scan()
         neighbors.sort(key=lambda n: n['rssi'], reverse=True)
@@ -57,6 +55,8 @@ class Cricket():
                 count += 1
                 if count == HOOD:
                     break
+        SND.duty(0)
+        print("--> done")
 
     def listen(self):
         # receive messages
@@ -102,6 +102,6 @@ def f_inv(y):
     return (2 / math.pi) * math.asin(y)
 
 
+start_wifi()
 cricket = Cricket()
 cricket.run()
-
