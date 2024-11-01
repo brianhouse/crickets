@@ -17,7 +17,7 @@ for neighbor in neighbors:
         if count == HOOD:
             break
 print("--> done")
+print(neighbors)
 
 while True:
     sleep(1)
-    print(neighbors)

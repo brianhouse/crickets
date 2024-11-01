@@ -21,12 +21,16 @@ if not len(sys.argv) > 1:
 
 port = f"/dev/cu.usbserial-{sys.argv[1]}"
 
-print(run(f"mpremote connect {port} fs ls"))
+# print(run(f"mpremote connect {port} fs ls"))
+# for filename in os.listdir("micro/"):
+#     if filename.split(".")[-1] != "py":
+#         continue
 
-for filename in os.listdir("micro/"):
-    if filename.split(".")[-1] != "py":
-        continue
+main_file = open("micro/main.py").read().split(" ")[-1].strip()
+for filename in ["main.py", "esp_helper.py", main_file]:
     print(run(f"mpremote connect {port} cp micro/{filename} :{filename}"))
+
 
 print(run(f"mpremote connect {port} soft-reset sleep 0.5 bootloader"))
 print(run(f"mpremote connect {port} exec --no-follow 'import main.py'"))
+subprocess.run(f"mpremote connect {port}", shell=True)

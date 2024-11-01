@@ -1,1 +1,1 @@
-import cricket.py
+import net_test.py
