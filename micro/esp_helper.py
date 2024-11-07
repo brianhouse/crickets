@@ -2,6 +2,8 @@ import network
 import ubinascii
 import math
 import espnow
+import bluetooth
+import socket
 from machine import ADC, Pin, PWM
 from time import sleep, sleep_ms, ticks_ms, ticks_us
 from random import random, randint, choice
@@ -19,8 +21,11 @@ SND.duty(0)
 peers = []
 
 
-def start_wifi():
+def start_network():
     global mesh, sta, ap
+
+    # make sure Bluetooth is off
+    bluetooth.BLE().active(False)
 
     # start wifi receiver
     sta = network.WLAN(network.STA_IF)
@@ -29,13 +34,14 @@ def start_wifi():
     # start access point
     ap = network.WLAN(network.AP_IF)
     ap.active(True)
-    ap.config(max_clients=0)
+    ap.config(max_clients=1)
 
     # activate mesh
     mesh = espnow.ESPNow()
     mesh.active(True)
 
     print("MAC address is", bin_to_hex(sta.config('mac')))
+    print(" AP address is", ap.ifconfig()[0])
 
 
 def scan():
@@ -113,4 +119,4 @@ def map(value, in_min, in_max, out_min, out_max):
     return (value * (out_max - out_min)) + out_min
 
 
-
+start_network()

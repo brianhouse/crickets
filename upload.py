@@ -21,13 +21,10 @@ if not len(sys.argv) > 1:
 
 port = f"/dev/cu.usbserial-{sys.argv[1]}"
 
-# print(run(f"mpremote connect {port} fs ls"))
-# for filename in os.listdir("micro/"):
-#     if filename.split(".")[-1] != "py":
-#         continue
-
-main_file = open("micro/main.py").read().split(" ")[-1].strip()
-for filename in ["main.py", "esp_helper.py", main_file]:
+print(run(f"mpremote connect {port} fs ls"))
+for filename in os.listdir("micro/"):
+    if filename.split(".")[-1] != "py":
+        continue
     print(run(f"mpremote connect {port} cp micro/{filename} :{filename}"))
 
 
