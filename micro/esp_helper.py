@@ -4,6 +4,7 @@ import math
 import espnow
 import bluetooth
 import socket
+import machine
 from machine import ADC, Pin, PWM
 from time import sleep, sleep_ms, ticks_ms, ticks_us
 from random import random, randint, choice
