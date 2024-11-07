@@ -1,9 +1,10 @@
+import uasyncio as asyncio
 from config import *
 
 
 class Cricket():
 
-    def run(self):
+    async def run(self):
         while True:
             t_previous = 0
             self.look()
@@ -22,7 +23,7 @@ class Cricket():
                 if self.capacitor >= 1.0:
                     self.flash()
                 t_previous = t
-                sleep_ms(TICK)
+                await asyncio.sleep_ms(TICK)
 
     def look(self):
         print("Looking for neighbors...")
@@ -86,6 +87,7 @@ def f(x):
 
 def f_inv(y):
     return (2 / math.pi) * math.asin(y)
+
 
 
 

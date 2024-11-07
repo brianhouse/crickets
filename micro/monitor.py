@@ -21,7 +21,7 @@ async def handle_request(reader, writer):
     await writer.wait_closed()
 
 
-async def start_server():
+async def start_monitor():
     await asyncio.start_server(handle_request, "0.0.0.0", HTTP)
     print(f"Server running on port {HTTP}")
     try:
@@ -30,5 +30,3 @@ async def start_server():
     except asyncio.CancelledError:
         pass
 
-
-asyncio.run(start_server())
