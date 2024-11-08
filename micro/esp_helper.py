@@ -10,8 +10,6 @@ from time import sleep, sleep_ms, ticks_ms, ticks_us
 from random import random, randint, choice
 
 # https://learn.adafruit.com/huzzah32-esp32-breakout-board/pinouts
-
-
 STA = Pin(13, Pin.OUT)
 LED = Pin(21, Pin.OUT)
 PIR = Pin(33, Pin.IN)
@@ -19,87 +17,70 @@ SND = PWM(Pin(27, Pin.OUT))
 SND.duty(0)
 
 
-peers = []
+class Mesh():
 
+    peers = []
 
-def start_network():
-    global mesh, sta, ap
+    def __init__(self):
+        global mesh, sta, ap
 
-    # make sure Bluetooth is off
-    bluetooth.BLE().active(False)
+        # make sure Bluetooth is off
+        bluetooth.BLE().active(False)
 
-    # start wifi receiver
-    sta = network.WLAN(network.STA_IF)
-    sta.active(True)
+        # start wifi receiver
+        self.sta = network.WLAN(network.STA_IF)
+        self.sta.active(True)
 
-    # start access point
-    ap = network.WLAN(network.AP_IF)
-    ap.active(True)
-    ap.config(max_clients=1)
+        # start access point
+        self.ap = network.WLAN(network.AP_IF)
+        self.ap.active(True)
+        self.ap.config(max_clients=1)
 
-    # activate mesh
-    mesh = espnow.ESPNow()
-    mesh.active(True)
+        # activate mesh
+        self.mesh = espnow.ESPNow()
+        self.mesh.active(True)
 
-    print("MAC address is", bin_to_hex(sta.config('mac')))
-    print(" AP address is", ap.ifconfig()[0])
+        self.mac = bin_to_hex(self.sta.config('mac'))
+        self.ip = self.ap.ifconfig()[0]
+        print("MAC address is", self.mac)
+        print(" IP address is", self.ip)
 
+    def scan(self):
+        self.neighbors = []
+        for ssid, bssid, channel, rssi, security, hidden in self.sta.scan():
+            self.neighbors.append({'ssid': ssid.decode("utf-8"),
+                                   'mac': bin_to_hex(bssid),
+                                   'channel': channel,
+                                   'rssi': rssi
+                                   })
+        return self.neighbors
 
-def scan():
-    global sta
-    nets = []
-    for ssid, bssid, channel, rssi, security, hidden in sta.scan():
-        nets.append({'ssid': ssid.decode("utf-8"),
-                     'mac': bin_to_hex(bssid),
-                     'channel': channel,
-                     'rssi': rssi,
-                     'security': security,
-                     'hidden': hidden
-                     })
-    return nets
-
-
-def send(message):
-    try:
-        for peer in peers:
+    def send(self, message):
+        for peer in self.peers:
             try:
-                mesh.send(hex_to_bin(peer), message)
+                self.mesh.send(hex_to_bin(peer), message)
             except Exception:
                 print("Can't send to", peer)
-    except NameError:
-        raise Exception("Wifi not started")
 
-
-def receive():
-    try:
-        sender, msg = mesh.recv(0)
+    def receive(self):
+        sender, msg = self.mesh.recv(0)
         if msg and sender:
             sender = bin_to_hex(sender)
             return sender, msg.decode()
         else:
             return None, None
-    except NameError:
-        raise Exception("Wifi not started")
 
+    def add_peer(self, mac):
+        self.mesh.add_peer(hex_to_bin(mac))
+        self.peers.append(mac)
 
-def add_peer(mac):
-    try:
-        mesh.add_peer(hex_to_bin(mac))
-        peers.append(mac)
-    except NameError:
-        raise Exception("Wifi not started")
-
-
-def clear_peers():
-    try:
-        for peer in peers:
+    def clear_peers(self):
+        for peer in self.peers:
             try:
-                mesh.del_peer(hex_to_bin(peer))
+                self.mesh.del_peer(hex_to_bin(peer))
             except ValueError as e:
                 print(e)
-        peers.clear()
-    except NameError:
-        raise Exception("Wifi not started")
+        self.peers.clear()
 
 
 def ap_to_peer(hex_mac):
@@ -120,4 +101,4 @@ def map(value, in_min, in_max, out_min, out_max):
     return (value * (out_max - out_min)) + out_min
 
 
-start_network()
+mesh = Mesh()

@@ -29,8 +29,8 @@ class Cricket():
         print("Looking for neighbors...")
         SND.duty(512)
         SND.freq(HUM)
-        clear_peers()
-        neighbors = scan()
+        mesh.clear_peers()
+        neighbors = mesh.scan()
         neighbors.sort(key=lambda n: n['rssi'], reverse=True)
         count = 0
         for neighbor in neighbors:
@@ -38,7 +38,7 @@ class Cricket():
                     neighbor['rssi'] > RANGE:
                 mac = ap_to_peer(neighbor['mac'])
                 print(neighbor['rssi'], neighbor['ssid'], mac)
-                add_peer(mac)
+                mesh.add_peer(mac)
                 count += 1
                 if count == HOOD:
                     break
@@ -48,7 +48,7 @@ class Cricket():
     def listen(self):
         # receive messages
         try:
-            sender, in_message = receive()
+            sender, in_message = mesh.receive()
         except ValueError:
             pass
         else:
@@ -56,7 +56,6 @@ class Cricket():
                 print("Received", in_message, "from", sender)
                 if in_message == "flash":
                     self.bump()
-                # setting messages
 
     def bump(self):
         if self.phase <= REST:
@@ -78,7 +77,7 @@ class Cricket():
         SND.duty(0)
         sleep_ms(50)
         LED.off()
-        send("flash")
+        mesh.send("flash")
 
 
 def f(x):
