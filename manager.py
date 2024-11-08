@@ -7,9 +7,19 @@ while True:
     print(neighbors)
     for neighbor in neighbors:
         mesh.connect(name_to_ssid(neighbor['name']))
-        #r = get("http://192.168.4.1:8088/peers")
-        #print(r.text)
+        sleep(.5)
+        response = get("http://192.168.4.1")
+        if response.status_code == 200:
+            print(response)
+        else:
+            print("Error:", response.status_code)
         sleep(1)
         print()
     print()
     sleep(5)
+
+
+"""
+why doesn't this work? it works fine with regular requests
+
+"""

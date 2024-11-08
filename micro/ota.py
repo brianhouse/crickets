@@ -11,7 +11,7 @@ async def handle_request(reader, writer):
     page = headers[0].split()[1] if len(headers) > 0 else "/"
     print(f"Request received {page}")
     if page == "/peers":
-        content = f"{mesh.ip} {mesh.peers}"
+        content = f"{mesh.name} {mesh.peers}"
     elif page == "/reset":
         content = "resetting"
         reset = True
@@ -56,8 +56,8 @@ async def extract_file(request, boundary):
 
 
 async def start_ota():
-    await asyncio.start_server(handle_request, "0.0.0.0", HTTP)
-    print(f"Server running on port {HTTP}")
+    await asyncio.start_server(handle_request, "0.0.0.0", 80)
+    print(f"Server running")
     try:
         while True:
             await asyncio.sleep(3600)

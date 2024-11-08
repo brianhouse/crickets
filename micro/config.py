@@ -14,6 +14,5 @@ TICK = 1            # cycle resolution in ms
 PITCH = randint(3500, 4500)
 HUM = randint(10, 20)
 
-# debug server port
-HTTP = 8088
-
+# OTA
+OTA = "D8E7AD"
