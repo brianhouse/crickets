@@ -34,7 +34,7 @@ class Mesh():
         # start access point
         self.ap = network.WLAN(network.AP_IF)
         self.ap.active(True)
-        self.ap.config(password='pulsecoupled', authmode=network.AUTH_WPA_PSK)
+        self.ap.config(password='pulsecoupled', authmode=network.AUTH_WPA2_PSK)
 
         # activate mesh
         self.mesh = espnow.ESPNow()
@@ -80,7 +80,11 @@ class Mesh():
         except Exception as e:
             print(e)
         while not self.sta.isconnected():
-            print(".")
+            status = self.sta.status()
+            if status in STATUS_CODES:
+                print(STATUS_CODES[status])
+            else:
+                print(".")
             sleep(1)
         print("--> connected")
 
@@ -130,6 +134,17 @@ def map(value, in_min, in_max, out_min, out_max):
     value = (value - in_min) / float(in_max - in_min)
     return (value * (out_max - out_min)) + out_min
 
+
+# connection status codes
+STATUS_CODES = {200: 'BEACON_TIMEOUT',
+                201: 'NO_AP_FOUND',
+                202: 'WRONG_PASSWORD',
+                203: 'ASSOC_FAIL',
+                204: 'HANDSHAKE_TIMEOUT',
+                1000: 'IDLE',
+                1001: 'CONNECTING',
+                1010: 'GOT_IP'
+                }
 
 mesh = Mesh()
 

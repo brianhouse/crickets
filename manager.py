@@ -13,6 +13,3 @@ while True:
         print()
     print()
     sleep(5)
-
-
-
