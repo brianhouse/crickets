@@ -30,15 +30,12 @@ class Cricket():
         SND.duty(512)
         SND.freq(HUM)
         mesh.clear_peers()
-        neighbors = mesh.scan()
-        neighbors.sort(key=lambda n: n['rssi'], reverse=True)
         count = 0
-        for neighbor in neighbors:
-            if neighbor['ssid'].split("_")[0] == "ESP" and \
-                    neighbor['rssi'] > RANGE:
-                mac = ap_to_peer(neighbor['mac'])
-                print(neighbor['rssi'], neighbor['ssid'], mac)
-                mesh.add_peer(mac)
+        for neighbor in mesh.scan():
+            neighbor, rssi = neighbor.values()
+            if rssi > RANGE:
+                print(neighbor)
+                mesh.add_peer(neighbor)
                 count += 1
                 if count == HOOD:
                     break
@@ -86,6 +83,7 @@ def f(x):
 
 def f_inv(y):
     return (2 / math.pi) * math.asin(y)
+
 
 
 
