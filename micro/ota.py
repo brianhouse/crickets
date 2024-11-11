@@ -7,6 +7,7 @@ async def handle_request(reader, writer):
     reset = False
     request = await reader.read(1024)
     request = request.decode('utf-8')
+    print(request)
     headers = request.split('\r\n')
     page = headers[0].split()[1] if len(headers) > 0 else "/"
     print(f"Request received {page}")
@@ -30,10 +31,13 @@ async def handle_request(reader, writer):
                             content = "SUCCESS"
     else:
         content = "HELLO WORLD"
-    content += "\r\n"
-    headers = f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(content)}\r\n\r\n"
-    writer.write(headers.encode())
-    writer.write(content.encode())
+    headers = ("HTTP/1.1 200 OK",
+               "Content-Type: text/plain; charset=utf-8",
+               f"Content-Length: {len(content)}",
+               "\r\n"
+               )
+    writer.write("\r\n".join(headers).encode('utf-8'))
+    writer.write(content.encode('utf-8'))
     await writer.drain()
     await writer.wait_closed()
     if reset:

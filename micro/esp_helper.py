@@ -71,23 +71,6 @@ class Mesh():
         else:
             return None, None
 
-    def connect(self, ssid):
-        if self.sta.isconnected():
-            self.sta.disconnect()
-        print(f"Connecting to {ssid.decode('utf-8')}...")
-        try:
-            self.sta.connect(ssid, "pulsecoupled")
-        except Exception as e:
-            print(e)
-        while not self.sta.isconnected():
-            status = self.sta.status()
-            if status in STATUS_CODES:
-                print(STATUS_CODES[status])
-            else:
-                print(".")
-            sleep(1)
-        print("--> connected")
-
     def add_peer(self, name):
         self.mesh.add_peer(hex_to_bin(name_to_mac(name)))
         self.peers.append(name)
@@ -134,17 +117,6 @@ def map(value, in_min, in_max, out_min, out_max):
     value = (value - in_min) / float(in_max - in_min)
     return (value * (out_max - out_min)) + out_min
 
-
-# connection status codes
-STATUS_CODES = {200: 'BEACON_TIMEOUT',
-                201: 'NO_AP_FOUND',
-                202: 'WRONG_PASSWORD',
-                203: 'ASSOC_FAIL',
-                204: 'HANDSHAKE_TIMEOUT',
-                1000: 'IDLE',
-                1001: 'CONNECTING',
-                1010: 'GOT_IP'
-                }
 
 mesh = Mesh()
 
