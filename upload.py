@@ -1,33 +1,19 @@
 #!venv/bin/python
 
-import os, sys, subprocess, time, mpremote
+from util import *
 
 
-def run(cmd):
-    print(f"$ {cmd}")
-    result = subprocess.run(cmd, shell=True, capture_output=True)
-    if result.returncode:
-        return result.stderr.decode('utf-8')
-    else:
-        return result.stdout.decode('utf-8')
-
-
-if not len(sys.argv) > 1:
-    lines = run("mpremote connect list").splitlines()
-    ports = [line.split("-")[-1].split(" ")[0] for line in lines
-             if "/dev/cu.usbserial" in line]
-    print("[PORT]", ports)
-    exit()
+port_list()
 
 port = f"/dev/cu.usbserial-{sys.argv[1]}"
 
-print(run(f"mpremote connect {port} fs ls"))
-for filename in os.listdir("micro/"):
+run(f"mpremote connect {port} fs ls")
+for filename in os.listdir("cricket/"):
     if filename.split(".")[-1] != "py":
         continue
-    print(run(f"mpremote connect {port} cp micro/{filename} :{filename}"))
+    run(f"mpremote connect {port} cp cricket/{filename} :{filename}")
+    print()
 
-
-print(run(f"mpremote connect {port} soft-reset sleep 0.5 bootloader"))
-print(run(f"mpremote connect {port} exec --no-follow 'import main.py'"))
-subprocess.run(f"mpremote connect {port}", shell=True)
+run(f"mpremote connect {port} soft-reset sleep 0.5 bootloader")
+run(f"mpremote connect {port} exec --no-follow 'import main.py'")
+run(f"mpremote connect {port}")

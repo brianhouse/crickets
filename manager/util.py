@@ -71,19 +71,39 @@ def request(url):
     return body.decode('utf-8')
 
 
-while True:
-    neighbors = scan()
-    print("CRICKETS:")
-    print(neighbors)
-    for neighbor in neighbors:
-        connect(f"ESP_{neighbor['name']}".encode('utf-8'))
-        print(sta.isconnected())
-        try:
-            response = request("http://192.168.4.1/")
-            print(response)
-        except Exception as e:
-            print("Request failed:", e)
-        sleep(1)
-        print()
-    print()
-    sleep(5)
+def post_file(url, filename, filedata):
+    print(f"Posting {filename} to {url}...")
+    url = url.replace("http://", "").replace("https://", "")
+    host = url.split("/")[0]
+    path = url.replace(host, "")
+    port = 80
+    print(host, path, port)
+    addr_info = usocket.getaddrinfo(host, port)[0][-1]
+    s = usocket.socket()
+    s.connect(addr_info)
+    # Create a boundary for multipart data
+    boundary = "----WebKitFormBoundary7MA4YWxkTrZu0gW"
+    body = "".join(
+        f"--{boundary}",
+        f"Content-Disposition: form-data; name=\"file\"; filename=\"{filename}",
+        "Content-Type: application/octet-stream",
+        "\r\n",
+    ).encode() + filedata + f"\r\n--{boundary}--\r\n".encode()
+    headers = "\r\n".join(
+        f"POST {path} HTTP/1.1",
+        f"Host: {host}",
+        f"Content-Type: multipart/form-data; boundary={boundary}\r\n",
+        f"Content-Length: {len(body)}",
+        "Connection: close",
+        "\r\n"
+    )
+    s.send(headers.encode() + body)
+    response = b""
+    while True:
+        data = s.recv(1024)
+        if not data:
+            break
+        response += data
+    s.close()
+    body = response.split(b"\r\n\r\n", 1)[-1]
+    return body.decode('utf-8')
