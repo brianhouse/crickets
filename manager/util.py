@@ -32,13 +32,10 @@ def scan():
 
 
 def connect(ssid):
-    if sta.isconnected():
-        sta.disconnect()
+    sta.disconnect()
+    sleep(.5)
     print(f"Connecting to {ssid.decode('utf-8')}...")
-    try:
-        sta.connect(ssid, "pulsecoupled")
-    except Exception as e:
-        print(e)
+    sta.connect(ssid, "pulsecoupled")
     while not sta.isconnected():
         status = sta.status()
         if status in STATUS_CODES:
@@ -50,12 +47,13 @@ def connect(ssid):
 
 
 def request(url):
-    print(f"Requesting {url}...")
+    if not sta.isconnected():
+        sta.connect()
     url = url.replace("http://", "").replace("https://", "")
     host = url.split("/")[0]
     path = url.replace(host, "")
     port = 80
-    print(host, path, port)
+    print("Request", host, path, port)
     addr_info = usocket.getaddrinfo(host, port)[0][-1]
     s = usocket.socket()
     s.connect(addr_info)

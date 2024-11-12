@@ -10,7 +10,6 @@ async def handle_request(reader, writer):
     print(request)
     headers = request.split('\r\n')
     page = headers[0].split()[1] if len(headers) > 0 else "/"
-    print(f"Request received {page}")
     if page == "/peers":
         content = f"{mesh.name} {mesh.peers}"
     elif page == "/reset":

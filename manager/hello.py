@@ -6,9 +6,8 @@ while True:
     print("CRICKETS:")
     print(neighbors)
     for neighbor in neighbors:
-        connect(f"ESP_{neighbor['name']}".encode('utf-8'))
-        print(sta.isconnected())
         try:
+            connect(f"ESP_{neighbor['name']}".encode('utf-8'))
             response = request("http://192.168.4.1/")
             print(response)
         except Exception as e:

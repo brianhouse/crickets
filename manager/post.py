@@ -6,11 +6,8 @@ while True:
     print("CRICKETS:")
     print(neighbors)
     for neighbor in neighbors:
-        connect(f"ESP_{neighbor['name']}".encode('utf-8'))
-        print(sta.isconnected())
         try:
-            # response = request("http://192.168.4.1/")
-            # print(response)
+            connect(f"ESP_{neighbor['name']}".encode('utf-8'))
             filename = "cricket.py"
             filedata = open("micro/cricket.py").read()
             response = post_file("http://192.168.4.1/file", filename, filedata)
