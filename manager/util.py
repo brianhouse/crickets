@@ -34,7 +34,7 @@ def scan():
 def connect(ssid):
     sta.disconnect()
     sleep(.5)
-    print(f"Connecting to {ssid.decode('utf-8')}...")
+    print(f"Connecting to {ssid}...")
     sta.connect(ssid, "pulsecoupled")
     while not sta.isconnected():
         status = sta.status()
@@ -70,7 +70,6 @@ def request(url):
 
 
 def post_file(url, filename, filedata):
-    print(f"Posting {filename} to {url}...")
     url = url.replace("http://", "").replace("https://", "")
     host = url.split("/")[0]
     path = url.replace(host, "")
@@ -81,20 +80,20 @@ def post_file(url, filename, filedata):
     s.connect(addr_info)
     # Create a boundary for multipart data
     boundary = "----WebKitFormBoundary7MA4YWxkTrZu0gW"
-    body = "".join(
+    body = "\r\n".join((
         f"--{boundary}",
-        f"Content-Disposition: form-data; name=\"file\"; filename=\"{filename}",
+        f"Content-Disposition: form-data; name=\"file\"; filename=\"{filename}\"",
         "Content-Type: application/octet-stream",
         "\r\n",
-    ).encode() + filedata + f"\r\n--{boundary}--\r\n".encode()
-    headers = "\r\n".join(
+    )).encode() + filedata + f"\r\n--{boundary}--\r\n".encode()
+    headers = "\r\n".join((
         f"POST {path} HTTP/1.1",
         f"Host: {host}",
-        f"Content-Type: multipart/form-data; boundary={boundary}\r\n",
+        f"Content-Type: multipart/form-data; boundary={boundary}",
         f"Content-Length: {len(body)}",
         "Connection: close",
         "\r\n"
-    )
+    ))
     s.send(headers.encode() + body)
     response = b""
     while True:

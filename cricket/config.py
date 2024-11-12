@@ -1,5 +1,6 @@
 from util import *
 
+
 # connection constants
 RANGE = -100
 HOOD = 5

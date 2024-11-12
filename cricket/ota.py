@@ -5,7 +5,15 @@ from config import *
 
 async def handle_request(reader, writer):
     reset = False
-    request = await reader.read(1024)
+    request = b""
+    while True:
+        try:
+            chunk = await asyncio.wait_for(reader.read(1024), timeout=.5)
+        except asyncio.TimeoutError:
+            chunk = None
+        if not chunk:
+            break
+        request += chunk
     request = request.decode('utf-8')
     print(request)
     headers = request.split('\r\n')
@@ -35,11 +43,13 @@ async def handle_request(reader, writer):
                f"Content-Length: {len(content)}",
                "\r\n"
                )
+    print(content)
     writer.write("\r\n".join(headers).encode('utf-8'))
     writer.write(content.encode('utf-8'))
     await writer.drain()
     await writer.wait_closed()
     if reset:
+        sleep(2)
         machine.reset()
 
 

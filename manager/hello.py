@@ -1,18 +1,20 @@
 from util import *
 
+print()
+crickets = scan()
+print("CRICKETS:")
+for cricket in crickets:
+    print(cricket)
+print()
 
-while True:
-    neighbors = scan()
-    print("CRICKETS:")
-    print(neighbors)
-    for neighbor in neighbors:
-        try:
-            connect(f"ESP_{neighbor['name']}".encode('utf-8'))
-            response = request("http://192.168.4.1/")
-            print(response)
-        except Exception as e:
-            print("Request failed:", e)
-        sleep(1)
-        print()
+for cricket in crickets:
+    try:
+        connect(f"ESP_{cricket['name']}")
+        response = request("http://192.168.4.1/")
+        print(response)
+    except Exception as e:
+        print("Request failed:", e)
+    sleep(1)
     print()
-    sleep(5)
+
+print("DONE")
