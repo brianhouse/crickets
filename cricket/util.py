@@ -59,26 +59,26 @@ class Mesh():
     def send(self, message):
         for peer in self.peers:
             try:
-                self.mesh.send(hex_to_bin(name_to_mac(peer)), message)
+                self.mesh.send(hex_to_bin(ap_to_peer(name_to_mac(peer))), message)
             except Exception:
                 print("Can't send to", peer)
 
     def receive(self):
         sender, msg = self.mesh.recv(0)
         if msg and sender:
-            sender = mac_to_name(bin_to_hex(sender))
+            sender = mac_to_name(peer_to_ap(bin_to_hex(sender)))
             return sender, msg.decode()
         else:
             return None, None
 
     def add_peer(self, name):
-        self.mesh.add_peer(hex_to_bin(name_to_mac(name)))
+        self.mesh.add_peer(hex_to_bin(ap_to_peer(name_to_mac(name))))
         self.peers.append(name)
 
     def clear_peers(self):
         for peer in self.peers:
             try:
-                self.mesh.del_peer(hex_to_bin(name_to_mac(peer)))
+                self.mesh.del_peer(hex_to_bin(ap_to_peer(name_to_mac(peer))))
             except ValueError as e:
                 print(e)
         self.peers.clear()
@@ -93,7 +93,8 @@ def ssid_to_name(ssid):
 
 
 def name_to_mac(name):
-    return f"7C:9E:BD:{name[:2]}:{name[2:4]}:{name[4:]}"
+    # return f"7C:9E:BD:{name[:2]}:{name[2:4]}:{name[4:]}" # ?
+    return f"A8:42:E3:{name[:2]}:{name[2:4]}:{name[4:]}"
 
 
 def mac_to_name(mac):
@@ -103,6 +104,11 @@ def mac_to_name(mac):
 def ap_to_peer(hex_mac):
     # subtract 1 from the last octet to find the peer address
     return hex_mac[:-2] + hex(int(hex_mac.split(':')[-1], 16) - 1)[-2:].upper()
+
+
+def peer_to_ap(hex_mac):
+    # add 1 from the last octet to find the peer address
+    return hex_mac[:-2] + hex(int(hex_mac.split(':')[-1], 16) + 1)[-2:].upper()
 
 
 def bin_to_hex(bin_mac):
@@ -119,6 +125,3 @@ def map(value, in_min, in_max, out_min, out_max):
 
 
 mesh = Mesh()
-
-
-

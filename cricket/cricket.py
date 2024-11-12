@@ -45,7 +45,6 @@ class Cricket():
         print("--> done")
 
     def listen(self):
-        # receive messages
         try:
             sender, in_message = mesh.receive()
         except ValueError:
