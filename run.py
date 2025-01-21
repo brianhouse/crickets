@@ -8,7 +8,7 @@ port_list()
 port = f"/dev/cu.usbserial-{sys.argv[1]}"
 
 if len(sys.argv) < 3:
-    print("[command]")
+    print("[PORT] [COMMAND]")
     exit()
 command = sys.argv[2]
 if command == "post":

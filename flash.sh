@@ -14,7 +14,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]
 then
     echo "Flashing..."
     esptool.py --chip esp32 --port $PORT --baud 115200 erase_flash
-    esptool.py --chip esp32 --port $PORT --baud 115200 write_flash -z 0x1000 ESP32_GENERIC-20240602-v1.23.0.bin
+    esptool.py --chip esp32 --port $PORT --baud 115200 write_flash -z 0x1000 ESP32_GENERIC-20241129-v1.24.1.bin
     echo "--> done"
 else
     echo "Exiting..."

@@ -8,7 +8,8 @@ def port_list():
         lines = run("mpremote connect list", True).splitlines()
         ports = [line.split("-")[-1].split(" ")[0] for line in lines
                  if "/dev/cu.usbserial" in line]
-        print("[PORT]", ports)
+        ports = [port for port in ports if len(port) > 1]
+        print("PORTS:", ports)
         exit()
 
 
