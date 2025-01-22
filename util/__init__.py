@@ -5,9 +5,8 @@ import subprocess
 
 def port_list():
     if not len(sys.argv) > 1:
-        lines = run("mpremote connect list", True).splitlines()
-        ports = [line.split("-")[-1].split(" ")[0] for line in lines
-                 if "/dev/cu.usbserial" in line]
+        lines = run("venv/bin/mpremote connect list", True).splitlines()
+        ports = [line.split("-")[-1].split(" ")[0] for line in lines]
         ports = [port for port in ports if len(port) > 1]
         print("PORTS:", ports)
         exit()
