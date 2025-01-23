@@ -7,7 +7,7 @@ def port_list():
     if not len(sys.argv) > 1:
         lines = run("venv/bin/mpremote connect list", True).splitlines()
         ports = [line.split("-")[-1].split(" ")[0] for line in lines]
-        ports = [port for port in ports if len(port) > 1]
+        ports = [port for port in ports if len(port) > 1 and "/dev" in port]
         print("PORTS:", ports)
         exit()
 

@@ -10,7 +10,7 @@ from time import sleep, sleep_ms, ticks_ms, ticks_us
 from random import random, randint, choice
 
 # https://learn.adafruit.com/huzzah32-esp32-breakout-board/pinouts
-STA = Pin(13, Pin.OUT)
+STS = Pin(13, Pin.OUT)
 LED = Pin(21, Pin.OUT)
 PIR = Pin(33, Pin.IN)
 SND = PWM(Pin(27, Pin.OUT))

@@ -16,6 +16,7 @@ class Cricket():
                 if PIR.value():
                     print("MOTION!")
                     LED.off()
+                    STS.off()
                     break
                 self.listen()
                 self.phase = min(self.phase + (t_elapsed * FREQ), 1.0)
@@ -67,6 +68,7 @@ class Cricket():
         print("--> flash")
         self.phase = 0.0
         LED.on()
+        STS.on()
         SND.duty(512)
         SND.freq(PITCH * 2)
         sleep_ms(20)
@@ -75,6 +77,7 @@ class Cricket():
         SND.duty(0)
         sleep_ms(50)
         LED.off()
+        STS.off()
         mesh.send("flash")
 
 
