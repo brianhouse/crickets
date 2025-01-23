@@ -2,7 +2,6 @@
 
 from util import *
 
-
 port_list()
 
 port = sys.argv[1]
@@ -16,10 +15,13 @@ if command == "post":
         print("post [filename]")
         exit()
     filename = sys.argv[3]
-    if filename in ['hello', 'net', 'peers', 'post']:
+    if filename in os.listdir("manager"):
         print("--> conflicting filename!")
         exit()
+    with open("cricket/update.txt", 'w') as f:
+        f.write(filename)
     run(f"venv/bin/mpremote connect {port} cp cricket/{filename} :{filename}")
+    run(f"venv/bin/mpremote connect {port} cp cricket/update.txt :update.txt")
 
 run(f"venv/bin/mpremote connect {port} cp manager/net.py :net.py")
 run(f"venv/bin/mpremote connect {port} soft-reset sleep 0.5 bootloader")

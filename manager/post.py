@@ -1,6 +1,4 @@
-import sys
 from net import *
-
 
 print()
 crickets = scan()
@@ -9,7 +7,8 @@ for cricket in crickets:
     print(cricket)
 print()
 
-filename = sys.argv[3]
+with open("update.txt") as f:
+    filename = f.read().trim()
 print(f"Posting {filename}...")
 filedata = open(filename).read()
 
