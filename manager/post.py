@@ -1,4 +1,4 @@
-from util import *
+from net import *
 
 
 print()
@@ -8,8 +8,9 @@ for cricket in crickets:
     print(cricket)
 print()
 
-filename = "config.py"
-filedata = open("config.py").read()
+filename = sys.argv[3]
+print(f"Posting {filename}...")
+filedata = open(filename).read()
 
 for cricket in crickets:
     try:

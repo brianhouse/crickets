@@ -1,4 +1,4 @@
-from util import *
+from net import *
 
 print()
 crickets = scan()
