@@ -1,6 +1,6 @@
 #!venv/bin/python
 
-from net import *
+from util import *
 
 
 port_list()
