@@ -8,7 +8,7 @@ for cricket in crickets:
 print()
 
 with open("update.txt") as f:
-    filename = f.read().trim()
+    filename = f.read().strip()
 print(f"Posting {filename}...")
 filedata = open(filename).read()
 
