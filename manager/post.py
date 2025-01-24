@@ -15,7 +15,7 @@ filedata = open(filename).read()
 
 for cricket in crickets:
     try:
-        connect(f"ESP_{cricket['name']}")
+        connect(f"ESP_{cricket['mac']}")
         response = post_file("http://192.168.4.1/file", filename, filedata)
         print(response)
     except NameError as e:
