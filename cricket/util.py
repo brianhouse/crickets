@@ -47,14 +47,13 @@ class Mesh():
         print(f"## {self.name} ##")
 
     def scan(self):
-        self.neighbors = []
+        neighbors = []
         for ssid, bssid, channel, rssi, security, hidden in self.sta.scan():
             if ssid.decode('utf-8').split("_")[0] == "ESP":
-                self.neighbors.append({'name': ssid_to_name(ssid),
-                                       'rssi': rssi}
-                                      )
-        self.neighbors.sort(key=lambda n: n['rssi'], reverse=True)
-        return self.neighbors
+                neighbors.append({'name': ssid_to_name(ssid),
+                                  'rssi': rssi})
+        neighbors.sort(key=lambda n: n['rssi'], reverse=True)
+        return neighbors
 
     def send(self, message):
         for peer in self.peers:

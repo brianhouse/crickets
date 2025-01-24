@@ -10,6 +10,7 @@ print()
 with open("update.txt") as f:
     filename = f.read().strip()
 print(f"Posting {filename}...")
+print()
 filedata = open(filename).read()
 
 for cricket in crickets:

@@ -5,6 +5,7 @@ from config import *
 class Cricket():
 
     async def run(self):
+        sleep(random())
         while True:
             t_previous = 0
             self.look()
@@ -46,15 +47,11 @@ class Cricket():
         print("--> done")
 
     def listen(self):
-        try:
-            sender, in_message = mesh.receive()
-        except ValueError:
-            pass
-        else:
-            if in_message is not None:
-                print("Received", in_message, "from", sender)
-                if in_message == "flash":
-                    self.bump()
+        sender, in_message = mesh.receive()
+        if in_message is not None:
+            print("Received", in_message, "from", sender)
+            if in_message == "flash":
+                self.bump()
 
     def bump(self):
         if self.phase <= REST:
