@@ -30,27 +30,25 @@ class Mesh():
         # start wifi receiver
         self.sta = network.WLAN(network.STA_IF)
         self.sta.active(True)
-
-        # start access point
-        self.ap = network.WLAN(network.AP_IF)
-        self.ap.active(True)
-        self.ap.config(password='pulsecoupled', authmode=network.AUTH_WPA2_PSK)
+        self.mac = bin_to_hex(self.sta.config('mac'))
 
         # activate mesh
         self.mesh = espnow.ESPNow()
         self.mesh.active(True)
 
-        self.mac = bin_to_hex(self.sta.config('mac'))
+        # start access point
+        self.ap = network.WLAN(network.AP_IF)
+        self.ap.active(True)
+        self.ap.config(ssid=mac_to_ssid(self.mac), password='pulsecoupled', authmode=network.AUTH_WPA2_PSK)
+
         self.ip = self.ap.ifconfig()[0]
-        self.ssid = self.ap.config('essid')
-        self.name = self.ssid.split("_")[-1]
-        print(f"## {self.name} ##")
+        print(f"## {self.mac} ##")
 
     def scan(self):
         neighbors = []
         for ssid, bssid, channel, rssi, security, hidden in self.sta.scan():
             if ssid.decode('utf-8').split("_")[0] == "ESP":
-                neighbors.append({'name': ssid_to_name(ssid),
+                neighbors.append({'mac': ssid_to_mac(ssid),
                                   'rssi': rssi})
         neighbors.sort(key=lambda n: n['rssi'], reverse=True)
         return neighbors
@@ -58,56 +56,37 @@ class Mesh():
     def send(self, message):
         for peer in self.peers:
             try:
-                self.mesh.send(hex_to_bin(ap_to_peer(name_to_mac(peer))), message)
+                self.mesh.send(hex_to_bin(peer), message)
             except Exception:
                 print("Can't send to", peer)
 
     def receive(self):
         sender, msg = self.mesh.recv(0)
         if msg and sender:
-            sender = mac_to_name(peer_to_ap(bin_to_hex(sender)))
+            sender = bin_to_hex(sender)
             return sender, msg.decode()
         else:
             return None, None
 
-    def add_peer(self, name):
-        self.mesh.add_peer(hex_to_bin(ap_to_peer(name_to_mac(name))))
-        self.peers.append(name)
+    def add_peer(self, mac):
+        self.mesh.add_peer(hex_to_bin(mac))
+        self.peers.append(mac)
 
     def clear_peers(self):
         for peer in self.peers:
             try:
-                self.mesh.del_peer(hex_to_bin(ap_to_peer(name_to_mac(peer))))
+                self.mesh.del_peer(hex_to_bin(peer))
             except ValueError as e:
                 print(e)
         self.peers.clear()
 
 
-def name_to_ssid(name):
-    return f"ESP_{name}".encode('utf-8')
+def mac_to_ssid(mac):
+    return f"ESP_{mac}".encode('utf-8')
 
 
-def ssid_to_name(ssid):
+def ssid_to_mac(ssid):
     return ssid.decode("utf-8").split("_")[-1]
-
-
-def name_to_mac(name):
-    # return f"7C:9E:BD:{name[:2]}:{name[2:4]}:{name[4:]}" # ?
-    return f"A8:42:E3:{name[:2]}:{name[2:4]}:{name[4:]}"
-
-
-def mac_to_name(mac):
-    return "".join(mac.split(":")[3:])
-
-
-def ap_to_peer(hex_mac):
-    # subtract 1 from the last octet to find the peer address
-    return hex_mac[:-2] + hex(int(hex_mac.split(':')[-1], 16) - 1)[-2:].upper()
-
-
-def peer_to_ap(hex_mac):
-    # add 1 from the last octet to find the peer address
-    return hex_mac[:-2] + hex(int(hex_mac.split(':')[-1], 16) + 1)[-2:].upper()
 
 
 def bin_to_hex(bin_mac):
