@@ -50,5 +50,12 @@ have a master list of cricket names, and then have the manager functions look fo
     anicka li  
 
 
+## Network
+
+hang on. ok, so I need the AP to do OTA etc.
+
+if I sent broadcast messages, and then filtered by rssi, wouldn't need to maintain a peer list at all. is that an advantage? simpler code? not really.
+
+
 
 
