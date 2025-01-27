@@ -90,7 +90,7 @@ def ssid_to_name(ssid):
 
 
 def name_to_mac(name):
-    name = name.replace('-', '+').replace('_', '/')
+    name = name[::-1].replace('-', '+').replace('_', '/')
     mac_bytes = ubinascii.a2b_base64(name + '\n')
     return ':'.join(mac_bytes.hex().upper()[i:i + 2] for i in range(0, 12, 2))
 
@@ -98,7 +98,7 @@ def name_to_mac(name):
 def mac_to_name(mac):
     mac_bytes = bytes.fromhex(mac.replace(":", "").replace("-", ""))
     name = ubinascii.b2a_base64(mac_bytes).decode('utf-8').strip()
-    return name.replace('+', '-').replace('/', '_').rstrip('\n')
+    return name.replace('+', '-').replace('/', '_').rstrip('\n')[::-1]
 
 
 def bin_to_hex(bin_mac):
