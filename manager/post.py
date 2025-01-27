@@ -10,7 +10,8 @@ print()
 with open("update.txt") as f:
     lines = [line.strip() for line in f]
     filename = lines[0]
-    targets = lines[1].split()
+    if len(lines) > 1:
+        targets = lines[1].split()
 print(f"Posting {filename}...")
 print()
 filedata = open(filename).read()
