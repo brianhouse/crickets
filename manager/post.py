@@ -8,7 +8,7 @@ for cricket in crickets:
 print()
 
 with open("update.txt") as f:
-    lines = [line.strip() for line in file]
+    lines = [line.strip() for line in f]
     filename = lines[0]
     targets = lines[1].split()
 print(f"Posting {filename}...")
