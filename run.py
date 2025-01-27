@@ -21,7 +21,7 @@ if command == "post":
     crickets = sys.argv[4:]
     with open("cricket/update.txt", 'w') as f:
         f.write(filename + "\n")
-        f.write(crickets)
+        f.write(str(crickets))
     run(f"venv/bin/mpremote connect {port} cp cricket/{filename} :{filename}")
     run(f"venv/bin/mpremote connect {port} cp cricket/update.txt :update.txt")
 
