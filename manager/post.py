@@ -18,7 +18,7 @@ for cricket in crickets:
         connect(f"ESP_{cricket['name']}")
         response = post_file("http://192.168.4.1/file", filename, filedata)
         print(response)
-    except NameError as e:
+    except Exception as e:
         print("Request failed:", e)
     sleep(1)
     print()
