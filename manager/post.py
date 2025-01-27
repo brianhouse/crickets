@@ -15,6 +15,8 @@ print(f"Posting {filename}...")
 print()
 filedata = open(filename).read()
 
+failed = []
+
 for cricket in crickets:
     if len(targets):
         if cricket['name'] not in targets:
@@ -25,10 +27,14 @@ for cricket in crickets:
         print(response)
     except Exception as e:
         print("Request failed:", e)
+        failed.append(cricket['name'])
     sleep(1)
     print()
 
 print("DONE")
+print("Failed:")
+for name in failed:
+    print(name)
 
 
 """
