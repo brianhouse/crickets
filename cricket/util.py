@@ -5,7 +5,6 @@ import espnow
 import bluetooth
 import socket
 import machine
-import base64
 from machine import ADC, Pin, PWM
 from time import sleep, sleep_ms, ticks_ms, ticks_us
 from random import random, randint, choice
@@ -91,13 +90,15 @@ def ssid_to_name(ssid):
 
 
 def name_to_mac(name):
-    mac_bytes = base64.urlsafe_b64decode(name)
+    name = name.replace('-', '+').replace('_', '/')
+    mac_bytes = ubinascii.a2b_base64(name + '\n')
     return ':'.join(mac_bytes.hex().upper()[i:i + 2] for i in range(0, 12, 2))
 
 
 def mac_to_name(mac):
     mac_bytes = bytes.fromhex(mac.replace(":", "").replace("-", ""))
-    return base64.urlsafe_b64encode(mac_bytes).decode('utf-8')
+    name = ubinascii.b2a_base64(mac_bytes).decode('utf-8').strip()
+    return name.replace('+', '-').replace('/', '_').rstrip('\n')
 
 
 def bin_to_hex(bin_mac):
