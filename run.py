@@ -18,8 +18,10 @@ if command == "post":
     if filename in os.listdir("manager"):
         print("--> conflicting filename!")
         exit()
+    crickets = sys.argv[4:]
     with open("cricket/update.txt", 'w') as f:
-        f.write(filename)
+        f.write(filename + "\n")
+        f.write(crickets)
     run(f"venv/bin/mpremote connect {port} cp cricket/{filename} :{filename}")
     run(f"venv/bin/mpremote connect {port} cp cricket/update.txt :update.txt")
 
