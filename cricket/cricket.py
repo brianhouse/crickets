@@ -5,7 +5,7 @@ from config import *
 class Cricket():
 
     async def run(self):
-        sleep(random())
+        sleep(random() + 1)
         while True:
             t_previous = 0
             self.look()
