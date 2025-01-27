@@ -7,6 +7,7 @@ for cricket in crickets:
     print(cricket)
 print()
 
+targets = ""
 with open("update.txt") as f:
     lines = [line.strip() for line in f]
     filename = lines[0]

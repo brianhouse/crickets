@@ -90,7 +90,7 @@ def ssid_to_name(ssid):
 
 
 def name_to_mac(name):
-    name = name[::-1].replace('-', '+').replace('_', '/')
+    name = reverse(name.replace('-', '+').replace('_', '/'))
     mac_bytes = ubinascii.a2b_base64(name + '\n')
     return ':'.join(mac_bytes.hex().upper()[i:i + 2] for i in range(0, 12, 2))
 
@@ -98,7 +98,7 @@ def name_to_mac(name):
 def mac_to_name(mac):
     mac_bytes = bytes.fromhex(mac.replace(":", "").replace("-", ""))
     name = ubinascii.b2a_base64(mac_bytes).decode('utf-8').strip()
-    return name.replace('+', '-').replace('/', '_').rstrip('\n')[::-1]
+    return reverse(name.replace('+', '-').replace('/', '_').rstrip('\n'))
 
 
 def bin_to_hex(bin_mac):
@@ -112,6 +112,10 @@ def hex_to_bin(hex_mac):
 def map(value, in_min, in_max, out_min, out_max):
     value = (value - in_min) / float(in_max - in_min)
     return (value * (out_max - out_min)) + out_min
+
+
+def reverse(s):
+    return "".join(reversed([c for c in s]))
 
 
 mesh = Mesh()
