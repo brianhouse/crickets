@@ -5,27 +5,30 @@ from config import *
 class Cricket():
 
     async def run(self):
-        sleep(random() + 1)
-        while True:
-            t_previous = 0
-            self.look()
-            self.phase = random()
-            self.capacitor = f(self.phase)
+        try:
+            sleep(random() + 2)
             while True:
-                t = ticks_ms() / 1000.0
-                t_elapsed = t - t_previous
-                if PIR.value():
-                    print("MOTION!")
-                    LED.off()
-                    STS.off()
-                    break
-                self.listen()
-                self.phase = min(self.phase + (t_elapsed * FREQ), 1.0)
+                t_previous = 0
+                self.look()
+                self.phase = random()
                 self.capacitor = f(self.phase)
-                if self.capacitor >= 1.0:
-                    self.flash()
-                t_previous = t
-                await asyncio.sleep_ms(TICK)
+                while True:
+                    t = ticks_ms() / 1000.0
+                    t_elapsed = t - t_previous
+                    if PIR.value():
+                        print("MOTION!")
+                        LED.off()
+                        STS.off()
+                        break
+                    self.listen()
+                    self.phase = min(self.phase + (t_elapsed * FREQ), 1.0)
+                    self.capacitor = f(self.phase)
+                    if self.capacitor >= 1.0:
+                        self.flash()
+                    t_previous = t
+                    await asyncio.sleep_ms(TICK)
+        except Exception as e:
+            print(e)
 
     def look(self):
         print("Looking for neighbors...")
@@ -50,9 +53,10 @@ class Cricket():
         sender, in_message = mesh.receive()
         if in_message is not None:
             print("Received", in_message, "from", sender)
-            if len(mesh.peers) < HOOD and sender not in mesh.peers:
-                mesh.add_peer(sender)
             if in_message == "flash":
+                if len(mesh.peers) < HOOD and sender not in mesh.peers:
+                    print("Adding", sender)
+                    mesh.add_peer(sender)
                 self.bump()
 
     def bump(self):

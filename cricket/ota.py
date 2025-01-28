@@ -70,7 +70,7 @@ async def extract_file(request, boundary):
 
 async def start_ota():
     await asyncio.start_server(handle_request, "0.0.0.0", 80)
-    print(f"Server running")
+    print(f"OTA server running")
     try:
         while True:
             await asyncio.sleep(3600)

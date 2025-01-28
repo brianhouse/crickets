@@ -47,7 +47,7 @@ class Mesh():
     def scan(self):
         neighbors = []
         for ssid, bssid, channel, rssi, security, hidden in self.sta.scan():
-            if ssid.decode('utf-8').split("_")[0] == "ESP":
+            if ssid.decode('utf-8').split("_")[0] == "CK":
                 neighbors.append({'name': ssid_to_name(ssid),
                                   'rssi': rssi})
         neighbors.sort(key=lambda n: n['rssi'], reverse=True)
@@ -61,12 +61,19 @@ class Mesh():
                 print("Can't send to", peer)
 
     def receive(self):
-        sender, msg = self.mesh.recv(0)
-        if msg and sender:
-            sender = mac_to_name(bin_to_hex(sender))
-            return sender, msg.decode()
-        else:
-            return None, None
+        try:
+            sender, msg = self.mesh.recv(0)
+            if msg and sender:
+                sender = mac_to_name(bin_to_hex(sender))
+                try:
+                    msg.decode()
+                except Exception as e:
+                    print(f"Received bad message ({e}) from {sender}")
+                else:
+                    return sender, msg.decode()
+        except Exception as e:
+            print(e)
+        return None, None
 
     def add_peer(self, name):
         self.mesh.add_peer(hex_to_bin(name_to_mac(name)))
@@ -82,7 +89,7 @@ class Mesh():
 
 
 def name_to_ssid(name):
-    return f"ESP_{name}".encode('utf-8')
+    return f"CK_{name}".encode('utf-8')
 
 
 def ssid_to_name(ssid):
