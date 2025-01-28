@@ -38,8 +38,6 @@ class Cricket():
         count = 0
         for neighbor in mesh.scan():
             neighbor, rssi = neighbor.values()
-            if neighbor == OTA:
-                continue
             if rssi > RANGE:
                 print(neighbor)
                 mesh.add_peer(neighbor)

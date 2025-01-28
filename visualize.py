@@ -4,18 +4,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 
-
-# Example dictionary of nodes and their connections
-graph_data = {
-    'A': ['B', 'C'],
-    'B': ['A', 'D', 'E'],
-    'C': ['A', 'F'],
-    'D': ['B'],
-    'E': ['B', 'F'],
-    'F': ['C', 'E']
-}
-
-graph_data = {'oqNJjLEq': ['8ONNqMB2'], '8ONNqMB2': ['oqNJjLEq'], 'cvH2jLEq': ['sMI2jLEq', 'oqNJjLEq', '8ONNqMB2'], 'seO296Jf': ['sMI2jLEq', '8ONNqMB2', 'oqNJjLEq', '4oO296Jf', 'cvH2jLEq'], '4oO296Jf': ['8ONNqMB2', 'sMI2jLEq', 'cvH2jLEq', 'oqNJjLEq'], 'sMI2jLEq': ['8ONNqMB2', 'oqNJjLEq']}
+graph_data = {'8ONNqMB2': ['oqNJjLEq', 'seO296Jf', '4oO296Jf', 'sMI2jLEq', 'cvH2jLEq'], '4oO296Jf': ['seO296Jf', 'oqNJjLEq', '8ONNqMB2', 'sMI2jLEq', 'cvH2jLEq'], 'seO296Jf': ['4oO296Jf', 'oqNJjLEq', '8ONNqMB2', 'sMI2jLEq', 'cvH2jLEq'], 'oqNJjLEq': ['seO296Jf', '4oO296Jf', '8ONNqMB2', 'sMI2jLEq', 'cvH2jLEq'], 'cvH2jLEq': ['sMI2jLEq', 'oqNJjLEq', '8ONNqMB2', '4oO296Jf', 'seO296Jf'], 'sMI2jLEq': ['8ONNqMB2', 'oqNJjLEq', 'seO296Jf', '4oO296Jf', 'cvH2jLEq']}
 
 # Create a Directed Graph
 G = nx.DiGraph()
