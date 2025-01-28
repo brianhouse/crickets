@@ -11,7 +11,7 @@ network = {}
 
 for cricket in crickets:
     try:
-        connect(f"ESP_{cricket['name']}")
+        connect(f"CK_{cricket['name']}")
         response = request("http://192.168.4.1/peers")
         print(response)
         peers = eval("".join(response.split()[1:]))

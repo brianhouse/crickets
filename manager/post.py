@@ -24,7 +24,7 @@ for cricket in crickets:
         if cricket['name'] not in targets:
             continue
     try:
-        connect(f"ESP_{cricket['name']}")
+        connect(f"CK_{cricket['name']}")
         response = post_file("http://192.168.4.1/file", filename, filedata)
         print(response)
     except Exception as e:
