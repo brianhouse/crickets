@@ -50,6 +50,8 @@ class Cricket():
         sender, in_message = mesh.receive()
         if in_message is not None:
             print("Received", in_message, "from", sender)
+            if len(mesh.peers) < HOOD and sender not in mesh.peers:
+                mesh.add_peer(sender)
             if in_message == "flash":
                 self.bump()
 

@@ -7,11 +7,15 @@ for cricket in crickets:
     print(cricket)
 print()
 
+network = {}
+
 for cricket in crickets:
     try:
         connect(f"ESP_{cricket['name']}")
         response = request("http://192.168.4.1/peers")
         print(response)
+        peers = eval("".join(response.split()[1:]))
+        network[cricket['name']] = peers
         print("--> done")
     except Exception as e:
         print("Request failed:", e)
@@ -19,3 +23,4 @@ for cricket in crickets:
     print()
 
 print("DONE")
+print(network)
