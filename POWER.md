@@ -1,5 +1,14 @@
 # Power
 
+--> check to see if Bluetooth is turned off
+https://docs.micropython.org/en/latest/library/bluetooth.html
+
+/
+
+ah! but from a connector standpoint, it's easier to power not off of V+ but off the BAT pin. then I could even solder it. that leaves the FTDI free.
+
+/
+
 V+ is 3.5–6v DC — don't try to use FTDI and a power supply simultaneously!
 
 can tolerate a 1.5v drop from a 5v source (30%) -- but let's say 5%
@@ -28,14 +37,7 @@ https://www.omnicalculator.com/physics/dc-wire-size
 
 comes back as 25 AWG
 
-22 AWG can get us to 20' (one-way)
-
-
-
-
---> check to see if Bluetooth is turned off
-https://docs.micropython.org/en/latest/library/bluetooth.html
-
+22 AWG can get us to 20' (one-way), which is 10' of the ground with 10' of lead in the air
 
 
 wire:
@@ -44,8 +46,3 @@ wire:
 or
 - https://a.co/d/aoXoifs (24 awg)
 
-
-
-/
-
-ah! but from a connector standpoint, it's easier to power not off of V+ but off the BAT pin. then I could even solder it. that leaves the FTDI free.

@@ -2,6 +2,10 @@ import uasyncio as asyncio
 from config import *
 
 
+PITCH = randint(PITCH_LOW, PITCH_HIGH)
+HUM = randint(HUM_LOW, HUM_HIGH)
+
+
 class Cricket():
 
     async def run(self):

@@ -8,6 +8,7 @@ import machine
 from machine import ADC, Pin, PWM
 from time import sleep, sleep_ms, ticks_ms, ticks_us
 from random import random, randint, choice
+from config import *
 
 # https://learn.adafruit.com/huzzah32-esp32-breakout-board/pinouts
 STS = Pin(13, Pin.OUT)
@@ -30,6 +31,8 @@ class Mesh():
         # start wifi receiver
         self.sta = network.WLAN(network.STA_IF)
         self.sta.active(True)
+        self.sta.config(txpower=POWER)
+        #print(self.sta.config("txpower"))
         self.mac = bin_to_hex(self.sta.config('mac'))
         self.name = mac_to_name(self.mac)
 
@@ -43,6 +46,7 @@ class Mesh():
         self.mesh.active(True)
 
         print(f"## {self.name} ##")
+
 
     def scan(self):
         neighbors = []
