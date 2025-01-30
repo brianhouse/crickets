@@ -28,6 +28,7 @@ https://www.omnicalculator.com/physics/dc-wire-size
 
 comes back as 25 AWG
 
+22 AWG can get us to 20' (one-way)
 
 
 

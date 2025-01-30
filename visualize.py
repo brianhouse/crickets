@@ -4,7 +4,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 
-graph_data = {'8ONNqMB2': ['oqNJjLEq', 'seO296Jf', '4oO296Jf', 'sMI2jLEq', 'cvH2jLEq'], '4oO296Jf': ['seO296Jf', 'oqNJjLEq', '8ONNqMB2', 'sMI2jLEq', 'cvH2jLEq'], 'seO296Jf': ['4oO296Jf', 'oqNJjLEq', '8ONNqMB2', 'sMI2jLEq', 'cvH2jLEq'], 'oqNJjLEq': ['seO296Jf', '4oO296Jf', '8ONNqMB2', 'sMI2jLEq', 'cvH2jLEq'], 'cvH2jLEq': ['sMI2jLEq', 'oqNJjLEq', '8ONNqMB2', '4oO296Jf', 'seO296Jf'], 'sMI2jLEq': ['8ONNqMB2', 'oqNJjLEq', 'seO296Jf', '4oO296Jf', 'cvH2jLEq']}
+graph_data = {'sMI2jLEq': ['8ONNqMB2', 'cvH2jLEq', 'oqNJjLEq', 'seO296Jf', '4oO296Jf'], '8ONNqMB2': ['sMI2jLEq', 'cvH2jLEq', 'oqNJjLEq', 'seO296Jf', '4oO296Jf'], 'oqNJjLEq': ['8ONNqMB2', 'cvH2jLEq', 'sMI2jLEq', 'seO296Jf', '4oO296Jf'], 'seO296Jf': ['4oO296Jf', 'oqNJjLEq', '8ONNqMB2', 'sMI2jLEq', 'cvH2jLEq'], '4oO296Jf': ['seO296Jf', 'sMI2jLEq', '8ONNqMB2', 'oqNJjLEq', 'cvH2jLEq'], 'cvH2jLEq': ['sMI2jLEq', '8ONNqMB2', 'oqNJjLEq', 'seO296Jf', '4oO296Jf']}
 
 # Create a Directed Graph
 G = nx.DiGraph()

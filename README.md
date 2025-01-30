@@ -35,4 +35,23 @@ https://docs.micropython.org/en/latest/reference/mpremote.html
 https://wellys.com/posts/rp2040_mpremote/  
 
 
-## Cricket
+## PIR
+
+Pins are numbered clockwise when looking at the bottom, with #1 being just counter-clockwise from the notch
+
+- Connect pin #1 (SENSE) to ground (most sensitive) - or connect to a resistor divider to decrease sensitivity
+- Connect pin #2 (OEN) to 3.3V to turn on / ground to turn off
+- Connect pin #3 (VSS) to Ground
+- Connect pin #4 (VDD) to 3.3V
+- Check signal on pin #5 (REL)
+- Connect pin #6 (ONTIME) to ground (min on time of 2 seconds) - or connect a resistor divider to increase up to one hour (3.3v)
+
+
+ie
+
+- 1: gnd
+- 2: 3V
+- 3: gnd
+- 4: 3v
+- 5:   read
+- 6: gnd
