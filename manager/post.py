@@ -35,9 +35,10 @@ for c, cricket in enumerate(crickets):
     print()
 
 print("DONE")
-print("Failed:")
-for name in failed:
-    print(name)
+if len(failed):
+    print("Failed:")
+    for name in failed:
+        print(name)
 
 
 """

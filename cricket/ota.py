@@ -23,7 +23,6 @@ async def handle_request(reader, writer):
     elif page == "/reset":
         content = "resetting"
         reset = True
-        machine.reset()
     elif page == "/file":
         content = "NO FILE DATA"
         for header in headers:
@@ -70,11 +69,9 @@ async def extract_file(request, boundary):
 
 async def start_ota():
     await asyncio.start_server(handle_request, "0.0.0.0", 80)
-    print(f"OTA server running")
+    print("OTA server running")
     try:
         while True:
             await asyncio.sleep(3600)
     except asyncio.CancelledError:
         pass
-
-
