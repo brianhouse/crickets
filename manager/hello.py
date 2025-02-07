@@ -8,7 +8,7 @@ for c, cricket in enumerate(crickets):
 print()
 
 for c, cricket in enumerate(crickets):
-    print(c)
+    print(c + 1)
     try:
         connect(f"CK_{cricket['name']}")
         response = request("http://192.168.4.1/")

@@ -20,7 +20,7 @@ filedata = open(filename).read()
 failed = []
 
 for c, cricket in enumerate(crickets):
-    print(c)
+    print(c + 1)
     if len(targets):
         if cricket['name'] not in targets:
             continue
