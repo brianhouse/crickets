@@ -25,4 +25,4 @@ for c, cricket in enumerate(crickets):
     print()
 
 print("DONE")
-print(json.dumps(network, indent=4))
+print(json.dumps(network))
