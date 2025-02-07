@@ -1,6 +1,8 @@
 import sys
 import os
 import subprocess
+import pickle
+import json
 
 
 def port_list():
@@ -20,3 +22,13 @@ def run(cmd, capture=False):
             return result.stderr.decode('utf-8')
         else:
             return result.stdout.decode('utf-8')
+
+
+def save(filename, data):
+    with open(filename, 'wb') as f:
+        pickle.dump(data, f)
+
+
+def load(filename):
+    with open(filename, 'rb') as f:
+        return pickle.load(f)

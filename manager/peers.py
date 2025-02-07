@@ -1,3 +1,4 @@
+import json
 from net import *
 
 print()
@@ -24,4 +25,4 @@ for c, cricket in enumerate(crickets):
     print()
 
 print("DONE")
-print(network)
+print(json.dumps(network, indent=4))
