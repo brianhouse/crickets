@@ -29,14 +29,13 @@ for edge in G.edges():
 # draw nodes and edges with their assigned colors
 pos = nx.spring_layout(G)
 plt.figure(figsize=(8, 6))
-nx.draw_networkx_nodes(G, pos, node_color=list(node_colors.values()), node_size=500)
+nx.draw_networkx_nodes(G, pos, node_color=list(node_colors.values()), node_size=900)
 nx.draw_networkx_edges(
-    G, pos, edge_color=edge_colors, arrows=True,
-    arrowstyle='-|>', arrowsize=15
+    G, pos, edge_color=edge_colors, arrows=False
 )
 
 # labels
-nx.draw_networkx_labels(G, pos, font_size=8, font_color='black', font_family='monospace')
+nx.draw_networkx_labels(G, pos, font_size=6, font_color='black', font_weight='bold', font_family='monospace')
 
 plt.title("Cricketnet")
 plt.show()
