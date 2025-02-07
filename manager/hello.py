@@ -4,10 +4,11 @@ print()
 crickets = scan()
 print("CRICKETS:")
 for c, cricket in enumerate(crickets):
-    print(c, cricket['name'], cricket['rssi'])
+    print(c + 1, cricket['name'], cricket['rssi'])
 print()
 
-for cricket in crickets:
+for c, cricket in enumerate(crickets):
+    print(c)
     try:
         connect(f"CK_{cricket['name']}")
         response = request("http://192.168.4.1/")

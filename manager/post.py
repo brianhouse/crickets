@@ -4,7 +4,7 @@ print()
 crickets = scan()
 print("CRICKETS:")
 for c, cricket in enumerate(crickets):
-    print(c, cricket['name'], cricket['rssi'])
+    print(c + 1, cricket['name'], cricket['rssi'])
 print()
 
 targets = ""
@@ -19,7 +19,8 @@ filedata = open(filename).read()
 
 failed = []
 
-for cricket in crickets:
+for c, cricket in enumerate(crickets):
+    print(c)
     if len(targets):
         if cricket['name'] not in targets:
             continue
