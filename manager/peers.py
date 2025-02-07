@@ -3,8 +3,8 @@ from net import *
 print()
 crickets = scan()
 print("CRICKETS:")
-for cricket in crickets:
-    print(cricket)
+for c, cricket in enumerate(crickets):
+    print(c, cricket['name'], cricket['rssi'])
 print()
 
 network = {}

@@ -24,6 +24,8 @@ that's possible. but let's assume 300mA and 9 power supplies w/ 33 each.
 
 each terminal block has 12 ports, so that's 3 each.
 
+makes more sense if it's 36 per supply. I think that's ok. 
+
 
 
 

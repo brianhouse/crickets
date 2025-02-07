@@ -57,3 +57,44 @@ https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/networ
 
 put this in config
 
+
+
+
+## space
+
+call it 
+58' x 32' for now
+
+that's 1,856 sq ft
+
+studio is 879 sq ft
+
+that's pretty much half size
+
+artyard grid is at 14.5', clearstory is like 5-10' above that
+
+studio grid is what?
+
+
+ok, so say 150 crickets for the studio
+880/150 = 5.33 sq ft
+
+ha! that's not 5x5, that's 2.5 x 2.5 (but one layer)
+
+
+so that's the test. 150 on a 2.5 x 2.5 grid in the studio
+
+
+## plan
+
+so get ziji to build what we know we need now
+
+- 20' wires, 1" of white insulation pulled, 3/16" insulation inner insulation pulled
+
+
+
+
+
+
+
+
