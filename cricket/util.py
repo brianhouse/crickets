@@ -48,6 +48,7 @@ class Mesh():
         print(f"## {self.name} ##")
 
 
+
     def scan(self):
         neighbors = []
         for ssid, bssid, channel, rssi, security, hidden in self.sta.scan():

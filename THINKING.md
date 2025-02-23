@@ -63,7 +63,7 @@ put this in config
 ## space
 
 call it 
-58' x 32' for now
+58' x 32' for now -- it's actually 70 x 32, but at least 12' margin for entrance
 
 that's 1,856 sq ft
 

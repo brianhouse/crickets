@@ -16,7 +16,7 @@ Before uploading code, put it into bootloader mode by holding down the GPIO #0 b
 ## Other Materials
 LED https://www.adafruit.com/product/846  
 Piezo https://www.adafruit.com/product/1739  
-PIR https://www.adafruit.com/product/5578  (missing 150)  
+PIR https://www.adafruit.com/product/5578
 Power supply https://www.adafruit.com/product/658  
 Power connector https://www.adafruit.com/product/2880  
 Resistors https://www.adafruit.com/product/4293  
