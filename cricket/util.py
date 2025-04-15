@@ -48,6 +48,7 @@ class Mesh():
         print(f"## {self.name} ##")
 
 
+
     def scan(self):
         neighbors = []
         for ssid, bssid, channel, rssi, security, hidden in self.sta.scan():
@@ -61,8 +62,8 @@ class Mesh():
         for peer in self.peers:
             try:
                 self.mesh.send(hex_to_bin(name_to_mac(peer)), message)
-            except Exception:
-                print("Can't send to", peer)
+            except Exception as e:
+                print("Can't send to", peer, f"({e})")
 
     def receive(self):
         try:

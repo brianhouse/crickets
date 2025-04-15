@@ -16,4 +16,4 @@ for filename in os.listdir("cricket/"):
 
 run(f"venv/bin/mpremote connect {port} soft-reset sleep 0.5 bootloader")
 run(f"venv/bin/mpremote connect {port} exec --no-follow 'import main.py'")
-run(f"mvenv/bin/premote connect {port}")
+run(f"venv/bin/mpremote connect {port}")

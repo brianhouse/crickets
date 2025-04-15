@@ -5,12 +5,14 @@ from config import *
 PITCH = randint(PITCH_LOW, PITCH_HIGH)
 HUM = randint(HUM_LOW, HUM_HIGH)
 
+print("Cricket() start")
+
 
 class Cricket():
 
     async def run(self):
         try:
-            sleep(random() + 2)
+            await asyncio.sleep(random() + 2)
             while True:
                 t_previous = 0
                 self.look()
@@ -76,7 +78,7 @@ class Cricket():
         STS.on()
         SND.duty(512)
         SND.freq(PITCH * 2)
-        sleep_ms(20)
+        sleep_ms(80)
         SND.freq(PITCH)
         sleep_ms(20)
         SND.duty(0)
