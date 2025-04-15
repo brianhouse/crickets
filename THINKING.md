@@ -62,36 +62,25 @@ put this in config
 
 ## space
 
-call it 
-58' x 32' for now -- it's actually 70 x 32, but at least 12' margin for entrance
+gallery is 70' x 31' 
 
-that's 1,856 sq ft
+chop 10' off the front and 6' off all sides
+
+54 x 19 = 1,026 sq ft
+
+1026 / 300 = cricket every 3.42 ft (1.85 x 1.85)
+
+/
 
 studio is 879 sq ft
-
-that's pretty much half size
-
-artyard grid is at 14.5', clearstory is like 5-10' above that
-
-studio grid is what?
+879 / 3.42 = 257 crickets
 
 
-ok, so say 150 crickets for the studio
-880/150 = 5.33 sq ft
+point is, 300 is going to be enough
 
-ha! that's not 5x5, that's 2.5 x 2.5 (but one layer)
-
-
-so that's the test. 150 on a 2.5 x 2.5 grid in the studio
 
 
 ## plan
-
-so get ziji to build what we know we need now
-
-- 20' wires, 1" of white insulation pulled, 3/16" insulation inner insulation pulled
-
-
 
 
 
