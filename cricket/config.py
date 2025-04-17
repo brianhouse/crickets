@@ -15,6 +15,7 @@ HUM_LOW, HUM_HIGH = 10, 20
 
 # behavior constants
 MOTION = False
+STATUS = False
 
 
 from util import *

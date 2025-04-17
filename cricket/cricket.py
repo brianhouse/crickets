@@ -22,13 +22,14 @@ class Cricket():
                     if MOTION and PIR.value():
                         print("MOTION!")
                         LED.off()
-                        STS.off()
+                        if STATUS:
+                            STS.off()
                         break
                     self.listen()
                     self.phase = min(self.phase + (t_elapsed * FREQ), 1.0)
                     self.capacitor = f(self.phase)
                     if self.capacitor >= 1.0:
-                        self.flash()
+                        await self.flash()
                     t_previous = t
                     await asyncio.sleep_ms(TICK)
         except Exception as e:
@@ -69,11 +70,12 @@ class Cricket():
         self.capacitor = min(self.capacitor + BUMP, 1.0)
         self.phase = f_inv(self.capacitor)
 
-    def flash(self):
+    async def flash(self):
         print("--> flash")
         self.phase = 0.0
         LED.on()
-        STS.on()
+        if STATUS:
+            STS.on()
         SND.duty(512)
         SND.freq(PITCH * 2)
         sleep_ms(80)
@@ -82,8 +84,9 @@ class Cricket():
         SND.duty(0)
         sleep_ms(50)
         LED.off()
-        STS.off()
-        mesh.send("flash")
+        if STATUS:
+            STS.off()
+        await mesh.send("flash")
 
 
 def f(x):
