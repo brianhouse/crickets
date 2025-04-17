@@ -1,6 +1,6 @@
 # connection constants
-POWER = 4
-RANGE = -20
+POWER = 8
+RANGE = -60
 HOOD = 5
 
 # capacitor constants

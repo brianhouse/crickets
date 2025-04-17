@@ -42,7 +42,7 @@ class Mesh():
         self.ap.config(ssid=name_to_ssid(self.name), password="pulsecoupled", authmode=network.AUTH_WPA2_PSK)
 
         # activate mesh
-        self.mesh = aioespnow.AOIESPNow()
+        self.mesh = aioespnow.AIOESPNow()
         self.mesh.active(True)
 
         print(f"## {self.name} ##")
