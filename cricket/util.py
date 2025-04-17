@@ -1,7 +1,7 @@
 import network
 import ubinascii
 import math
-import espnow
+import aioespnow
 import bluetooth
 import socket
 import machine
@@ -42,7 +42,7 @@ class Mesh():
         self.ap.config(ssid=name_to_ssid(self.name), password="pulsecoupled", authmode=network.AUTH_WPA2_PSK)
 
         # activate mesh
-        self.mesh = espnow.ESPNow()
+        self.mesh = aioespnow.AOIESPNow()
         self.mesh.active(True)
 
         print(f"## {self.name} ##")
@@ -61,7 +61,7 @@ class Mesh():
     def send(self, message):
         for peer in self.peers:
             try:
-                self.mesh.send(hex_to_bin(name_to_mac(peer)), message)
+                await self.mesh.asend(hex_to_bin(name_to_mac(peer)), message)
             except Exception as e:
                 print("Can't send to", peer, f"({e})")
 

@@ -1,4 +1,4 @@
-import network, espnow, bluetooth, usocket
+import network, espnow, bluetooth, usocket, time
 from time import sleep
 
 STATUS_CODES = {200: 'BEACON_TIMEOUT',
@@ -18,6 +18,29 @@ network.WLAN(network.AP_IF).active(False)
 
 sta = network.WLAN(network.STA_IF)
 sta.active(True)
+
+
+def scan_all():
+    neighbors = []
+    while True:
+        try:
+            for neighbor in scan():
+                if neighbor['name'] not in [neighbor['name'] for neighbor in neighbors]:
+                    neighbors.append(neighbor)
+                else:
+                    for nb in neighbors:
+                        if nb['name'] == neighbor['name']:
+                            nb['rssi'] = neighbor['rssi']
+                neighbors.sort(key=lambda neighbor: neighbor['rssi'], reverse=True)
+                print("\033c")
+                print("NEIGHBORS:")
+                for c, neighbor in enumerate(neighbors):
+                    print(c + 1, '\t', neighbor['name'], '\t', neighbor['rssi'])
+            time.sleep(1)
+        except KeyboardInterrupt:
+            print("----->")
+            break
+    return neighbors
 
 
 def scan():

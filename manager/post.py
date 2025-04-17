@@ -1,11 +1,6 @@
 from net import *
 
-print()
-crickets = scan()
-print("CRICKETS:")
-for c, cricket in enumerate(crickets):
-    print(c + 1, cricket['name'], cricket['rssi'])
-print()
+crickets = scan_all()
 
 targets = ""
 with open("update.txt") as f:

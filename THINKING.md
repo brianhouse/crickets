@@ -58,6 +58,7 @@ https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/networ
 put this in config
 
 
+ESPNow.peers_table
 
 
 ## space
