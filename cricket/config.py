@@ -13,6 +13,10 @@ TICK = 20           # cycle resolution in ms
 PITCH_LOW, PITCH_HIGH = 3000, 4500
 HUM_LOW, HUM_HIGH = 10, 20
 
+# behavior constants
+MOTION = False
+
+
 from util import *
 
 

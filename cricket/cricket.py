@@ -5,8 +5,6 @@ from config import *
 PITCH = randint(PITCH_LOW, PITCH_HIGH)
 HUM = randint(HUM_LOW, HUM_HIGH)
 
-print("Cricket() start")
-
 
 class Cricket():
 
@@ -21,7 +19,7 @@ class Cricket():
                 while True:
                     t = ticks_ms() / 1000.0
                     t_elapsed = t - t_previous
-                    if PIR.value():
+                    if MOTION and PIR.value():
                         print("MOTION!")
                         LED.off()
                         STS.off()
