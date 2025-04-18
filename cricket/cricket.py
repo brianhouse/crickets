@@ -73,17 +73,20 @@ class Cricket():
     async def flash(self):
         print("--> flash")
         self.phase = 0.0
-        LED.on()
+        if BLINK:
+            LED.on()
         if STATUS:
             STS.on()
-        SND.duty(512)
-        SND.freq(PITCH * 2)
-        sleep_ms(80)
-        SND.freq(PITCH)
-        sleep_ms(20)
-        SND.duty(0)
-        sleep_ms(50)
-        LED.off()
+        if CHIRP:
+            SND.duty(512)
+            SND.freq(PITCH * 2)
+            sleep_ms(80)
+            SND.freq(PITCH)
+            sleep_ms(20)
+            SND.duty(0)
+            sleep_ms(50)
+        if BLINK:
+            LED.off()
         if STATUS:
             STS.off()
         await mesh.send("flash")

@@ -7,7 +7,7 @@ HOOD = 5
 FREQ = 1            # endogenous frequency in Hz
 BUMP = 0.05         # capacitor bump amount when neighbor flashes
 REST = 0.2          # percent of cycle to be unresponsive after flash
-TICK = 10           # cycle resolution in ms
+TICK = 10            # cycle resolution in ms
 
 # automatic constants
 PITCH_LOW, PITCH_HIGH = 3000, 4500
@@ -16,6 +16,8 @@ HUM_LOW, HUM_HIGH = 10, 20
 # behavior constants
 MOTION = False
 STATUS = False
+BLINK = True
+CHIRP = False
 
 
 from util import *
