@@ -10,6 +10,7 @@ class Cricket():
 
     async def run(self):
         try:
+            SND.duty(0)
             await asyncio.sleep(random() + 2)
             while True:
                 t_previous = 0

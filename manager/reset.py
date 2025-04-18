@@ -13,7 +13,7 @@ while len(cricket_names):
         connect(f"CK_{cricket_name}")
         response = request("http://192.168.4.1/reset")
         print(response)
-        if response == "SUCCESS":
+        if response == "resetting":
             cricket_names.remove(cricket_name)
     except Exception as e:
         print("Request failed:", e)

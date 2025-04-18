@@ -15,10 +15,9 @@ while len(cricket_names):
         connect(f"CK_{cricket_name}")
         response = request("http://192.168.4.1/peers")
         print(response)
-        if response == "SUCCESS":
-            peers = eval("".join(response.split()[1:]))
-            network[cricket_name] = peers
-            cricket_names.remove(cricket_name)                    
+        peers = eval("".join(response.split()[1:]))
+        network[cricket_name] = peers
+        cricket_names.remove(cricket_name)                    
     except Exception as e:
         print("Request failed:", e)
     print()
