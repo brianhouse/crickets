@@ -80,11 +80,13 @@ class Cricket():
         if CHIRP:
             SND.duty(512)
             SND.freq(PITCH * 2)
-            sleep_ms(80)
+        await asyncio.sleep_ms(80)
+        if CHIRP:
             SND.freq(PITCH)
-            sleep_ms(20)
+        await asyncio.sleep_ms(20)
+        if CHIRP:
             SND.duty(0)
-            sleep_ms(50)
+        await asyncio.sleep_ms(50)
         if BLINK:
             LED.off()
         if STATUS:

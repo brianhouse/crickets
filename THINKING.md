@@ -80,6 +80,12 @@ studio is 879 sq ft
 point is, 300 is going to be enough
 
 
+## acrylic
+
+300-35 = 265 / 6 = 44 + 1 = 45
+
+18.50 * 45 = $832.50
+
 
 ## plan
 
