@@ -1,39 +1,31 @@
 from net import *
 
-crickets = scan_all()
+with open("crickets.json") as f:
+    cricket_names = eval(f.read())
 
 targets = ""
 with open("update.txt") as f:
     lines = [line.strip() for line in f]
     filename = lines[0]
-    if len(lines) > 1:
-        targets = lines[1].split()
 print(f"Posting {filename}...")
 print()
 filedata = open(filename).read()
 
-failed = []
-
-for c, cricket in enumerate(crickets):
-    print(c + 1)
-    if len(targets):
-        if cricket['name'] not in targets:
-            continue
+i = -1
+while len(cricket_names):
+    print(json.dumps(cricket_names))
+    i += 1
+    i %= len(cricket_names)
+    cricket_name = cricket_names[i]
     try:
-        connect(f"CK_{cricket['name']}")
+        connect(f"CK_{cricket_name}")
         response = post_file("http://192.168.4.1/file", filename, filedata)
         print(response)
+        if response == "SUCCESS":
+            cricket_names.remove(cricket_name)
     except Exception as e:
         print("Request failed:", e)
-        failed.append(cricket['name'])
-    sleep(1)
     print()
-
-print("DONE")
-if len(failed):
-    print("Failed:")
-    for name in failed:
-        print(name)
 
 
 """

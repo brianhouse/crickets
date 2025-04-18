@@ -1,4 +1,4 @@
-import network, espnow, bluetooth, usocket, time
+import network, espnow, bluetooth, usocket, time, json
 from time import sleep
 
 STATUS_CODES = {200: 'BEACON_TIMEOUT',
@@ -20,29 +20,6 @@ sta = network.WLAN(network.STA_IF)
 sta.active(True)
 
 
-def scan_all():
-    neighbors = []
-    print("Scanning all neighbors...")
-    while True:
-        for neighbor in scan():
-            print("--> scanned")
-            if neighbor['name'] not in [neighbor['name'] for neighbor in neighbors]:
-                neighbors.append(neighbor)
-            else:
-                for nb in neighbors:
-                    if nb['name'] == neighbor['name']:
-                        nb['rssi'] = neighbor['rssi']
-            neighbors.sort(key=lambda neighbor: neighbor['rssi'], reverse=True)
-            print("\033c")
-            print("NEIGHBORS:")
-            for c, neighbor in enumerate(neighbors):
-                print(c + 1, '\t', neighbor['name'], '\t', neighbor['rssi'])
-        if len(neighbors) == 2:
-            break
-        time.sleep(1)
-    return neighbors
-
-
 def scan():
     neighbors = []
     for ssid, bssid, channel, rssi, security, hidden in sta.scan():
@@ -59,12 +36,16 @@ def connect(ssid):
     sleep(.5)
     print(f"Connecting to {ssid}...")
     sta.connect(ssid, "pulsecoupled")
+    tries = 0
     while not sta.isconnected():
         status = sta.status()
         if status in STATUS_CODES:
             print(STATUS_CODES[status])
         else:
             print(".")
+        tries += 1
+        if tries == 15:
+            raise Exception("MAX TRIES REACHED")
         sleep(1)
     print("--> connected")
 
@@ -101,6 +82,7 @@ def post_file(url, filename, filedata):
     addr_info = usocket.getaddrinfo(host, port)[0][-1]
     s = usocket.socket()
     s.connect(addr_info)
+    s.settimeout(5)
     # Create a boundary for multipart data
     boundary = "----WebKitFormBoundary7MA4YWxkTrZu0gW"
     body = "\r\n".join((
