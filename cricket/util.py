@@ -84,6 +84,13 @@ class Mesh():
         self.mesh.add_peer(hex_to_bin(name_to_mac(name)))
         self.peers.append(name)
 
+    def remove_peer(self, name):
+        try:
+            self.mesh.del_peer(hex_to_bin(name_to_mac(name)))
+            self.peers.remove(name)
+        except ValueError as e:
+            print(e)
+
     def clear_peers(self):
         for peer in self.peers:
             try:
