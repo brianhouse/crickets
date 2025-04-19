@@ -59,7 +59,8 @@ class Cricket():
             print("Received", in_message, "from", sender)
             if in_message == "flash":
                 if sender not in mesh.peers:
-                    mesh.remove_peer(choice(mesh.peers))
+                    if len(mesh.peers) == HOOD:
+                        mesh.remove_peer(choice(mesh.peers))
                     print("Adding", sender)
                     mesh.add_peer(sender)
                 self.bump()
