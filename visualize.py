@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 from util import *
 
-with open("peers.json") as f:
+with open("sim.json") as f:
     graph_data = json.loads(f.read())
 
 G = nx.DiGraph()
@@ -27,7 +27,7 @@ for edge in G.edges():
         edge_colors.append(node_colors[edge[0]])
 
 # draw nodes and edges with their assigned colors
-pos = nx.spring_layout(G)
+pos = nx.spring_layout(G, 1)
 plt.figure(figsize=(8, 6))
 nx.draw_networkx_nodes(G, pos, node_color=list(node_colors.values()), node_size=900)
 nx.draw_networkx_edges(

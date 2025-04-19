@@ -32,7 +32,7 @@ class Mesh():
         self.sta = network.WLAN(network.STA_IF)
         self.sta.active(True)
         self.sta.config(txpower=POWER)
-        #print(self.sta.config("txpower"))
+        # print(self.sta.config("txpower"))
         self.mac = bin_to_hex(self.sta.config('mac'))
         self.name = mac_to_name(self.mac)
 
@@ -46,8 +46,6 @@ class Mesh():
         self.mesh.active(True)
 
         print(f"## {self.name} ##")
-
-
 
     def scan(self):
         neighbors = []

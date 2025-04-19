@@ -87,7 +87,18 @@ point is, 300 is going to be enough
 18.50 * 45 = $832.50
 
 
-## plan
+## group formation
+
+ok. so making the swap based on distance would be great.
+
+but how do we break week ties?
+
+if a neighbor shares less than X percent ties, cut it
+
+
+alternately, sending a friend and checking that friend 
+
+having the group assignment in the beginning doesn't solve it, because there can be overlapping groups
 
 
 

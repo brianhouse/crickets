@@ -1,11 +1,11 @@
 # connection constants
 POWER = 7
-RANGE = -60
+RANGE = -40
 HOOD = 5
 
 # capacitor constants
 FREQ = 1            # endogenous frequency in Hz
-BUMP = 0.03         # capacitor bump amount when neighbor flashes
+BUMP = 0.01         # capacitor bump amount when neighbor flashes
 REST = 0.1          # percent of cycle to be unresponsive after flash
 TICK = 10           # cycle resolution in ms
 
