@@ -79,8 +79,9 @@ class Mesh():
         return None, None
 
     def add_peer(self, name):
-        self.mesh.add_peer(hex_to_bin(name_to_mac(name)))
-        self.peers.append(name)
+        if name not in self.peers:
+            self.mesh.add_peer(hex_to_bin(name_to_mac(name)))
+            self.peers.append(name)
 
     def remove_peer(self, name):
         try:
