@@ -9,6 +9,8 @@ NODES = 100
 MAX_HOOD = 10
 INIT_HOOD = 5
 MIN_HOOD = 3
+FRIEND_LINK = .2
+GROUP_LEADER = .2
 
 
 class Node():
@@ -23,7 +25,7 @@ class Node():
 
     def look(self):
         self.group = "null"
-        if random.random() < .2:
+        if random.random() < GROUP_LEADER:
             self.group = "group_" + self.name
         neighbors = list(nodes)
         neighbors.sort(key=lambda neighbor: self.distance(neighbor.name))
@@ -88,7 +90,7 @@ class Node():
             if self.group == sender_group:
                 if sender not in self.peers:
                     self.add_peer(sender)
-                if friend not in self.peers and random.random() < .2:
+                if friend not in self.peers and random.random() < FRIEND_LINK:
                     self.add_peer(friend)
                 # bump
             else:

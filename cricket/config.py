@@ -1,7 +1,9 @@
 # connection constants
 POWER = 7
 RANGE = -40
-HOOD = 5
+MAX_HOOD = 10
+INIT_HOOD = 5
+MIN_HOOD = 3
 
 # capacitor constants
 FREQ = 1            # endogenous frequency in Hz
