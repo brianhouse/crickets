@@ -42,7 +42,8 @@ class Node():
                     self.recips[name] -= 1
                     if self.recips[name] < -10:
                         self.remove_peer(name)
-                    node.receive_flash(self.name, self.peers[0] if len(self.peers) else None)
+                    else:
+                        node.receive_flash(self.name, self.peers[0] if len(self.peers) else None)
 
     def receive_flash(self, sender, friend):
         if sender not in self.peers:
