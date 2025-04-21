@@ -5,9 +5,9 @@ from random import choice, randint
 from simvis import LiveGraphAnimator
 
 
-NODES = 16
-HOOD = 3
-RANGE = 3
+NODES = 25
+HOOD = 5
+# RANGE = 3
 
 
 class Node():
@@ -18,6 +18,18 @@ class Node():
         self.y = name % 4
         self.peers = []
         self.group = "null"
+        self.recips = {}
+
+    def look(self):
+        self.group = "null"
+        if random.random() < .2:
+            self.group = "group_" + self.name
+        neighbors = list(nodes)
+        neighbors.sort(key=lambda neighbor: self.distance(neighbor.name))
+        i = 0
+        while len(self.peers) < HOOD:
+            self.add_peer(neighbors[i].name)
+            i += 1
 
     def distance(self, name):
         for node in nodes:
@@ -28,18 +40,29 @@ class Node():
     def add_peer(self, name):
         if name not in self.peers and name != self.name:
             self.peers.append(name)
+            self.recips[name] = 0
 
     def remove_peer(self, name):
         if name in self.peers:
             self.peers.remove(name)
+            del self.recips[name]
 
     def flash(self):
+        if not len(self.peers):
+            self.look()
         for name in self.peers:
             for node in nodes:
                 if node.name == name:
-                    node.receive_flash(self.name, self.group)
+                    self.recips[name] -= 1
+                    if self.recips[name] < -3:
+                        self.remove_peer(name)
+                    else:
+                        node.receive_flash(self.name, self.group)
 
     def receive_flash(self, sender, sender_group):
+
+        if sender in self.peers:
+            self.recips[sender] += 1
 
         # both unassigned
         if self.group == "null" and sender_group == "null":
@@ -71,19 +94,10 @@ nodes = []
 for i in range(NODES):
     node = Node(i)
     nodes.append(node)
-for i in range(2):
-    node = choice(nodes)
-    node.group = "group_" + node.name
+# for i in range(2):
+#     node = choice(nodes)
+#     node.group = "group_" + node.name
 
-
-# randomly assign peers
-for node in nodes:
-    neighbors = list(nodes)
-    neighbors.sort(key=lambda neighbor: node.distance(neighbor.name))
-    i = 0
-    while len(node.peers) < HOOD:
-        node.add_peer(neighbors[i].name)
-        i += 1
 
 animator = LiveGraphAnimator()
 
@@ -108,7 +122,7 @@ def feed_data():
 
         i += 1
 
-        if i % 3 == 0:
+        if True: #i % 3 == 0:
 
             # flash
             node = nodes[n]
