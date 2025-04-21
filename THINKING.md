@@ -89,18 +89,11 @@ point is, 300 is going to be enough
 
 ## group formation
 
-ok. so making the swap based on distance would be great.
+if a message is received that is closer, add it and remove the farthest one
 
-but how do we break week ties?
+the flash also sends a friend. if that one is closer, add that one too
 
-if a neighbor shares less than X percent ties, cut it
-
-
-alternately, sending a friend and checking that friend 
-
-having the group assignment in the beginning doesn't solve it, because there can be overlapping groups
-
-
+if after X sends it's not reciprocated, remove it
 
 
 

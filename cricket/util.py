@@ -79,7 +79,7 @@ class Mesh():
         return None, None
 
     def add_peer(self, name):
-        if name not in self.peers:
+        if name not in self.peers and name != self.name:
             self.mesh.add_peer(hex_to_bin(name_to_mac(name)))
             self.peers.append(name)
 
