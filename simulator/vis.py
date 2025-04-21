@@ -50,16 +50,16 @@ class LiveGraphAnimator:
                 y = data[node].get('y', 5.0)
                 self.pos[node] = (x, y)
 
-        # Smoothly update layout
-        new_pos = nx.spring_layout(self.G, pos=self.pos, fixed=None, iterations=5, k=0.7)
-        for node in self.pos:
-            old_x, old_y = self.pos[node]
-            new_x, new_y = new_pos[node]
-            # Blend old and new positions for smooth motion
-            self.pos[node] = (
-                0.8 * old_x + 0.2 * new_x,
-                0.8 * old_y + 0.2 * new_y,
-            )
+        # # Smoothly update layout
+        # new_pos = nx.spring_layout(self.G, pos=self.pos, fixed=None, iterations=5, k=0.7)
+        # for node in self.pos:
+        #     old_x, old_y = self.pos[node]
+        #     new_x, new_y = new_pos[node]
+        #     # Blend old and new positions for smooth motion
+        #     self.pos[node] = (
+        #         0.8 * old_x + 0.2 * new_x,
+        #         0.8 * old_y + 0.2 * new_y,
+        #     )
 
         # Colors
         node_colors = [self._get_node_color(node) for node in self.G.nodes()]

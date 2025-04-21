@@ -2,20 +2,21 @@
 
 import json, math, time, threading, random
 from random import choice, randint
-from simvis import LiveGraphAnimator
+from vis import LiveGraphAnimator
 
 
-NODES = 25
-HOOD = 5
-# RANGE = 3
+NODES = 100
+MAX_HOOD = 10
+INIT_HOOD = 5
+MIN_HOOD = 3
 
 
 class Node():
 
     def __init__(self, name):
         self.name = str(name)
-        self.x = name // 4
-        self.y = name % 4
+        self.x = name // 10
+        self.y = name % 10
         self.peers = []
         self.group = "null"
         self.recips = {}
@@ -27,7 +28,7 @@ class Node():
         neighbors = list(nodes)
         neighbors.sort(key=lambda neighbor: self.distance(neighbor.name))
         i = 0
-        while len(self.peers) < HOOD:
+        while len(self.peers) < INIT_HOOD:
             self.add_peer(neighbors[i].name)
             i += 1
 
@@ -38,6 +39,8 @@ class Node():
         return 1000
 
     def add_peer(self, name):
+        if len(self.peers) >= MAX_HOOD:
+            return
         if name not in self.peers and name != self.name:
             self.peers.append(name)
             self.recips[name] = 0
@@ -48,7 +51,7 @@ class Node():
             del self.recips[name]
 
     def flash(self):
-        if not len(self.peers):
+        if len(self.peers) < MIN_HOOD:
             self.look()
         for name in self.peers:
             for node in nodes:
@@ -57,9 +60,10 @@ class Node():
                     if self.recips[name] < -3:
                         self.remove_peer(name)
                     else:
-                        node.receive_flash(self.name, self.group)
+                        friend = choice(self.peers)
+                        node.receive_flash(self.name, self.group, friend)
 
-    def receive_flash(self, sender, sender_group):
+    def receive_flash(self, sender, sender_group, friend):
 
         if sender in self.peers:
             self.recips[sender] += 1
@@ -84,6 +88,8 @@ class Node():
             if self.group == sender_group:
                 if sender not in self.peers:
                     self.add_peer(sender)
+                if friend not in self.peers and random.random() < .2:
+                    self.add_peer(friend)
                 # bump
             else:
                 self.remove_peer(sender)
@@ -104,8 +110,8 @@ animator = LiveGraphAnimator()
 
 def feed_data():
 
-    n = 0
     i = 0
+    party = []
 
     while True:
 
@@ -118,18 +124,21 @@ def feed_data():
                                }
 
         animator.update_graph(data)
-        time.sleep(1 / 30)  # simulate delay
+        time.sleep(1 / 100)
 
         i += 1
 
-        if True: #i % 3 == 0:
+        if True:
+
+            if not len(party):
+                party = nodes[:]
+                random.shuffle(party)
+                print("blink")
 
             # flash
-            node = nodes[n]
+            node = party.pop()
             node.flash()
-            print(node.name, node.peers, node.group)
-            n += 1
-            n %= len(nodes)
+            # print(node.name, node.peers, node.group)
 
 
 # Run the data feeding in a separate thread
