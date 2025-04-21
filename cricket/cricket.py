@@ -11,7 +11,7 @@ class Cricket():
     async def run(self):
         try:
             SND.duty(0)
-            await asyncio.sleep(random() + 2)
+            await asyncio.sleep(random() * 3 + 1)
             while True:
                 t_previous = 0
                 self.look()
@@ -36,20 +36,30 @@ class Cricket():
         except Exception as e:
             print(e)
 
+    def add_peer(self, peer):
+        if peer not in self.recips and len(mesh.peers) < MAX_HOOD:
+            self.recips[peer] = 0
+            mesh.add_peer(peer)
+
+    def remove_peer(self, peer):
+        if peer in self.recips:
+            mesh.remove_peer(peer)
+            del self.recips[peer]
+
     def look(self):
+        mesh.group = "null"
+        if random.random() < GROUP_LEADER:
+            mesh.group = mesh.name
         print("Looking for neighbors...")
         SND.duty(512)
         SND.freq(HUM)
         mesh.clear_peers()
-        count = 0
-        for neighbor in mesh.scan():
-            neighbor, rssi = neighbor.values()
-            if rssi > RANGE:
-                print(neighbor)
-                mesh.add_peer(neighbor)
-                count += 1
-                if count == HOOD:
-                    break
+        self.recips = {}
+        neighbors = mesh.scan()
+        neighbors.sort(key=lambda neighbor: neighbor[1])  # rssi
+        for i in range(INIT_HOOD):
+            print(neighbors[i])
+            self.add_peer(neighbors[i])
         SND.duty(0)
         print("--> done")
 
@@ -57,11 +67,34 @@ class Cricket():
         sender, in_message = mesh.receive()
         if in_message is not None:
             print("Received", in_message, "from", sender)
-            if in_message == "flash":
-                if len(mesh.peers) < HOOD and sender not in mesh.peers:
-                    mesh.add_peer(sender)
-                if sender in mesh.peers:
-                    self.bump()
+            _, sender_group, friend = in_message.split(" ")
+
+            if sender in self.recips:
+                self.recips[sender] += 1
+
+            # both unassigned
+            if mesh.group == "null" and sender_group == "null":
+                pass
+
+            # self unassigned, sender assigned
+            elif mesh.group == "null":
+                mesh.group = sender_group
+                self.add_peer(sender)
+                self.bump()
+
+            # self assigned, sender unassigned
+            elif sender_group == "null":
+                self.add_peer(sender)
+
+        # both have groups assigned
+        else:
+            if mesh.group == sender_group:
+                self.add_peer(sender)
+                if friend != "null" and random.random() < FRIEND_LINK:
+                    self.add_peer(friend)
+                self.bump()
+            else:
+                self.remove_peer(sender)
 
     def bump(self):
         if self.phase <= REST:
@@ -92,7 +125,12 @@ class Cricket():
             LED.off()
         if STATUS:
             STS.off()
-        await mesh.send("flash")
+        for peer in mesh.peers:
+            self.recips[peer] -= 1
+            if self.recips[peer] < SEVER:
+                self.remove_peer(name)
+        friend = choice(mesh.peers) if len(mesh.peers) else "null"
+        await mesh.send(f"flash {self.group} {friend}")
 
 
 def f(x):
