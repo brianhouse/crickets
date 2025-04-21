@@ -18,7 +18,6 @@ class Node():
         self.y = name % 4
         self.peers = []
         self.group = "null"
-        self.peer_groups = {}
 
     def distance(self, name):
         for node in nodes:
@@ -38,10 +37,7 @@ class Node():
         for name in self.peers:
             for node in nodes:
                 if node.name == name:
-                    # if name in self.peer_groups and self.peer_groups[name] != self.group:
-                    #     self.remove_peer(name)
-                    # else:
-                        node.receive_flash(self.name, self.group)
+                    node.receive_flash(self.name, self.group)
 
     def receive_flash(self, sender, sender_group):
 
@@ -53,7 +49,6 @@ class Node():
         # self unassigned, sender assigned
         elif self.group == "null":
             self.group = sender_group
-            self.peer_groups[sender] = sender_group
             self.add_peer(sender)
             # bump
 
@@ -63,7 +58,6 @@ class Node():
 
         # both have groups assigned
         else:
-            self.peer_groups[sender] = sender_group
             if self.group == sender_group:
                 if sender not in self.peers:
                     self.add_peer(sender)
