@@ -48,7 +48,7 @@ class Cricket():
 
     def look(self):
         mesh.group = "null"
-        if random.random() < GROUP_LEADER:
+        if random() < GROUP_LEADER:
             mesh.group = mesh.name
         print("Looking for neighbors...")
         SND.duty(512)
@@ -56,10 +56,11 @@ class Cricket():
         mesh.clear_peers()
         self.recips = {}
         neighbors = mesh.scan()
-        neighbors.sort(key=lambda neighbor: neighbor[1])  # rssi
-        for i in range(INIT_HOOD):
-            print(neighbors[i])
-            self.add_peer(neighbors[i])
+        if len(neighbors):
+            neighbors.sort(key=lambda neighbor: neighbor[1])  # rssi
+            for i in range(INIT_HOOD):
+                print(neighbors[i])
+                self.add_peer(neighbors[i])
         SND.duty(0)
         print("--> done")
 
@@ -90,7 +91,7 @@ class Cricket():
         else:
             if mesh.group == sender_group:
                 self.add_peer(sender)
-                if friend != "null" and random.random() < FRIEND_LINK:
+                if friend != "null" and random() < FRIEND_LINK:
                     self.add_peer(friend)
                 self.bump()
             else:
