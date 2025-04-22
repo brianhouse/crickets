@@ -61,6 +61,7 @@ def request(url):
     addr_info = usocket.getaddrinfo(host, port)[0][-1]
     s = usocket.socket()
     s.connect(addr_info)
+    s.settimeout(5)
     s.send(f"GET {path} HTTP/1.1\r\nHost: 192.168.4.1\r\nConnection: close\r\n\r\n".encode())
     response = b""
     while True:

@@ -5,23 +5,20 @@ network = {}
 with open("crickets.json") as f:
     cricket_names = eval(f.read())
 
-i = -1
 while len(cricket_names):
-    print(json.dumps(cricket_names))
-    i += 1
-    i %= len(cricket_names)
-    cricket_name = cricket_names[i]
+    print("Remaining:", json.dumps(cricket_names))
+    cricket_name = cricket_names.pop()
     try:
         connect(f"CK_{cricket_name}")
         response = request("http://192.168.4.1/peers")
-        print(response)
         group = response.split()[1]
         peers = eval("".join(response.split()[2:]))
-        network[cricket_name] = {'group': group, 'peers': peers}
-        cricket_names.remove(cricket_name)
+        network[cricket_name] = {'group': group, 'peers': peers}            
+        print("Network:")
+        print(json.dumps(network))
     except Exception as e:
         print("Request failed:", e)
+        cricket_names.insert(0, cricket_name)
     print()
 
 print("DONE")
-print(json.dumps(network))
