@@ -4,3 +4,5 @@ dev
 venv
 update.txt
 peers.json
+crickets.json
+crickets_master.json

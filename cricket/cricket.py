@@ -37,12 +37,14 @@ class Cricket():
             print(e)
 
     def add_peer(self, peer):
-        if peer not in self.recips and len(mesh.peers) < MAX_HOOD:
+        if peer != mesh.name and peer not in self.recips and len(mesh.peers) < MAX_HOOD:
+            print(f"Adding {peer}")
             self.recips[peer] = 0
             mesh.add_peer(peer)
 
     def remove_peer(self, peer):
         if peer in self.recips:
+            print(f"Removing {peer}")
             mesh.remove_peer(peer)
             del self.recips[peer]
 
@@ -50,6 +52,7 @@ class Cricket():
         mesh.group = "null"
         if random() < GROUP_LEADER:
             mesh.group = mesh.name
+            print("Group Leader")
         print("Looking for neighbors...")
         SND.duty(512)
         SND.freq(HUM)
@@ -57,10 +60,11 @@ class Cricket():
         self.recips = {}
         neighbors = mesh.scan()
         if len(neighbors):
-            neighbors.sort(key=lambda neighbor: neighbor[1])  # rssi
+            neighbors.sort(key=lambda neighbor: neighbor['rssi'])
             for i in range(INIT_HOOD):
-                print(neighbors[i])
-                self.add_peer(neighbors[i])
+                if i < len(neighbors):
+                    peer = neighbors[i]['name']
+                    self.add_peer(peer)
         SND.duty(0)
         print("--> done")
 
@@ -75,7 +79,7 @@ class Cricket():
 
             # both unassigned
             if mesh.group == "null" and sender_group == "null":
-                pass
+                self.bump()
 
             # self unassigned, sender assigned
             elif mesh.group == "null":
@@ -87,15 +91,15 @@ class Cricket():
             elif sender_group == "null":
                 self.add_peer(sender)
 
-        # both have groups assigned
-        else:
-            if mesh.group == sender_group:
-                self.add_peer(sender)
-                if friend != "null" and random() < FRIEND_LINK:
-                    self.add_peer(friend)
-                self.bump()
+            # both have groups assigned
             else:
-                self.remove_peer(sender)
+                if mesh.group == sender_group:
+                    self.add_peer(sender)
+                    if friend != "null" and random() < FRIEND_LINK:
+                        self.add_peer(friend)
+                    self.bump()
+                else:
+                    self.remove_peer(sender)
 
     def bump(self):
         if self.phase <= REST:
@@ -126,12 +130,15 @@ class Cricket():
             LED.off()
         if STATUS:
             STS.off()
-        for peer in mesh.peers:
-            self.recips[peer] -= 1
-            if self.recips[peer] < SEVER:
-                self.remove_peer(name)
-        friend = choice(mesh.peers) if len(mesh.peers) else "null"
-        await mesh.send(f"flash {self.group} {friend}")
+        if len(mesh.peers) < MIN_HOOD:
+            self.look()
+        else:
+            for peer in mesh.peers:
+                self.recips[peer] -= 1
+                if self.recips[peer] < SEVER:
+                    self.remove_peer(peer)
+            friend = choice(mesh.peers) if len(mesh.peers) else "null"
+            await mesh.send(f"flash {mesh.group} {friend}")
 
 
 def f(x):
