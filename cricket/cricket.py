@@ -20,19 +20,25 @@ class Cricket():
                 while True:
                     t = ticks_ms() / 1000.0
                     t_elapsed = t - t_previous
-                    if MOTION and PIR.value():
-                        print("MOTION!")
-                        LED.off()
-                        if STATUS:
-                            STS.off()
-                        break
-                    self.listen()
-                    self.phase = min(self.phase + (t_elapsed * FREQ), 1.0)
-                    self.capacitor = f(self.phase)
-                    if self.capacitor >= 1.0:
-                        await self.flash()
-                    t_previous = t
-                    await asyncio.sleep_ms(TICK)
+                    if t_elapsed >= TICK:
+                        interval = abs(t_elapsed - TICK) * 1000
+                        if interval > 15:
+                            print("jitter", interval)
+                        else:
+                            print(".")
+                        if MOTION and PIR.value():
+                            print("MOTION!")
+                            LED.off()
+                            if STATUS:
+                                STS.off()
+                            break
+                        self.listen()
+                        self.phase = min(self.phase + (t_elapsed * FREQ), 1.0)
+                        self.capacitor = f(self.phase)
+                        if self.capacitor >= 1.0:
+                            await self.flash()
+                        t_previous = t
+                    await asyncio.sleep_ms(1)
         except Exception as e:
             print(e)
 
