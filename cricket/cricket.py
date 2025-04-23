@@ -24,8 +24,6 @@ class Cricket():
                         interval = abs(t_elapsed - TICK) * 1000
                         if interval > 15:
                             print("jitter", interval)
-                        else:
-                            print(".")
                         if MOTION and PIR.value():
                             print("MOTION!")
                             LED.off()
@@ -127,13 +125,12 @@ class Cricket():
         if CHIRP:
             SND.duty(512)
             SND.freq(PITCH * 2)
-        await asyncio.sleep_ms(80)
+        await asyncio.sleep_ms(30)
         if CHIRP:
             SND.freq(PITCH)
-        await asyncio.sleep_ms(20)
+        await asyncio.sleep_ms(120)
         if CHIRP:
             SND.duty(0)
-        await asyncio.sleep_ms(50)
         if BLINK:
             LED.off()
         if STATUS:
