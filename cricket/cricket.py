@@ -69,8 +69,10 @@ class Cricket():
         print("--> done")
 
     def listen(self):
-        sender, in_message = mesh.receive()
-        if in_message is not None:
+        while True:
+            sender, in_message = mesh.receive()
+            if sender is None or in_message is None:
+                return
             print("Received", in_message, "from", sender)
             _, sender_group, friend = in_message.split(" ")
 
@@ -139,6 +141,10 @@ class Cricket():
                     self.remove_peer(peer)
             friend = choice(mesh.peers) if len(mesh.peers) else "null"
             await mesh.send(f"flash {mesh.group} {friend}")
+        while True:  # clear any messages
+            sender, in_message = mesh.receive()
+            if sender is None or in_message is None:
+                return
 
 
 def f(x):

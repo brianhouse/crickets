@@ -9,7 +9,7 @@ SEVER = -3
 
 # capacitor constants
 FREQ = 1            # endogenous frequency in Hz
-BUMP = 0.005        # capacitor bump amount when neighbor flashes
+BUMP = 0.01         # capacitor bump amount when neighbor flashes
 REST = 0.10         # percent of cycle to be unresponsive after flash
 TICK = 10           # cycle resolution in ms
 
