@@ -151,6 +151,8 @@ class Cricket():
             sender, in_message = mesh.receive()
             if sender is None or in_message is None:
                 return
+            elif sender in self.recips.keys():
+                self.recips[sender] = 0  # don't hold this against recips
 
 
 def f(x):
