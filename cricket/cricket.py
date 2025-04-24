@@ -124,21 +124,7 @@ class Cricket():
             LED.on()
         if STATUS:
             STS.on()
-        if CHIRP:
-            SND.duty(512)
-            SND.freq(PITCH * 2)
-        # await asyncio.sleep_ms(30)
-        sleep_ms(30)
-        if CHIRP:
-            SND.freq(PITCH)
-        # await asyncio.sleep_ms(120)
-        sleep_ms(30)
-        if CHIRP:
-            SND.duty(0)
-        if BLINK:
-            LED.off()
-        if STATUS:
-            STS.off()
+
         if len(mesh.peers) < MIN_HOOD:
             self.look()
         else:
@@ -155,6 +141,22 @@ class Cricket():
                     return
                 elif sender in self.recips.keys():
                     self.recips[sender] = 0  # don't hold this against recips
+
+        if CHIRP:
+            SND.duty(512)
+            SND.freq(PITCH * 2)
+        # await asyncio.sleep_ms(30)
+        sleep_ms(30)
+        if CHIRP:
+            SND.freq(PITCH)
+        # await asyncio.sleep_ms(120)
+        sleep_ms(50)
+        if CHIRP:
+            SND.duty(0)
+        if BLINK:
+            LED.off()
+        if STATUS:
+            STS.off()
 
 
 def f(x):
