@@ -119,40 +119,41 @@ class Cricket():
     async def flash(self):
         print("--> flash")
         self.phase = 0.0
-        if BLINK:
-            LED.on()
-        if STATUS:
-            STS.on()
-        if CHIRP:
-            SND.duty(512)
-            SND.freq(PITCH * 2)
-        await asyncio.sleep_ms(30)
-        # sleep_ms(30)
-        if CHIRP:
-            SND.freq(PITCH)
-        await asyncio.sleep_ms(120)
-        # sleep_ms(120)
-        if CHIRP:
-            SND.duty(0)
-        if BLINK:
-            LED.off()
-        if STATUS:
-            STS.off()
-        if len(mesh.peers) < MIN_HOOD:
-            self.look()
-        else:
-            for peer in mesh.peers:
-                self.recips[peer] -= 1
-                if self.recips[peer] <= SEVER:
-                    self.remove_peer(peer)
-            friend = choice(mesh.peers) if len(mesh.peers) else "null"
-            await mesh.send(f"flash {mesh.group} {friend}")
-        while True:  # clear any messages
-            sender, in_message = mesh.receive()
-            if sender is None or in_message is None:
-                return
-            elif sender in self.recips.keys():
-                self.recips[sender] = 0  # don't hold this against recips
+        self.capacitor = 0.0
+        # if BLINK:
+        #     LED.on()
+        # if STATUS:
+        #     STS.on()
+        # if CHIRP:
+        #     SND.duty(512)
+        #     SND.freq(PITCH * 2)
+        # await asyncio.sleep_ms(30)
+        # # sleep_ms(30)
+        # if CHIRP:
+        #     SND.freq(PITCH)
+        # await asyncio.sleep_ms(120)
+        # # sleep_ms(120)
+        # if CHIRP:
+        #     SND.duty(0)
+        # if BLINK:
+        #     LED.off()
+        # if STATUS:
+        #     STS.off()
+        # if len(mesh.peers) < MIN_HOOD:
+        #     self.look()
+        # else:
+        for peer in mesh.peers:
+            self.recips[peer] -= 1
+            if self.recips[peer] <= SEVER:
+                self.remove_peer(peer)
+        friend = choice(mesh.peers) if len(mesh.peers) else "null"
+        await mesh.send(f"flash {mesh.group} {friend}")
+        # while True:  # clear any messages
+        #     sender, in_message = mesh.receive()
+        #     if sender is None or in_message is None:
+        #         return
+        #     elif sender in self.recips.keys():
+        #         self.recips[sender] = 0  # don't hold this against recips
 
 
 def f(x):
