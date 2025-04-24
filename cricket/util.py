@@ -57,6 +57,8 @@ class Mesh():
         return neighbors
 
     async def send(self, message):
+        if not len(mesh.peers):
+            return
         try:
             await self.mesh.asend(None, message, True)
         except Exception as e:
