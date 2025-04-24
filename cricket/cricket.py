@@ -82,7 +82,7 @@ class Cricket():
             _, sender_group, friend = in_message.split(" ")
 
             if sender in self.recips.keys():
-                self.recips[sender] += 1
+                self.recips[sender] = 0
 
             # both unassigned
             if mesh.group == "null" and sender_group == "null":
