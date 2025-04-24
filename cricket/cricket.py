@@ -122,13 +122,13 @@ class Cricket():
         self.capacitor = 0.0
         # if BLINK:
         #     LED.on()
-        # if STATUS:
-        #     STS.on()
+        if STATUS:
+            STS.on()
         # if CHIRP:
         #     SND.duty(512)
         #     SND.freq(PITCH * 2)
         # await asyncio.sleep_ms(30)
-        # # sleep_ms(30)
+        sleep_ms(30)
         # if CHIRP:
         #     SND.freq(PITCH)
         # await asyncio.sleep_ms(120)
@@ -137,8 +137,8 @@ class Cricket():
         #     SND.duty(0)
         # if BLINK:
         #     LED.off()
-        # if STATUS:
-        #     STS.off()
+        if STATUS:
+            STS.off()
         # if len(mesh.peers) < MIN_HOOD:
         #     self.look()
         # else:
