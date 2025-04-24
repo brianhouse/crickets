@@ -19,9 +19,9 @@ HUM_LOW, HUM_HIGH = 10, 20
 
 # behavior constants
 MOTION = False
-STATUS = True
+STATUS = False
 BLINK = True
-CHIRP = False
+CHIRP = True
 
 
 from util import *
