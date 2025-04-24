@@ -126,12 +126,12 @@ class Cricket():
         if CHIRP:
             SND.duty(512)
             SND.freq(PITCH * 2)
-        # await asyncio.sleep_ms(30)
-        sleep_ms(30)
+        await asyncio.sleep_ms(30)
+        # sleep_ms(30)
         if CHIRP:
             SND.freq(PITCH)
-        # await asyncio.sleep_ms(120)
-        sleep_ms(120)
+        await asyncio.sleep_ms(120)
+        # sleep_ms(120)
         if CHIRP:
             SND.duty(0)
         if BLINK:
@@ -139,10 +139,8 @@ class Cricket():
         if STATUS:
             STS.off()
         if len(mesh.peers) < MIN_HOOD:
-            print(mesh.peers)
             self.look()
         else:
-            print(self.recips)
             for peer in mesh.peers:
                 self.recips[peer] -= 1
                 if self.recips[peer] <= SEVER:
