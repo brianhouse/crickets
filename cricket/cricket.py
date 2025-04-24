@@ -21,6 +21,7 @@ class Cricket():
                     t = ticks_ms() / 1000.0
                     t_elapsed = t - t_previous
                     if t_elapsed >= TICK:
+                        # print("TICK", t_elapsed)
                         error = abs(t_elapsed - TICK) * 1000
                         if error > 15:
                             print("jitter", error)
@@ -77,10 +78,10 @@ class Cricket():
             sender, in_message = mesh.receive()
             if sender is None or in_message is None:
                 return
-            print("Received", in_message, "from", sender)
+            print("Received from", sender, ": ", in_message)
             _, sender_group, friend = in_message.split(" ")
 
-            if sender in self.recips:
+            if sender in self.recips.keys():
                 self.recips[sender] += 1
 
             # both unassigned
@@ -138,11 +139,13 @@ class Cricket():
         if STATUS:
             STS.off()
         if len(mesh.peers) < MIN_HOOD:
+            print(mesh.peers)
             self.look()
         else:
+            print(self.recips)
             for peer in mesh.peers:
                 self.recips[peer] -= 1
-                if self.recips[peer] < SEVER:
+                if self.recips[peer] <= SEVER:
                     self.remove_peer(peer)
             friend = choice(mesh.peers) if len(mesh.peers) else "null"
             await mesh.send(f"flash {mesh.group} {friend}")
@@ -158,6 +161,7 @@ def f(x):
 
 def f_inv(y):
     return (2 / math.pi) * math.asin(y)
+
 
 
 
