@@ -5,7 +5,7 @@ INIT_HOOD = 5
 MIN_HOOD = 3
 FRIEND_LINK = .2
 GROUP_LEADER = .2
-SEVER = -3
+SEVER = -4
 
 # capacitor constants
 FREQ = 1            # endogenous frequency in Hz
