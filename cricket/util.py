@@ -57,11 +57,10 @@ class Mesh():
         return neighbors
 
     async def send(self, message):
-        for peer in self.peers:
-            try:
-                await self.mesh.asend(hex_to_bin(name_to_mac(peer)), message, True)
-            except Exception as e:
-                print("Can't send to", peer, f"({e})")
+        try:
+            await self.mesh.asend(None, message, True)
+        except Exception as e:
+            print("Can't send", f"({e})")
 
     def receive(self):
         try:
