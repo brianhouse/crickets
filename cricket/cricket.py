@@ -132,7 +132,7 @@ class Cricket():
         if CHIRP:
             SND.freq(PITCH)
         # await asyncio.sleep_ms(120)
-        sleep_ms(120)
+        sleep_ms(30)
         if CHIRP:
             SND.duty(0)
         if BLINK:
