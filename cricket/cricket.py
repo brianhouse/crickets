@@ -147,6 +147,7 @@ class Cricket():
             if self.recips[peer] <= SEVER:
                 self.remove_peer(peer)
         friend = choice(mesh.peers) if len(mesh.peers) else "null"
+        print("sending", mesh.peers)
         await mesh.send(f"flash {mesh.group} {friend}")
         # while True:  # clear any messages
         #     sender, in_message = mesh.receive()
