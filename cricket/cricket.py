@@ -25,6 +25,8 @@ class Cricket():
                         error = abs(t_elapsed - TICK) * 1000
                         if error > 15:
                             print("jitter", error)
+                        if len(mesh.peers) < MIN_HOOD:
+                            self.look()
                         if MOTION and PIR.value():
                             print("MOTION!")
                             LED.off()
@@ -125,22 +127,13 @@ class Cricket():
         if STATUS:
             STS.on()
 
-        if len(mesh.peers) < MIN_HOOD:
-            self.look()
-        else:
-            for peer in mesh.peers:
-                self.recips[peer] -= 1
-                if self.recips[peer] <= SEVER:
-                    self.remove_peer(peer)
-            friend = choice(mesh.peers) if len(mesh.peers) else "null"
-            print("sending", mesh.peers)
-            await mesh.send(f"flash {mesh.group} {friend}")
-            while True:  # clear any messages
-                sender, in_message = mesh.receive()
-                if sender is None or in_message is None:
-                    return
-                elif sender in self.recips.keys():
-                    self.recips[sender] = 0  # don't hold this against recips
+        for peer in mesh.peers:
+            self.recips[peer] -= 1
+            if self.recips[peer] <= SEVER:
+                self.remove_peer(peer)
+        friend = choice(mesh.peers) if len(mesh.peers) else "null"
+        print("sending", mesh.peers)
+        await mesh.send(f"flash {mesh.group} {friend}")
 
         if CHIRP:
             SND.duty(512)
