@@ -1,6 +1,6 @@
 # connection constants
 POWER = 7
-RANGE = -50
+RANGE = -70
 MAX_HOOD = 8
 MIN_HOOD = 3
 FRIEND_LINK = .2

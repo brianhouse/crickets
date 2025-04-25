@@ -9,21 +9,21 @@ HUM = randint(HUM_LOW, HUM_HIGH)
 class Cricket():
 
     async def run(self):
-        try:
-            SND.duty(0)
-            await asyncio.sleep(random() * 3 + 1)
+        SND.duty(0)
+        await asyncio.sleep(random() * 3 + 1)
+        while True:
+            t_previous = 0
+            self.look()
+            self.phase = random()
+            self.capacitor = f(self.phase)
             while True:
-                t_previous = 0
-                self.look()
-                self.phase = random()
-                self.capacitor = f(self.phase)
-                while True:
+                try:
                     t = ticks_ms() / 1000.0
                     t_elapsed = t - t_previous
                     if t_elapsed >= TICK:
                         # print("TICK", t_elapsed)
-                        error = abs(t_elapsed - TICK) * 1000
-                        if error > 15:
+                        error = abs(t_elapsed - TICK)
+                        if error > .015:
                             print("jitter", error)
                         if len(mesh.peers) < MIN_HOOD:
                             self.look()
@@ -44,19 +44,19 @@ class Cricket():
                             await self.flash()
                         t_previous = t
                     await asyncio.sleep_ms(1)
-        except Exception as e:
-            print(e)
+                except Exception as e:
+                    print(e)
 
     def add_peer(self, peer):
         if peer == mesh.name or peer in self.recips:
             return
         print(f"Adding {peer}...")
         mesh.add_peer(peer)
-        self.recips[sender] = 0
+        self.recips[peer] = 0
         mesh.sort_peers()
-        if len(mesh.peers) < MAX_HOOD:
+        if len(mesh.peers) > MAX_HOOD:
             if mesh.get_rssi(mesh.peers[-1]) is not None:
-                print(mesh.peers[-1], "didn't make the cut")
+                print(mesh.peers[-1], "didn't make the cut", mesh.get_rssi(mesh.peers[-1]))
                 self.remove_peer(mesh.peers[-1])
 
     def remove_peer(self, peer):
@@ -71,6 +71,7 @@ class Cricket():
             mesh.group = mesh.name
             print("Group Leader")
         print("Looking for neighbors...")
+        SND.duty(0)
         SND.duty(512)
         SND.freq(HUM)
         mesh.clear_peers()

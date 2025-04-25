@@ -100,15 +100,12 @@ class Mesh():
         self.peers.clear()
 
     def sort_peers(self):
-        try:
-            self.peers.sort(key=lambda peer: (self.get_rssi(peer) is None, self.get_rssi(peer)))
-        except ValueError as e:
-            print(e)
+        self.peers.sort(key=lambda peer: (self.get_rssi(peer) is None, self.get_rssi(peer)))
 
     def get_rssi(self, peer):
         try:
             return self.mesh.peers_table[hex_to_bin(name_to_mac(peer))][0]
-        except IndexError:
+        except KeyError:
             return None
 
 
