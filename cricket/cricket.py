@@ -87,7 +87,7 @@ class Cricket():
                     peer = neighbors[i]['name']
                     self.add_peer(peer)
         SND.duty(0)
-        print("--> done")
+        print("--> done looking")
 
     def listen(self):
         while True:
