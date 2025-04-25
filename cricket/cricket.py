@@ -37,7 +37,7 @@ class Cricket():
                             break
                         self.listen()
                         for peer in mesh.peers:
-                            if mesh.get_rssi(peer) < RANGE:
+                            if mesh.get_rssi(peer) is not None and mesh.get_rssi(peer) < RANGE:
                                 print(peer, "is too far")
                                 self.remove_peer(peer)
                         self.phase = min(self.phase + (t_elapsed * FREQ), 1.0)
