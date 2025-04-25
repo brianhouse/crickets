@@ -17,6 +17,7 @@ class Cricket():
             self.phase = random()
             self.capacitor = f(self.phase)
             self.looking = False
+            self.motion = 0
             while True:
                 try:
                     t = ticks_ms() / 1000.0
@@ -29,12 +30,16 @@ class Cricket():
                             print("jitter", error)
                         if len(mesh.peers) < MIN_HOOD:
                             self.look()
-                        if MOTION and PIR.value():
-                            print("MOTION!")
-                            LED.off()
-                            if STATUS:
-                                STS.off()
-                            break
+                        if MOTION:
+                            if PIR.value():
+                                self.motion += 1
+                                if self.motion == MOTION:
+                                    print("MOTION!")
+                                    self.look()
+                            else:
+                                self.motion -= 1
+                                if self.motion < 0:
+                                    self.motion = 0
                         self.listen()
                         self.phase = min(self.phase + (t_elapsed * FREQ), 1.0)
                         self.capacitor = f(self.phase)
