@@ -26,7 +26,7 @@ class Cricket():
                         error = abs(t_elapsed - TICK)
                         if not self.looking and error > .015:
                             self.looking = False
-                            print("jitter", error)
+                            print("jitter", error, self.looking)
                         if len(mesh.peers) < MIN_HOOD:
                             self.look()
                         if MOTION and PIR.value():
@@ -52,7 +52,7 @@ class Cricket():
     def add_peer(self, peer):
         if peer == mesh.name or peer in self.recips:
             return
-        print(f"Adding {peer}...")
+        print(f"Adding {peer}")
         mesh.add_peer(peer)
         self.recips[peer] = 0
         mesh.sort_peers()
