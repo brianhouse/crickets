@@ -16,6 +16,7 @@ class Cricket():
             self.look()
             self.phase = random()
             self.capacitor = f(self.phase)
+            self.looking = False
             while True:
                 try:
                     t = ticks_ms() / 1000.0
@@ -23,7 +24,8 @@ class Cricket():
                     if t_elapsed >= TICK:
                         # print("TICK", t_elapsed)
                         error = abs(t_elapsed - TICK)
-                        if error > .015:
+                        if not self.looking and error > .015:
+                            self.looking = False
                             print("jitter", error)
                         if len(mesh.peers) < MIN_HOOD:
                             self.look()
@@ -66,6 +68,7 @@ class Cricket():
             del self.recips[peer]
 
     def look(self):
+        self.looking = True
         mesh.group = "null"
         if random() < GROUP_LEADER:
             mesh.group = mesh.name
