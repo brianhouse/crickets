@@ -60,7 +60,7 @@ class Mesh():
         if not len(mesh.peers):
             return
         try:
-            await self.mesh.asend(None, message, True)
+            await self.mesh.asend(None, message, False)
         except Exception as e:
             print("Can't send", f"({e})")
 

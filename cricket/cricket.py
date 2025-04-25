@@ -26,7 +26,7 @@ class Cricket():
                         error = abs(t_elapsed - TICK)
                         if not self.looking and error > .015:
                             self.looking = False
-                            print("jitter", error, self.looking)
+                            print("jitter", error)
                         if len(mesh.peers) < MIN_HOOD:
                             self.look()
                         if MOTION and PIR.value():
@@ -36,10 +36,6 @@ class Cricket():
                                 STS.off()
                             break
                         self.listen()
-                        for peer in mesh.peers:
-                            if mesh.get_rssi(peer) is not None and mesh.get_rssi(peer) < RANGE:
-                                print(peer, "is too far")
-                                self.remove_peer(peer)
                         self.phase = min(self.phase + (t_elapsed * FREQ), 1.0)
                         self.capacitor = f(self.phase)
                         if self.capacitor >= 1.0:
@@ -66,6 +62,17 @@ class Cricket():
             print(f"Removing {peer}")
             mesh.remove_peer(peer)
             del self.recips[peer]
+
+    def cull_peers(self):
+        for peer in mesh.peers:
+            self.recips[peer] -= 1
+            if self.recips[peer] <= SEVER:
+                print(peer, "didn't reciprocate")
+                self.remove_peer(peer)
+        for peer in mesh.peers:
+            if mesh.get_rssi(peer) is not None and mesh.get_rssi(peer) < RANGE:
+                print(peer, "is too far")
+                self.remove_peer(peer)
 
     def look(self):
         self.looking = True
@@ -141,10 +148,7 @@ class Cricket():
         if STATUS:
             STS.on()
 
-        for peer in mesh.peers:
-            self.recips[peer] -= 1
-            if self.recips[peer] <= SEVER:
-                self.remove_peer(peer)
+        self.cull_peers()
         friend = choice(mesh.peers) if len(mesh.peers) else "null"
         print("sending", mesh.peers)
         await mesh.send(f"flash {mesh.group} {friend}")
