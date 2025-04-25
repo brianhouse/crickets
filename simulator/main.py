@@ -6,12 +6,11 @@ from vis import LiveGraphAnimator
 
 
 NODES = 100
-MAX_HOOD = 10
-INIT_HOOD = 5
+MAX_HOOD = 8
 MIN_HOOD = 3
 FRIEND_LINK = .2
 GROUP_LEADER = .2
-
+SEVER = -4
 
 class Node():
 
@@ -30,7 +29,7 @@ class Node():
         neighbors = list(nodes)
         neighbors.sort(key=lambda neighbor: self.distance(neighbor.name))
         i = 0
-        while len(self.peers) < INIT_HOOD:
+        while len(self.peers) < MIN_HOOD:
             self.add_peer(neighbors[i].name)
             i += 1
 
@@ -40,12 +39,15 @@ class Node():
                 return math.sqrt((self.x - node.x)**2 + (self.y - node.y)**2)
         return 1000
 
-    def add_peer(self, name):
+    def add_peer(self, name, friend=False):
         if len(self.peers) >= MAX_HOOD:
             return
         if name not in self.peers and name != self.name:
             self.peers.append(name)
             self.recips[name] = 0
+            self.peers.sort(key=lambda peer: self.distance(peer) if not friend else 1000)  # not exact, because this will refresh faster than the reality
+            if len(self.peers) > MAX_HOOD:
+                self.remove_peer(self.peers[-1])
 
     def remove_peer(self, name):
         if name in self.peers:
@@ -59,7 +61,7 @@ class Node():
             for node in nodes:
                 if node.name == name:
                     self.recips[name] -= 1
-                    if self.recips[name] < -3:
+                    if self.recips[name] < SEVER:
                         self.remove_peer(name)
                     else:
                         friend = choice(self.peers)
@@ -91,7 +93,7 @@ class Node():
                 if sender not in self.peers:
                     self.add_peer(sender)
                 if friend not in self.peers and random.random() < FRIEND_LINK:
-                    self.add_peer(friend)
+                    self.add_peer(friend, True)
                 # bump
             else:
                 self.remove_peer(sender)
@@ -102,9 +104,10 @@ nodes = []
 for i in range(NODES):
     node = Node(i)
     nodes.append(node)
-# for i in range(2):
-#     node = choice(nodes)
-#     node.group = "group_" + node.name
+for node in nodes:
+    for i in range(MIN_HOOD):
+        other = choice([other for other in nodes if other != node])
+        node.add_peer(other.name)
 
 
 animator = LiveGraphAnimator()

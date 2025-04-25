@@ -99,6 +99,18 @@ class Mesh():
                 print(e)
         self.peers.clear()
 
+    def sort_peers(self):
+        try:
+            self.peers.sort(key=lambda peer: (self.get_rssi(peer) is None, self.get_rssi(peer)))
+        except ValueError as e:
+            print(e)
+
+    def get_rssi(self, peer):
+        try:
+            return self.mesh.peers_table[hex_to_bin(name_to_mac(peer))][0]
+        except IndexError:
+            return None
+
 
 def name_to_ssid(name):
     return f"CK_{name}".encode('utf-8')
@@ -108,24 +120,48 @@ def ssid_to_name(ssid):
     return ssid.decode("utf-8").split("_")[-1]
 
 
+lookup_name_to_mac = {}
 def name_to_mac(name):
-    name = reverse(name.replace('-', '+').replace('_', '/'))
-    mac_bytes = ubinascii.a2b_base64(name + '\n')
-    return ':'.join(mac_bytes.hex().upper()[i:i + 2] for i in range(0, 12, 2))
+    if name in lookup_name_to_mac:
+        return lookup_name_to_mac[name]
+    else:
+        name = reverse(name.replace('-', '+').replace('_', '/'))
+        mac_bytes = ubinascii.a2b_base64(name + '\n')
+        result = ':'.join(mac_bytes.hex().upper()[i:i + 2] for i in range(0, 12, 2))
+        lookup_name_to_mac[name] = result
+        return result
 
 
+lookup_mac_to_name = {}
 def mac_to_name(mac):
-    mac_bytes = bytes.fromhex(mac.replace(":", "").replace("-", ""))
-    name = ubinascii.b2a_base64(mac_bytes).decode('utf-8').strip()
-    return reverse(name.replace('+', '-').replace('/', '_').rstrip('\n'))
+    if mac in lookup_mac_to_name:
+        return lookup_mac_to_name[mac]
+    else:
+        mac_bytes = bytes.fromhex(mac.replace(":", "").replace("-", ""))
+        name = ubinascii.b2a_base64(mac_bytes).decode('utf-8').strip()
+        result = reverse(name.replace('+', '-').replace('/', '_').rstrip('\n'))
+        lookup_mac_to_name[mac] = result
+        return result
 
 
+lookup_bin_to_hex = {}
 def bin_to_hex(bin_mac):
-    return ubinascii.hexlify(bin_mac, ':').decode().upper()
+    if bin_mac in lookup_bin_to_hex:
+        return lookup_bin_to_hex[bin_mac]
+    else:
+        result = ubinascii.hexlify(bin_mac, ':').decode().upper()
+        lookup_bin_to_hex[bin_mac] = result
+        return result
 
 
+lookup_hex_to_bin = {}
 def hex_to_bin(hex_mac):
-    return ubinascii.unhexlify(hex_mac.replace(':', '').lower())
+    if hex_mac in lookup_hex_to_bin:
+        return lookup_hex_to_bin[hex_mac]
+    else:
+        result = ubinascii.unhexlify(hex_mac.replace(':', '').lower())
+        lookup_hex_to_bin[hex_mac] = result
+        return result
 
 
 def map(value, in_min, in_max, out_min, out_max):

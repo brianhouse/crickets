@@ -34,6 +34,10 @@ class Cricket():
                                 STS.off()
                             break
                         self.listen()
+                        for peer in mesh.peers:
+                            if mesh.get_rssi(peer) < RANGE:
+                                print(peer, "is too far")
+                                self.remove_peer(peer)
                         self.phase = min(self.phase + (t_elapsed * FREQ), 1.0)
                         self.capacitor = f(self.phase)
                         if self.capacitor >= 1.0:
@@ -44,10 +48,16 @@ class Cricket():
             print(e)
 
     def add_peer(self, peer):
-        if peer != mesh.name and peer not in self.recips and len(mesh.peers) < MAX_HOOD:
-            print(f"Adding {peer}")
-            self.recips[peer] = 0
-            mesh.add_peer(peer)
+        if peer == mesh.name or peer in self.recips:
+            return
+        print(f"Adding {peer}...")
+        mesh.add_peer(peer)
+        self.recips[sender] = 0
+        mesh.sort_peers()
+        if len(mesh.peers) < MAX_HOOD:
+            if mesh.get_rssi(mesh.peers[-1]) is not None:
+                print(mesh.peers[-1], "didn't make the cut")
+                self.remove_peer(mesh.peers[-1])
 
     def remove_peer(self, peer):
         if peer in self.recips:
@@ -68,7 +78,7 @@ class Cricket():
         neighbors = mesh.scan()
         if len(neighbors):
             neighbors.sort(key=lambda neighbor: neighbor['rssi'])
-            for i in range(INIT_HOOD):
+            for i in range(MIN_HOOD):
                 if i < len(neighbors):
                     peer = neighbors[i]['name']
                     self.add_peer(peer)
