@@ -28,6 +28,12 @@ class Cricket():
                         if not self.looking and error > .015:
                             self.looking = False
                             print("jitter", error)
+                        self.phase = min(self.phase + (t_elapsed * FREQ), 1.0)
+                        self.capacitor = f(self.phase)
+                        self.listen()
+                        if self.capacitor >= 1.0:
+                            print('flashing...')
+                            await self.flash()
                         if len(mesh.peers) < MIN_HOOD:
                             self.look()
                         if MOTION:
@@ -40,11 +46,6 @@ class Cricket():
                                 self.motion -= 1
                                 if self.motion < 0:
                                     self.motion = 0
-                        self.listen()
-                        self.phase = min(self.phase + (t_elapsed * FREQ), 1.0)
-                        self.capacitor = f(self.phase)
-                        if self.capacitor >= 1.0:
-                            await self.flash()
                         t_previous = t
                     await asyncio.sleep_ms(1)
                 except Exception as e:
@@ -53,18 +54,18 @@ class Cricket():
     def add_peer(self, peer):
         if peer == mesh.name or peer in self.recips:
             return
-        print(f"Adding {peer}")
+        # print(f"Adding {peer}")
         mesh.add_peer(peer)
         self.recips[peer] = 0
         mesh.sort_peers()
         if len(mesh.peers) > MAX_HOOD:
             if mesh.get_rssi(mesh.peers[-1]) is not None:
-                print(mesh.peers[-1], "didn't make the cut", mesh.get_rssi(mesh.peers[-1]))
+                # print(mesh.peers[-1], "didn't make the cut", mesh.get_rssi(mesh.peers[-1]))
                 self.remove_peer(mesh.peers[-1])
 
     def remove_peer(self, peer):
         if peer in self.recips:
-            print(f"Removing {peer}")
+            # print(f"Removing {peer}")
             mesh.remove_peer(peer)
             del self.recips[peer]
 
@@ -72,11 +73,11 @@ class Cricket():
         for peer in mesh.peers:
             self.recips[peer] -= 1
             if self.recips[peer] <= SEVER:
-                print(peer, "didn't reciprocate")
+                # print(peer, "didn't reciprocate")
                 self.remove_peer(peer)
         for peer in mesh.peers:
             if mesh.get_rssi(peer) is not None and mesh.get_rssi(peer) < RANGE:
-                print(peer, "is too far")
+                # print(peer, "is too far")
                 self.remove_peer(peer)
 
     def look(self):
@@ -102,11 +103,12 @@ class Cricket():
         print("--> done looking")
 
     def listen(self):
+        print("Receiving...")
         while True:
             sender, in_message = mesh.receive()
             if sender is None or in_message is None:
                 return
-            print("Received from", sender, ": ", in_message)
+            print("--> received from", sender, ": ", in_message)
             _, sender_group, friend = in_message.split(" ")
 
             if sender in self.recips.keys():
@@ -128,21 +130,23 @@ class Cricket():
 
             # both have groups assigned
             else:
+                print("both")
                 if mesh.group == sender_group:
+                    print("in group")
                     self.add_peer(sender)
-                    if friend != "null" and random() < FRIEND_LINK:
-                        self.add_peer(friend)
+                    # if friend != "null" and random() < FRIEND_LINK:
+                    #     self.add_peer(friend)
                     self.bump()
                 else:
                     self.remove_peer(sender)
 
     def bump(self):
         if self.phase <= REST:
-            print("--> resting")
+            print("--> resting", self.phase)
             return
-        print("--> bump")
         self.capacitor = min(self.capacitor + BUMP, 1.0)
         self.phase = f_inv(self.capacitor)
+        print("--> bump", self.capacitor)
 
     async def flash(self):
         print("--> flash")
