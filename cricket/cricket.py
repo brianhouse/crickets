@@ -60,7 +60,6 @@ class Cricket(Node):
             SND.freq(self.hum)
         self.clear_peers()
         neighbors = self.scan()
-        print(neighbors)
         if len(neighbors):
             for i in range(MIN_HOOD):
                 if i < len(neighbors) and neighbors[i].rssi > RANGE:

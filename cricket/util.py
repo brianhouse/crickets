@@ -52,7 +52,6 @@ class Node():
         self.neighbors.clear()
         for ssid, bssid, channel, rssi, security, hidden in self.sta.scan():
             if ssid.decode('utf-8').split("_")[0] == "CK":
-                print(ssid, rssi)
                 peer = Peer.find(ssid=ssid)
                 peer.scan_rssi = rssi
                 self.neighbors.append(peer)
@@ -83,11 +82,9 @@ class Node():
 
     def add_peer(self, bin_mac):
         self.mesh.add_peer(bin_mac)
-        print("added to mesh")
 
     def remove_peer(self, bin_mac):
         self.mesh.del_peer(bin_mac)
-        print("removed from mesh")
 
 
 class Peer():
@@ -132,10 +129,8 @@ class Peer():
     @property
     def rssi(self):
         if self.scan_rssi is not None:
-            print('returning scan_rssi')
             return self.scan_rssi
         try:
-            print('returning peers_table')
             return Node.current.mesh.peers_table[self.bin_mac][0]
         except KeyError:
             return None
