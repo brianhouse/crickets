@@ -62,7 +62,7 @@ class Cricket(Node):
         neighbors = self.scan()
         if len(neighbors):
             for i in range(MIN_HOOD):
-                if i < len(neighbors) and neighbors[i].rssi > RANGE:
+                if i < len(neighbors) and neighbors[i].rssi >= RANGE:
                     self.add_peer(neighbors[i])
         if HUM:
             SND.duty(0)
@@ -73,6 +73,10 @@ class Cricket(Node):
         for message in messages:
             sender, message = message
             O.print("GOT", message, "from", sender)
+            if sender.rssi < RANGE:
+                print("TOO FAR")
+                return False
+
             _, sender_group, friend = message.split(" ")
 
             if sender in self.peers:
@@ -162,8 +166,8 @@ class Cricket(Node):
 
     def send(self):
         O.print("SEND", self.peers)
-        friend = choice(self.peers).name if len(self.peers) else "null"
         if len(self.peers):
+            friend = choice(self.peers).name
             Node.send(self, f"flash {self.group} {friend}")
         self.cull_peers()
 

@@ -67,7 +67,11 @@ class Node():
     def receive(self):
         self.messages.clear()
         while True:
-            bin_mac, message = self.mesh.recv(0)
+            try:
+                bin_mac, message = self.mesh.recv(0)
+            except Exception as e:
+                print(e)
+                return self.messages
             if bin_mac is None or message is None:
                 break
             peer = Peer.find(bin_mac=bin_mac)
