@@ -1,6 +1,7 @@
+import machine
 import uasyncio as asyncio
 import ujson, socket, re
-from config import *
+from time import sleep
 
 
 async def handle_request(reader, writer):
@@ -19,7 +20,7 @@ async def handle_request(reader, writer):
     headers = request.split('\r\n')
     page = headers[0].split()[1] if len(headers) > 0 else "/"
     if page == "/peers":
-        content = f"{mesh.name} {mesh.group} {mesh.peers}"
+        content = f"{cricket.name} {cricket.group} {cricket.peers}"
     elif page == "/reset":
         content = "resetting"
         reset = True
@@ -67,7 +68,9 @@ async def extract_file(request, boundary):
     return None, None
 
 
-async def start_ota():
+async def start_ota(c):
+    global cricket
+    cricket = c
     await asyncio.start_server(handle_request, "0.0.0.0", 80)
     print("OTA server running")
     try:

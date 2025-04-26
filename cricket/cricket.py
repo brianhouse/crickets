@@ -1,128 +1,86 @@
-import uasyncio as asyncio
+from util import *
 from config import *
 
 
-PITCH = randint(PITCH_LOW, PITCH_HIGH)
-HUM = randint(HUM_LOW, HUM_HIGH)
+class Cricket(Node):
 
-
-class Cricket():
+    def __init__(self):
+        Node.__init__(self)
+        self.phase = random()
+        self.capacitor = self.f(self.phase)
+        self.pitch = randint(PITCH_LOW, PITCH_HIGH)
+        self.hum = randint(HUM_LOW, HUM_HIGH)
+        self.t_previous = ticks_ms()
+        self.group = "null"
+        self.peers = []
+        print(f"## {self.name} ##")
 
     async def run(self):
-        SND.duty(0)
-        await asyncio.sleep(random() * 3 + 1)
+        await asyncio.sleep_ms(randint(1000, 3000))
+        self.t_previous = ticks_ms()
         while True:
-            t_previous = 0
-            self.look()
-            self.phase = random()
-            self.capacitor = f(self.phase)
-            self.looking = False
-            self.motion = 0
-            while True:
-                try:
-                    t = ticks_ms() / 1000.0
-                    t_elapsed = t - t_previous
-                    if t_elapsed >= TICK:
-                        # print("TICK", t_elapsed)
-                        error = abs(t_elapsed - TICK)
-                        if not self.looking and error > .015:
-                            self.looking = False
-                            print("jitter", error)
-                        self.phase = min(self.phase + (t_elapsed * FREQ), 1.0)
-                        self.capacitor = f(self.phase)
-                        self.listen()
-                        if self.capacitor >= 1.0:
-                            print('flashing...')
-                            await self.flash()
-                        if len(mesh.peers) < MIN_HOOD:
-                            self.look()
-                        if MOTION:
-                            if PIR.value():
-                                self.motion += 1
-                                if self.motion == MOTION:
-                                    print("MOTION!")
-                                    self.look()
-                            else:
-                                self.motion -= 1
-                                if self.motion < 0:
-                                    self.motion = 0
-                        t_previous = t
-                    await asyncio.sleep_ms(1)
-                except Exception as e:
-                    print(e)
-
-    def add_peer(self, peer):
-        if peer == mesh.name or peer in self.recips:
-            return
-        # print(f"Adding {peer}")
-        mesh.add_peer(peer)
-        self.recips[peer] = 0
-        mesh.sort_peers()
-        if len(mesh.peers) > MAX_HOOD:
-            if mesh.get_rssi(mesh.peers[-1]) is not None:
-                # print(mesh.peers[-1], "didn't make the cut", mesh.get_rssi(mesh.peers[-1]))
-                self.remove_peer(mesh.peers[-1])
-
-    def remove_peer(self, peer):
-        if peer in self.recips:
-            # print(f"Removing {peer}")
-            mesh.remove_peer(peer)
-            del self.recips[peer]
-
-    def cull_peers(self):
-        for peer in mesh.peers:
-            self.recips[peer] -= 1
-            if self.recips[peer] <= SEVER:
-                # print(peer, "didn't reciprocate")
-                self.remove_peer(peer)
-        for peer in mesh.peers:
-            if mesh.get_rssi(peer) is not None and mesh.get_rssi(peer) < RANGE:
-                # print(peer, "is too far")
-                self.remove_peer(peer)
+            # try:
+                t = ticks_ms()
+                t_elapsed = ticks_diff(t, self.t_previous)
+                if t_elapsed >= TICK:
+                    error = abs(t_elapsed - TICK)
+                    # print("TICK", t_elapsed)
+                    if error > 10:
+                        print("JITTER", error)
+                    self.t_previous = t
+                    self.phase = min(self.phase + (t_elapsed / 1000), 1.0)
+                    self.capacitor = self.f(self.phase)
+                    if self.capacitor >= 1.0:
+                        await self.flash()
+                    # print("MEM", gc.mem_free())
+                    self.listen()
+                    self.cull_peers()
+                    if len(self.peers) < MIN_HOOD:
+                        self.look()
+                    gc.collect()
+                await asyncio.sleep_ms(1)
+            # except Exception as e:
+            #     print(e)
 
     def look(self):
-        self.looking = True
-        mesh.group = "null"
+        self.group = "null"
         if random() < GROUP_LEADER:
-            mesh.group = mesh.name
-            print("Group Leader")
-        print("Looking for neighbors...")
+            self.group = self.name
+            print("LEADER")
+        print("LOOK...")
         SND.duty(0)
         SND.duty(512)
-        SND.freq(HUM)
-        mesh.clear_peers()
-        self.recips = {}
-        neighbors = mesh.scan()
+        SND.freq(self.hum)
+        self.clear_peers()
+        neighbors = self.scan()
         if len(neighbors):
-            neighbors.sort(key=lambda neighbor: neighbor['rssi'])
             for i in range(MIN_HOOD):
                 if i < len(neighbors):
-                    peer = neighbors[i]['name']
-                    self.add_peer(peer)
+                    self.add_peer(neighbors[i])
         SND.duty(0)
-        print("--> done looking")
+        print("--> DONE")
 
     def listen(self):
-        print("Receiving...")
-        while True:
-            sender, in_message = mesh.receive()
-            if sender is None or in_message is None:
-                return
-            print("--> received from", sender, ": ", in_message)
-            _, sender_group, friend = in_message.split(" ")
+        messages = self.receive()
+        for message in messages:
+            sender, message = message
+            # print("--> received from", sender, ": ", in_message)
+            _, sender_group, friend = message.split(" ")
 
-            if sender in self.recips.keys():
-                self.recips[sender] = 0
+            if sender in self.peers:
+                sender.recip = 0
 
             # both unassigned
-            if mesh.group == "null" and sender_group == "null":
-                self.bump()
+            if self.group == "null" and sender_group == "null":
+                if self.bump():
+                    return
 
             # self unassigned, sender assigned
-            elif mesh.group == "null":
-                mesh.group = sender_group
+            elif self.group == "null":
+                self.group = sender_group
                 self.add_peer(sender)
-                self.bump()
+                if self.bump():
+                    return
 
             # self assigned, sender unassigned
             elif sender_group == "null":
@@ -130,26 +88,51 @@ class Cricket():
 
             # both have groups assigned
             else:
-                print("both")
-                if mesh.group == sender_group:
-                    print("in group")
+                if self.group == sender_group:
                     self.add_peer(sender)
-                    # if friend != "null" and random() < FRIEND_LINK:
-                    #     self.add_peer(friend)
-                    self.bump()
+                    if friend != "null" and random() < FRIEND_LINK:
+                        self.add_peer(Peers.find(name=friend))
+                    if self.bump():
+                        return
                 else:
                     self.remove_peer(sender)
 
-    def bump(self):
-        if self.phase <= REST:
-            print("--> resting", self.phase)
+    def cull_peers(self):
+        # if more than MAX_HOOD peers and a last peer has an rssi, remove it (and avoid sort())
+        # (recips will take care of it if there's peers w/o an rssi)
+        furthest = None
+        for peer in self.peers:
+            if peer.rssi is not None and (furthest is None or peer.rssi < furthest.rssi):
+                peer = furthest
+        if furthest is not None:
+            print(furthest, "CUT", furthest.rssi)
+            self.remove_peer(furthest)
+
+    def add_peer(self, peer):
+        if peer in self.peers:
             return
-        self.capacitor = min(self.capacitor + BUMP, 1.0)
-        self.phase = f_inv(self.capacitor)
-        print("--> bump", self.capacitor)
+        print(f"ADD {peer}")
+        self.mesh.add_peer(peer.bin_mac)
+
+    def remove_peer(self, peer):
+        if peer in self.peers:
+            print(f"REMOVE {peer}")
+            try:
+                self.mesh.del_peer(peer.bin_mac)
+                self.peers.remove(name)
+            except Exception as e:
+                print(e)
+
+    def clear_peers(self):
+        for peer in self.peers:
+            try:
+                self.mesh.del_peer(peer.bin_mac)
+            except Exception as e:
+                print(e)
+        self.peers.clear()
 
     async def flash(self):
-        print("--> flash")
+        print("FLASH")
         self.phase = 0.0
         self.capacitor = 0.0
         if BLINK:
@@ -157,19 +140,16 @@ class Cricket():
         if STATUS:
             STS.on()
 
-        self.cull_peers()
-        friend = choice(mesh.peers) if len(mesh.peers) else "null"
-        print("sending", mesh.peers)
-        await mesh.send(f"flash {mesh.group} {friend}")
+        friend = choice(self.peers).name if len(self.peers) else "null"
+        print("SEND", self.peers, friend)
+        await self.send(f"flash {self.group} {friend}")
 
         if CHIRP:
             SND.duty(512)
-            SND.freq(PITCH * 2)
-        # await asyncio.sleep_ms(30)
+            SND.freq(self.pitch * 2)
         sleep_ms(30)
         if CHIRP:
-            SND.freq(PITCH)
-        # await asyncio.sleep_ms(120)
+            SND.freq(self.pitch)
         sleep_ms(30)
         if CHIRP:
             SND.duty(0)
@@ -178,17 +158,20 @@ class Cricket():
         if STATUS:
             STS.off()
 
+    def bump(self):
+        if self.phase / 1000 < REST:
+            print("REST")
+            return False
+        print("BUMP")
+        self.capacitor = min(self.capacitor + BUMP, 1.0)
+        self.phase = self.f_inv(self.capacitor)
+        if self.capacitor >= 1.0:
+            self.flash()
+        return True
 
-def f(x):
-    return math.sin((math.pi / 2) * x)
+    def f(self, x):
+        return math.sin((math.pi / 2) * x)
 
-
-def f_inv(y):
-    return (2 / math.pi) * math.asin(y)
-
-
-
-
-
-
+    def f_inv(self, y):
+        return (2 / math.pi) * math.asin(y)
 

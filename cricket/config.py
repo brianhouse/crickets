@@ -8,10 +8,9 @@ GROUP_LEADER = .2
 SEVER = -4
 
 # capacitor constants
-FREQ = 1            # endogenous frequency in Hz
-BUMP = 0.05         # capacitor bump amount when neighbor flashes
-REST = 0.10         # percent of cycle to be unresponsive after flash (in practice, the time it takes to flash overrides this ~145ms)
-TICK = 0.01         # cycle resolution in seconds
+TICK = 10
+BUMP = 50
+REST = 250
 
 # automatic constants
 PITCH_LOW, PITCH_HIGH = 3000, 4500
@@ -22,11 +21,3 @@ MOTION = False
 STATUS = False
 BLINK = True
 CHIRP = True
-
-
-from util import *
-
-
-
-
-
