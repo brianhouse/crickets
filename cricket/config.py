@@ -2,10 +2,10 @@
 POWER = 7
 RANGE = -70
 MAX_HOOD = 8
-MIN_HOOD = 3
+MIN_HOOD = 1  #
 FRIEND_LINK = .2
 GROUP_LEADER = .2
-SEVER = -4
+SEVER = -3
 
 # capacitor constants
 TICK = 10
@@ -18,6 +18,7 @@ HUM_LOW, HUM_HIGH = 10, 20
 
 # behavior constants
 MOTION = False
-STATUS = False
-BLINK = True
-CHIRP = True
+STATUS = True   #
+BLINK = False   #
+CHIRP = False   #
+HUM = False     #

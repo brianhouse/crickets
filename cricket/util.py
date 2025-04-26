@@ -52,7 +52,7 @@ class Node():
         self.neighbors.clear()
         for ssid, bssid, channel, rssi, security, hidden in self.sta.scan():
             if ssid.decode('utf-8').split("_")[0] == "CK":
-                self.neighbors.append(Peer.find(ssid=ssid))
+                self.neighbors.append(Peer.find(ssid=ssid, rssi=rssi))
         self.neighbors.sort(key=lambda n: r.rssi, reverse=True)
         return self.neighbors
 
@@ -83,16 +83,16 @@ class Peer():
     seen_peers = []
 
     @classmethod
-    def find(cls, name=None, ssid=None, bin_mac=None):
+    def find(cls, name=None, ssid=None, bin_mac=None, rssi=None):
         for peer in cls.seen_peers:
             if peer.name == name or peer.ssid == ssid or peer.bin_mac == bin_mac:
                 peer.recips = 0
                 return peer
-        peer = Peer(name, ssid)
+        peer = Peer(name=name, ssid=ssid, rssi=rssi)
         cls.seen_peers.append(peer)
         return peer
 
-    def __init__(self, name=None, ssid=None, bin_mac=None):
+    def __init__(self, name=None, ssid=None, bin_mac=None, rssi=None):
         if not name and not ssid and not bin_mac:
             raise Exception("Peer() needs name or ssid or bin_mac")
         if name:
@@ -111,17 +111,36 @@ class Peer():
             self.name = mac_to_name(self.hex_mac)
             self.ssid = name_to_ssid(self.name)
         self.recips = 0
-        print("CREATED", self.name)
+        self._rssi = rssi
+        print("CREATED", self)
 
     @property
     def rssi(self):
         try:
             return Node.current.mesh.peers_table[self.bin_mac][0]
         except KeyError:
+            if self._rssi is not None:
+                return self._rssi
             return None
 
     def __repr__(self):
         return f"{self.name} {self.rssi or ''}"
+
+
+class O():
+
+    pause = True
+
+    @classmethod
+    def print(cls, *args):
+        if cls.pause:
+            print("-----")
+            cls.pause = False
+        print(*args)
+
+    @classmethod
+    def reset(cls):
+        cls.pause = True
 
 
 def name_to_ssid(name):
