@@ -23,26 +23,28 @@ class Cricket(Node):
         self.t_previous = ticks_ms()
         while True:
             # try:
+                await asyncio.sleep_ms(1)
                 t = ticks_ms()
                 t_elapsed = ticks_diff(t, self.t_previous)
                 if t_elapsed >= TICK:
+                    self.t_previous = t
                     error = abs(t_elapsed - TICK)
                     # O.print("TICK", t_elapsed)
                     if error > 15:  # perceptibility
                         O.print("*", error)
                     O.reset()
-                    self.t_previous = t
                     self.phase = min(self.phase + (t_elapsed / 1000), 1.0)
                     self.capacitor = self.f(self.phase)
                     if self.capacitor >= 1.0:
-                        await self.flash()
+                        self.flash()
+                        continue
                     # O.print("MEM", gc.mem_free())
-                    self.listen()
+                    if self.listen():
+                        continue
                     if len(self.peers) < MIN_HOOD:
                         O.print("LONELY")
                         self.look()
                     gc.collect()
-                await asyncio.sleep_ms(1)
             # except Exception as e:
             #     O.print(e)
 
@@ -58,6 +60,7 @@ class Cricket(Node):
             SND.freq(self.hum)
         self.clear_peers()
         neighbors = self.scan()
+        print(neighbors)
         if len(neighbors):
             for i in range(MIN_HOOD):
                 if i < len(neighbors) and neighbors[i].rssi > RANGE:
@@ -79,14 +82,14 @@ class Cricket(Node):
             # both unassigned
             if self.group == "null" and sender_group == "null":
                 if self.bump():
-                    return
+                    return True
 
             # self unassigned, sender assigned
             elif self.group == "null":
                 self.group = sender_group
                 self.add_peer(sender)
                 if self.bump():
-                    return
+                    return True
 
             # self assigned, sender unassigned
             elif sender_group == "null":
@@ -99,13 +102,22 @@ class Cricket(Node):
                     if friend != "null" and friend != self.name and random() < FRIEND_LINK:
                         self.add_peer(Peer.find(name=friend))
                     if self.bump():
-                        return
+                        return True
                 else:
                     self.remove_peer(sender)
 
+        return False
+
     def cull_peers(self):
 
-        # distance
+        # anybody ghosted?
+        for peer in self.peers:
+            peer.recips -= 1
+            if peer.recips < SEVER:
+                O.print("GHOST", peer)
+                self.remove_peer(peer)
+
+        # really too far
         for peer in self.peers:
             if peer.rssi is not None and peer.rssi < RANGE:
                 O.print("DIS", peer)
@@ -127,37 +139,36 @@ class Cricket(Node):
             return
         O.print(f"ADD {peer}")
         self.peers.append(peer)
-        self.mesh.add_peer(peer.bin_mac)
+        try:
+            Node.add_peer(self, peer.bin_mac)
+        except Exception as e:
+            O.print(e)
 
     def remove_peer(self, peer):
         if peer in self.peers:
             O.print(f"REMOVE {peer}")
+            self.peers.remove(peer)
             try:
-                self.peers.remove(peer)
-                self.mesh.del_peer(peer.bin_mac)
+                Node.remove_peer(self, peer.bin_mac)
             except Exception as e:
                 O.print(e)
 
     def clear_peers(self):
         for peer in self.peers:
             try:
-                self.mesh.del_peer(peer.bin_mac)
+                Node.remove_peer(self, peer.bin_mac)
             except Exception as e:
                 O.print(e)
         self.peers.clear()
 
-    async def send(self):
+    def send(self):
         O.print("SEND", self.peers)
-        for peer in self.peers:
-            peer.recips -= 1
-            if peer.recips < SEVER:
-                O.print("GHOST", peer)
-                self.remove_peer(peer)
         friend = choice(self.peers).name if len(self.peers) else "null"
         if len(self.peers):
-            await Node.send(self, f"flash {self.group} {friend}")
+            Node.send(self, f"flash {self.group} {friend}")
+        self.cull_peers()
 
-    async def flash(self):
+    def flash(self):
         O.print("FLASH")
         self.phase = 0.0
         self.capacitor = 0.0
@@ -165,8 +176,7 @@ class Cricket(Node):
             LED.on()
         if STATUS:
             STS.on()
-        self.cull_peers()
-        await self.send()
+        self.send()
         if CHIRP:
             SND.duty(512)
             SND.freq(self.pitch * 2)

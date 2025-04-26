@@ -1,7 +1,7 @@
 import math
 import gc
 import uasyncio as asyncio
-import aioespnow
+import espnow
 import bluetooth
 import ubinascii
 import network
@@ -39,7 +39,7 @@ class Node():
         self.ap.config(ssid=name_to_ssid(self.name), password="pulsecoupled", authmode=network.AUTH_WPA2_PSK)
 
         # activate mesh
-        self.mesh = aioespnow.AIOESPNow()
+        self.mesh = espnow.ESPNow()
         self.mesh.active(True)
 
         # create objects
@@ -52,30 +52,42 @@ class Node():
         self.neighbors.clear()
         for ssid, bssid, channel, rssi, security, hidden in self.sta.scan():
             if ssid.decode('utf-8').split("_")[0] == "CK":
-                self.neighbors.append(Peer.find(ssid=ssid, rssi=rssi))
-        self.neighbors.sort(key=lambda n: r.rssi, reverse=True)
+                print(ssid, rssi)
+                peer = Peer.find(ssid=ssid)
+                peer.scan_rssi = rssi
+                self.neighbors.append(peer)
+        self.neighbors.sort(key=lambda n: n.rssi, reverse=True)
         return self.neighbors
 
-    async def send(self, message):
+    def send(self, message):
         try:
-            await self.mesh.asend(None, message, False)
+            self.mesh.send(None, message, False)
         except Exception as e:
             print("Can't send", f"({e})")
 
     def receive(self):
         self.messages.clear()
         while True:
-            sender, message = self.mesh.recv(0)
-            if sender is None or message is None:
+            bin_mac, message = self.mesh.recv(0)
+            if bin_mac is None or message is None:
                 break
-            sender = Peer.find(bin_mac=sender)
+            peer = Peer.find(bin_mac=bin_mac)
+            peer.scan_rssi = None
             try:
                 message = message.decode()
             except Exception as e:
-                print(f"Received bad message ({e}) from {sender}")
+                print(f"Received bad message ({e}) from {peer}")
             else:
-                self.messages.append((sender, message))
+                self.messages.append((peer, message))
         return self.messages
+
+    def add_peer(self, bin_mac):
+        self.mesh.add_peer(bin_mac)
+        print("added to mesh")
+
+    def remove_peer(self, bin_mac):
+        self.mesh.del_peer(bin_mac)
+        print("removed from mesh")
 
 
 class Peer():
@@ -83,16 +95,16 @@ class Peer():
     seen_peers = []
 
     @classmethod
-    def find(cls, name=None, ssid=None, bin_mac=None, rssi=None):
+    def find(cls, name=None, ssid=None, bin_mac=None):
         for peer in cls.seen_peers:
             if peer.name == name or peer.ssid == ssid or peer.bin_mac == bin_mac:
-                peer.recips = 0
+                peer.reset()
                 return peer
-        peer = Peer(name=name, ssid=ssid, rssi=rssi)
+        peer = Peer(name=name, ssid=ssid, bin_mac=None)
         cls.seen_peers.append(peer)
         return peer
 
-    def __init__(self, name=None, ssid=None, bin_mac=None, rssi=None):
+    def __init__(self, name=None, ssid=None, bin_mac=None):
         if not name and not ssid and not bin_mac:
             raise Exception("Peer() needs name or ssid or bin_mac")
         if name:
@@ -110,17 +122,22 @@ class Peer():
             self.hex_mac = bin_to_hex(self.bin_mac)
             self.name = mac_to_name(self.hex_mac)
             self.ssid = name_to_ssid(self.name)
-        self.recips = 0
-        self._rssi = rssi
+        self.reset()
         print("CREATED", self)
+
+    def reset(self):
+        self.recips = 0
+        self.scan_rssi = None
 
     @property
     def rssi(self):
+        if self.scan_rssi is not None:
+            print('returning scan_rssi')
+            return self.scan_rssi
         try:
+            print('returning peers_table')
             return Node.current.mesh.peers_table[self.bin_mac][0]
         except KeyError:
-            if self._rssi is not None:
-                return self._rssi
             return None
 
     def __repr__(self):
