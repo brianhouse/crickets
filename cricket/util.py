@@ -7,7 +7,7 @@ import ubinascii
 import network
 from machine import Pin, PWM
 from time import ticks_ms, ticks_diff, sleep_ms
-from random import random, randint
+from random import random, randint, choice
 from config import *
 
 
@@ -42,14 +42,17 @@ class Node():
         self.mesh = aioespnow.AIOESPNow()
         self.mesh.active(True)
 
+        # create objects
         self.messages = []
         self.neighbors = []
+
+        Node.current = self
 
     def scan(self):
         self.neighbors.clear()
         for ssid, bssid, channel, rssi, security, hidden in self.sta.scan():
             if ssid.decode('utf-8').split("_")[0] == "CK":
-                self.neighbors.append(Peers.find(ssid=ssid))
+                self.neighbors.append(Peer.find(ssid=ssid))
         self.neighbors.sort(key=lambda n: r.rssi, reverse=True)
         return self.neighbors
 
@@ -67,7 +70,7 @@ class Node():
             sender, message = self.mesh.recv(0)
             if sender is None or message is None:
                 break
-            sender = Peers.find(name=sender)
+            sender = Peer.find(name=sender)
             try:
                 message = message.decode()
             except Exception as e:
@@ -101,17 +104,17 @@ class Peer():
             self.name = ssid_to_name(ssid)
         self.hex_mac = name_to_mac(self.name)
         self.bin_mac = hex_to_bin(self.hex_mac)
-        self.rssi = None
         self.recips = 0
+        print("CREATED", name)
 
     @property
     def rssi(self):
         try:
-            return self.mesh.peers_table[self.bin_mac][0]
+            return Node.current.mesh.peers_table[self.bin_mac][0]
         except KeyError:
             return None
 
-    def __str__(self):
+    def __repr__(self):
         return self.name
 
 

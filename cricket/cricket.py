@@ -6,6 +6,7 @@ class Cricket(Node):
 
     def __init__(self):
         Node.__init__(self)
+        SND.duty(0)
         self.phase = random()
         self.capacitor = self.f(self.phase)
         self.pitch = randint(PITCH_LOW, PITCH_HIGH)
@@ -17,6 +18,7 @@ class Cricket(Node):
 
     async def run(self):
         await asyncio.sleep_ms(randint(1000, 3000))
+        self.look()
         self.t_previous = ticks_ms()
         while True:
             # try:
@@ -25,7 +27,7 @@ class Cricket(Node):
                 if t_elapsed >= TICK:
                     error = abs(t_elapsed - TICK)
                     # print("TICK", t_elapsed)
-                    if error > 10:
+                    if error > 15:  # perceptibility
                         print("JITTER", error)
                     self.t_previous = t
                     self.phase = min(self.phase + (t_elapsed / 1000), 1.0)
@@ -91,7 +93,7 @@ class Cricket(Node):
                 if self.group == sender_group:
                     self.add_peer(sender)
                     if friend != "null" and random() < FRIEND_LINK:
-                        self.add_peer(Peers.find(name=friend))
+                        self.add_peer(Peer.find(name=friend))
                     if self.bump():
                         return
                 else:
@@ -112,6 +114,7 @@ class Cricket(Node):
         if peer in self.peers:
             return
         print(f"ADD {peer}")
+        self.peers.append(peer)
         self.mesh.add_peer(peer.bin_mac)
 
     def remove_peer(self, peer):
@@ -141,7 +144,7 @@ class Cricket(Node):
             STS.on()
 
         friend = choice(self.peers).name if len(self.peers) else "null"
-        print("SEND", self.peers, friend)
+        print("SEND", self.peers)
         await self.send(f"flash {self.group} {friend}")
 
         if CHIRP:
