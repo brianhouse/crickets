@@ -69,9 +69,7 @@ class Cricket(Node):
         O.print("--> DONE")
 
     def listen(self):
-        messages = self.receive()
-        for message in messages:
-            sender, message = message
+        for sender, message in self.receive():
             O.print("GOT", message, "from", sender)
             if sender.rssi < RANGE:
                 print("TOO FAR")

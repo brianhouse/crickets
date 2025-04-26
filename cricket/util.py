@@ -71,7 +71,7 @@ class Node():
                 bin_mac, message = self.mesh.recv(0)
             except Exception as e:
                 print(e)
-                return self.messages
+                break
             if bin_mac is None or message is None:
                 break
             peer = Peer.find(bin_mac=bin_mac)
@@ -81,7 +81,13 @@ class Node():
             except Exception as e:
                 print(f"Received bad message ({e}) from {peer}")
             else:
-                self.messages.append((peer, message))
+                dup = False
+                for message in self.messages:
+                    if message[0] == peer:
+                        dup = True
+                        print('caught dup')
+                if not dup:
+                    self.messages.append((peer, message))
         return self.messages
 
     def add_peer(self, bin_mac):
