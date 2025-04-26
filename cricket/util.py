@@ -57,8 +57,6 @@ class Node():
         return self.neighbors
 
     async def send(self, message):
-        if not len(self.mesh.peers_table):
-            return
         try:
             await self.mesh.asend(None, message, False)
         except Exception as e:
@@ -70,13 +68,13 @@ class Node():
             sender, message = self.mesh.recv(0)
             if sender is None or message is None:
                 break
-            sender = Peer.find(name=sender)
+            sender = Peer.find(bin_mac=sender)
             try:
                 message = message.decode()
             except Exception as e:
                 print(f"Received bad message ({e}) from {sender}")
             else:
-                self.messages.append(sender, message)
+                self.messages.append((sender, message))
         return self.messages
 
 
@@ -85,27 +83,35 @@ class Peer():
     seen_peers = []
 
     @classmethod
-    def find(cls, name=None, ssid=None):
+    def find(cls, name=None, ssid=None, bin_mac=None):
         for peer in cls.seen_peers:
-            if peer.name == name or peer.ssid == ssid:
+            if peer.name == name or peer.ssid == ssid or peer.bin_mac == bin_mac:
+                peer.recips = 0
                 return peer
         peer = Peer(name, ssid)
         cls.seen_peers.append(peer)
         return peer
 
-    def __init__(self, name=None, ssid=None):
-        if not name and not ssid:
-            raise Exception("Peer() needs name or ssid")
+    def __init__(self, name=None, ssid=None, bin_mac=None):
+        if not name and not ssid and not bin_mac:
+            raise Exception("Peer() needs name or ssid or bin_mac")
         if name:
             self.name = name
-            self.ssid = name_to_ssid(name)
+            self.ssid = name_to_ssid(self.name)
+            self.hex_mac = name_to_mac(self.name)
+            self.bin_mac = hex_to_bin(self.hex_mac)
         elif ssid:
             self.ssid = ssid
-            self.name = ssid_to_name(ssid)
-        self.hex_mac = name_to_mac(self.name)
-        self.bin_mac = hex_to_bin(self.hex_mac)
+            self.name = ssid_to_name(self.ssid)
+            self.hex_mac = name_to_mac(self.name)
+            self.bin_mac = hex_to_bin(self.hex_mac)
+        elif bin_mac:
+            self.bin_mac = bin_mac
+            self.hex_mac = bin_to_hex(self.bin_mac)
+            self.name = mac_to_name(self.hex_mac)
+            self.ssid = name_to_ssid(self.name)
         self.recips = 0
-        print("CREATED", name)
+        print("CREATED", self.name)
 
     @property
     def rssi(self):
@@ -115,7 +121,7 @@ class Peer():
             return None
 
     def __repr__(self):
-        return self.name
+        return f"{self.name} {self.rssi or ''}"
 
 
 def name_to_ssid(name):

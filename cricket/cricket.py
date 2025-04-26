@@ -19,6 +19,7 @@ class Cricket(Node):
     async def run(self):
         await asyncio.sleep_ms(randint(1000, 3000))
         self.look()
+        self.receive()  # clear messages
         self.t_previous = ticks_ms()
         while True:
             # try:
@@ -28,7 +29,7 @@ class Cricket(Node):
                     error = abs(t_elapsed - TICK)
                     # print("TICK", t_elapsed)
                     if error > 15:  # perceptibility
-                        print("JITTER", error)
+                        print("*", error)
                     self.t_previous = t
                     self.phase = min(self.phase + (t_elapsed / 1000), 1.0)
                     self.capacitor = self.f(self.phase)
@@ -66,7 +67,7 @@ class Cricket(Node):
         messages = self.receive()
         for message in messages:
             sender, message = message
-            # print("--> received from", sender, ": ", in_message)
+            print("GOT", message, "from", sender)
             _, sender_group, friend = message.split(" ")
 
             if sender in self.peers:
@@ -92,7 +93,7 @@ class Cricket(Node):
             else:
                 if self.group == sender_group:
                     self.add_peer(sender)
-                    if friend != "null" and random() < FRIEND_LINK:
+                    if friend != "null" and friend != self.name and random() < FRIEND_LINK:
                         self.add_peer(Peer.find(name=friend))
                     if self.bump():
                         return
@@ -100,6 +101,7 @@ class Cricket(Node):
                     self.remove_peer(sender)
 
     def cull_peers(self):
+        ### do recips
         # if more than MAX_HOOD peers and a last peer has an rssi, remove it (and avoid sort())
         # (recips will take care of it if there's peers w/o an rssi)
         furthest = None
@@ -107,7 +109,7 @@ class Cricket(Node):
             if peer.rssi is not None and (furthest is None or peer.rssi < furthest.rssi):
                 peer = furthest
         if furthest is not None:
-            print(furthest, "CUT", furthest.rssi)
+            print("CUT", furthest)
             self.remove_peer(furthest)
 
     def add_peer(self, peer):
@@ -145,7 +147,8 @@ class Cricket(Node):
 
         friend = choice(self.peers).name if len(self.peers) else "null"
         print("SEND", self.peers)
-        await self.send(f"flash {self.group} {friend}")
+        if len(self.peers):
+            await self.send(f"flash {self.group} {friend}")
 
         if CHIRP:
             SND.duty(512)
@@ -162,7 +165,7 @@ class Cricket(Node):
             STS.off()
 
     def bump(self):
-        if self.phase / 1000 < REST:
+        if self.phase * 1000 < REST:
             print("REST")
             return False
         print("BUMP")
