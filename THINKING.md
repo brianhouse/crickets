@@ -89,12 +89,5 @@ point is, 300 is going to be enough
 
 ## group formation
 
-if a message is received that is closer, add it and remove the farthest one
-
-the flash also sends a friend. if that one is closer, add that one too
-
-if after X sends it's not reciprocated, remove it
-
-
 
 

@@ -22,3 +22,5 @@ STATUS = True   #
 BLINK = False   #
 CHIRP = False   #
 HUM = False     #
+
+DEBUG = True    #

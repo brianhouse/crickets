@@ -5,7 +5,7 @@ from config import *
 class Cricket(Node):
 
     def __init__(self):
-        Node.__init__(self)
+        super().__init__()
         SND.duty(0)
         self.phase = random()
         self.capacitor = self.f(self.phase)
@@ -22,7 +22,7 @@ class Cricket(Node):
         self.receive()  # clear messages
         self.t_previous = ticks_ms()
         while True:
-            # try:
+            try:
                 await asyncio.sleep_ms(1)
                 t = ticks_ms()
                 t_elapsed = ticks_diff(t, self.t_previous)
@@ -45,8 +45,11 @@ class Cricket(Node):
                         O.print("LONELY")
                         self.look()
                     gc.collect()
-            # except Exception as e:
-            #     O.print(e)
+            except Exception as e:
+                if DEBUG:
+                    raise(e)
+                else:
+                    O.print(e)
 
     def look(self):
         self.group = "null"
@@ -141,7 +144,7 @@ class Cricket(Node):
         O.print(f"ADD {peer}")
         self.peers.append(peer)
         try:
-            Node.add_peer(self, peer.bin_mac)
+            super().add_peer(peer.bin_mac)
         except Exception as e:
             O.print(e)
 
@@ -150,14 +153,14 @@ class Cricket(Node):
             O.print(f"REMOVE {peer}")
             self.peers.remove(peer)
             try:
-                Node.remove_peer(self, peer.bin_mac)
+                super().remove_peer(peer.bin_mac)
             except Exception as e:
                 O.print(e)
 
     def clear_peers(self):
         for peer in self.peers:
             try:
-                Node.remove_peer(self, peer.bin_mac)
+                super().remove_peer(peer.bin_mac)
             except Exception as e:
                 O.print(e)
         self.peers.clear()
@@ -166,7 +169,7 @@ class Cricket(Node):
         O.print("SEND", self.peers)
         if len(self.peers):
             friend = choice(self.peers).name
-            Node.send(self, f"flash {self.group} {friend}")
+            super().send(f"flash {self.group} {friend}")
         self.cull_peers()
 
     def flash(self):
