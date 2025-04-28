@@ -1,5 +1,8 @@
 reload to make sure message dups works, test with double sends
 
+try the same thing with the close range, make sure the new scan limit works
+
+
 change config
 
 TEST WITH MANAGER

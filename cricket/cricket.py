@@ -62,10 +62,10 @@ class Cricket(Node):
             SND.duty(512)
             SND.freq(self.hum)
         self.clear_peers()
-        neighbors = self.scan()
+        neighbors = self.scan(RANGE)
         if len(neighbors):
             for i in range(MIN_HOOD):
-                if i < len(neighbors) and neighbors[i].rssi >= RANGE:
+                if i < len(neighbors):
                     self.add_peer(neighbors[i])
         if HUM:
             SND.duty(0)

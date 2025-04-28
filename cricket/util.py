@@ -48,9 +48,11 @@ class Node():
 
         Node.current = self
 
-    def scan(self):
+    def scan(self, rssi_limit=None):
         self.neighbors.clear()
         for ssid, bssid, channel, rssi, security, hidden in self.sta.scan():
+            if rssi_limit and rssi < rssi_limit:
+                continue
             if ssid.decode('utf-8').split("_")[0] == "CK":
                 peer = Peer.find(ssid=ssid)
                 peer.scan_rssi = rssi
