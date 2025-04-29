@@ -109,7 +109,7 @@ class Peer():
             if peer.name == name or peer.ssid == ssid or peer.bin_mac == bin_mac:
                 peer.reset()
                 return peer
-        peer = Peer(name=name, ssid=ssid, bin_mac=None)
+        peer = Peer(name=name, ssid=ssid, bin_mac=bin_mac)
         cls.seen_peers.append(peer)
         return peer
 
