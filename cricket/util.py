@@ -90,6 +90,8 @@ class Node():
                         print('caught dup')
                 if not dup:
                     self.messages.append((peer, message))
+        if len(self.messages):
+            print("messages", self.messages)
         return self.messages
 
     def add_peer(self, bin_mac):
@@ -197,3 +199,9 @@ def hex_to_bin(hex_mac):
 
 def reverse(s):
     return "".join(reversed([c for c in s]))
+
+
+
+
+
+
