@@ -2,7 +2,7 @@
 POWER = 7
 RANGE = -70
 MAX_HOOD = 8
-MIN_HOOD = 1  #
+MIN_HOOD = 3
 FRIEND_LINK = .2
 GROUP_LEADER = .2
 SEVER = -3
@@ -18,9 +18,9 @@ HUM_LOW, HUM_HIGH = 10, 20
 
 # behavior constants
 MOTION = False
-STATUS = True   #
-BLINK = False   #
-CHIRP = False   #
-HUM = False     #
+STATUS = False
+BLINK = True
+CHIRP = True
+HUM = True
 
-DEBUG = True    #
+DEBUG = False
