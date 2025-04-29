@@ -39,8 +39,7 @@ class Cricket(Node):
                         self.flash()
                         continue
                     # O.print("MEM", gc.mem_free())
-                    if self.listen():
-                        continue
+                    self.listen()
                     if len(self.peers) < MIN_HOOD:
                         O.print("LONELY")
                         self.look()
@@ -76,7 +75,7 @@ class Cricket(Node):
             O.print("GOT", message, "from", sender)
             if sender.rssi < RANGE:
                 print("TOO FAR")
-                return False
+                continue
 
             _, sender_group, friend = message.split(" ")
 
@@ -86,14 +85,14 @@ class Cricket(Node):
             # both unassigned
             if self.group == "null" and sender_group == "null":
                 if self.bump():
-                    return True
+                    return
 
             # self unassigned, sender assigned
             elif self.group == "null":
                 self.group = sender_group
                 self.add_peer(sender)
                 if self.bump():
-                    return True
+                    return
 
             # self assigned, sender unassigned
             elif sender_group == "null":
@@ -106,7 +105,7 @@ class Cricket(Node):
                     if friend != "null" and friend != self.name and random() < FRIEND_LINK:
                         self.add_peer(Peer.find(name=friend))
                     if self.bump():
-                        return True
+                        return
                 else:
                     self.remove_peer(sender)
 
@@ -200,11 +199,12 @@ class Cricket(Node):
             O.print("REST")
             return False
         O.print("BUMP")
-        self.capacitor = min(self.capacitor + BUMP, 1.0)
+        self.capacitor = min(self.capacitor + BUMP / 1000, 1.0)
         self.phase = self.f_inv(self.capacitor)
         if self.capacitor >= 1.0:
             self.flash()
-        return True
+            return True
+        return False
 
     def f(self, x):
         return math.sin((math.pi / 2) * x)
