@@ -14,6 +14,7 @@ class Cricket(Node):
         self.t_previous = ticks_ms()
         self.group = "null"
         self.peers = []
+        self.paused = False
         O.print(f"## {self.name} ##")
 
     async def run(self):
@@ -22,6 +23,11 @@ class Cricket(Node):
         self.receive()  # clear messages
         self.t_previous = ticks_ms()
         while True:
+            if self.paused:
+                LED.on()
+                STS.on()
+                await asyncio.sleep(1)
+                continue
             try:
                 await asyncio.sleep_ms(1)
                 t = ticks_ms()
@@ -199,7 +205,7 @@ class Cricket(Node):
             O.print("REST")
             return False
         O.print("BUMP")
-        self.capacitor = min(self.capacitor + BUMP / 1000, 1.0)
+        self.capacitor = min(self.capacitor + (BUMP / 1000), 1.0)
         self.phase = self.f_inv(self.capacitor)
         if self.capacitor >= 1.0:
             self.flash()

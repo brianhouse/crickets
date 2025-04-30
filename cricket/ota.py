@@ -6,6 +6,8 @@ from time import sleep
 
 async def handle_request(reader, writer):
     reset = False
+    updated = False
+    resume = False
     request = b""
     while True:
         try:
@@ -24,6 +26,8 @@ async def handle_request(reader, writer):
     elif page == "/reset":
         content = "resetting"
         reset = True
+    elif page == "/resume":
+        resume = True
     elif page == "/file":
         content = "NO FILE DATA"
         for header in headers:
@@ -36,6 +40,7 @@ async def handle_request(reader, writer):
                         with open(f"/{filename}", 'wb') as f:
                             f.write(file_data)
                             content = "SUCCESS"
+                            updated = True
     else:
         content = "HELLO WORLD"
     headers = ("HTTP/1.1 200 OK",
@@ -48,6 +53,10 @@ async def handle_request(reader, writer):
     writer.write(content.encode('utf-8'))
     await writer.drain()
     await writer.wait_closed()
+    if updated:
+        cricket.paused = True
+    if resume:
+        cricket.paused = False
     if reset:
         sleep(2)
         machine.reset()
