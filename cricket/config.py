@@ -20,7 +20,7 @@ HUM_LOW, HUM_HIGH = 10, 20
 MOTION = False
 STATUS = False
 BLINK = True
-CHIRP = True
+CHIRP = False
 HUM = True
 
 DEBUG = False

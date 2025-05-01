@@ -2,6 +2,7 @@ import machine
 import uasyncio as asyncio
 import ujson, socket, re
 from time import sleep
+from config import DEBUG
 
 
 async def handle_request(reader, writer):
@@ -17,49 +18,55 @@ async def handle_request(reader, writer):
         if not chunk:
             break
         request += chunk
-    request = request.decode('utf-8')
-    print(request)
-    headers = request.split('\r\n')
-    page = headers[0].split()[1] if len(headers) > 0 else "/"
-    if page == "/peers":
-        content = f"{cricket.name} {cricket.group} {cricket.peers}"
-    elif page == "/reset":
-        content = "resetting"
-        reset = True
-    elif page == "/resume":
-        resume = True
-    elif page == "/file":
-        content = "NO FILE DATA"
-        for header in headers:
-            if header.startswith("Content-Type:"):
-                if "boundary=" in header:
-                    boundary_start = header.find("boundary=") + len("boundary=")
-                    boundary = header[boundary_start:].strip()
-                    file_data, filename = await extract_file(request, boundary)
-                    if file_data:
-                        with open(f"/{filename}", 'wb') as f:
-                            f.write(file_data)
-                            content = "SUCCESS"
-                            updated = True
-    else:
-        content = "HELLO WORLD"
-    headers = ("HTTP/1.1 200 OK",
-               "Content-Type: text/plain; charset=utf-8",
-               f"Content-Length: {len(content)}",
-               "\r\n"
-               )
-    print(content)
-    writer.write("\r\n".join(headers).encode('utf-8'))
-    writer.write(content.encode('utf-8'))
-    await writer.drain()
-    await writer.wait_closed()
-    if updated:
-        cricket.paused = True
-    if resume:
-        cricket.paused = False
-    if reset:
-        sleep(2)
-        machine.reset()
+    try:
+        request = request.decode('utf-8')
+        print(request)
+        headers = request.split('\r\n')
+        page = headers[0].split()[1] if len(headers) > 0 else "/"
+        if page == "/peers":
+            content = f"{cricket.name} {cricket.group} {cricket.peers}"
+        elif page == "/reset":
+            content = "resetting"
+            reset = True
+        elif page == "/resume":
+            resume = True
+        elif page == "/file":
+            content = "NO FILE DATA"
+            for header in headers:
+                if header.startswith("Content-Type:"):
+                    if "boundary=" in header:
+                        boundary_start = header.find("boundary=") + len("boundary=")
+                        boundary = header[boundary_start:].strip()
+                        file_data, filename = await extract_file(request, boundary)
+                        if file_data:
+                            with open(f"/{filename}", 'wb') as f:
+                                f.write(file_data)
+                                content = "SUCCESS"
+                                updated = True
+        else:
+            content = "HELLO WORLD"
+        headers = ("HTTP/1.1 200 OK",
+                   "Content-Type: text/plain; charset=utf-8",
+                   f"Content-Length: {len(content)}",
+                   "\r\n"
+                   )
+        print(content)
+        writer.write("\r\n".join(headers).encode('utf-8'))
+        writer.write(content.encode('utf-8'))
+        await writer.drain()
+        await writer.wait_closed()
+        if updated:
+            cricket.paused = True
+        if resume:
+            cricket.paused = False
+        if reset:
+            sleep(2)
+            machine.reset()
+    except Exception as e:
+        if DEBUG:
+            raise e
+        else:
+            print(e)
 
 
 async def extract_file(request, boundary):
