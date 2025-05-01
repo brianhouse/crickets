@@ -21,6 +21,6 @@ MOTION = False
 STATUS = False
 BLINK = True
 CHIRP = False
-HUM = True
+HUM = False
 
 DEBUG = False

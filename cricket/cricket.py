@@ -89,23 +89,13 @@ class Cricket(Node):
             if sender in self.peers:
                 sender.recip = 0
 
-            # both unassigned
-            if self.group == "null" and sender_group == "null":
-                if self.bump():
-                    return
-
-            # self unassigned, sender assigned
-            elif self.group == "null":
-                self.group = sender_group
+            if self.group == "null":
+                if sender_group != "null":
+                    self.group = sender_group
                 self.add_peer(sender)
                 if self.bump():
                     return
 
-            # self assigned, sender unassigned
-            elif sender_group == "null":
-                self.add_peer(sender)
-
-            # both have groups assigned
             else:
                 if self.group == sender_group:
                     self.add_peer(sender)
@@ -135,7 +125,7 @@ class Cricket(Node):
 
         # if more than MAX_HOOD peers and a last peer has an rssi, remove it (and avoid sort())
         # (recips will take care of it if there's peers w/o an rssi)
-        if len(self.peers) > MAX_HOOD:
+        while len(self.peers) > MAX_HOOD:
             furthest = None
             for peer in self.peers:
                 if peer.rssi is not None and (furthest is None or peer.rssi < furthest.rssi):
