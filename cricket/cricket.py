@@ -19,7 +19,7 @@ class Cricket(Node):
 
     async def run(self):
         await asyncio.sleep_ms(randint(1000, 3000))
-        self.look()
+        await self.look()
         self.receive()  # clear messages
         self.t_previous = ticks_ms()
         while True:
@@ -48,7 +48,7 @@ class Cricket(Node):
                     self.listen()
                     if len(self.peers) < MIN_HOOD:
                         O.print("LONELY")
-                        self.look()
+                        await self.look()
                     gc.collect()
             except Exception as e:
                 if DEBUG:
@@ -56,7 +56,7 @@ class Cricket(Node):
                 else:
                     O.print(e)
 
-    def look(self):
+    async def look(self):
         self.group = "null"
         if random() < GROUP_LEADER:
             self.group = self.name
