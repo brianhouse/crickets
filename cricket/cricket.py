@@ -52,7 +52,7 @@ class Cricket(Node):
                     gc.collect()
             except Exception as e:
                 if DEBUG:
-                    raise(e)
+                    raise e
                 else:
                     O.print(e)
 
