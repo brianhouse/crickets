@@ -84,29 +84,40 @@ class Cricket(Node):
                 print("TOO FAR")
                 continue
 
-            _, sender_group, friend = message.split(" ")
+            _, sender_group, friend_name = message.split(" ")
 
             if sender in self.peers:
                 sender.recip = 0
 
-            if self.group == "null":
-                if sender_group != "null":
-                    self.group = sender_group
+            # both unassigned
+            if self.group == "null" and sender_group == "null":
+                if self.bump():
+                    return
+
+            # self unassigned, sender assigned
+            elif self.group == "null":
+                self.group = sender_group
                 self.add_peer(sender)
                 if self.bump():
                     return
 
+            # self assigned, sender unassigned
+            elif sender_group == "null":
+                self.add_peer(sender)
+
+            # both have groups assigned
             else:
                 if self.group == sender_group:
                     self.add_peer(sender)
-                    if friend != "null" and friend != self.name and random() < FRIEND_LINK:
-                        self.add_peer(Peer.find(name=friend))
+                    if friend != "null" and friend_name != self.name and random() < FRIEND_LINK:
+                        friend = Peer.find(name=friend_name)
+                        if friend.rssi is None or friend.rssi >= RANGE:
+                            self.add_peer(friend)
                     if self.bump():
                         return
                 else:
                     self.remove_peer(sender)
 
-        return False
 
     def cull_peers(self):
 
@@ -166,7 +177,6 @@ class Cricket(Node):
         if len(self.peers):
             friend = choice(self.peers).name
             super().send(f"flash {self.group} {friend}")
-        self.cull_peers()
 
     def flash(self):
         O.print("FLASH")
@@ -176,6 +186,7 @@ class Cricket(Node):
             LED.on()
         if STATUS:
             STS.on()
+        self.cull_peers()
         self.send()
         if CHIRP:
             SND.duty(512)
