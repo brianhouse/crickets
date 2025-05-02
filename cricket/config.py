@@ -1,15 +1,15 @@
 # connection constants
-POWER = 7
-RANGE = -70
+POWER = 6
+RANGE = -55
 MAX_HOOD = 8
-MIN_HOOD = 3
+MIN_HOOD = 1
 FRIEND_LINK = .2
 GROUP_LEADER = .2
 SEVER = -3
 
 # capacitor constants
 TICK = 10
-BUMP = 50
+BUMP = 25
 REST = 250
 
 # automatic constants

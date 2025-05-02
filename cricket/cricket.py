@@ -64,6 +64,7 @@ class Cricket(Node):
             self.group = self.name
             O.print("LEADER")
         O.print("LOOK...")
+        STS.on()
         if HUM:
             SND.duty(0)
             SND.duty(512)
@@ -75,6 +76,7 @@ class Cricket(Node):
             for i in range(MIN_HOOD):
                 if i < len(neighbors):
                     self.add_peer(neighbors[i])
+        STS.off()
         if HUM:
             SND.duty(0)
         O.print("--> DONE")
