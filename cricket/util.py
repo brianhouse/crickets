@@ -7,7 +7,7 @@ import ubinascii
 import network
 from machine import Pin, PWM
 from time import ticks_ms, ticks_diff, sleep_ms
-from random import random, randint, choice
+from random import random, randint, choice, randrange
 from config import *
 
 
@@ -48,16 +48,19 @@ class Node():
 
         Node.current = self
 
-    def scan(self, rssi_limit=None):
+    def scan(self, rssi_limit=None, sort=False):
         self.neighbors.clear()
         for ssid, bssid, channel, rssi, security, hidden in self.sta.scan():
-            if rssi_limit and rssi < rssi_limit:
+            if rssi_limit is not None and rssi < rssi_limit:
                 continue
             if ssid.decode('utf-8').split("_")[0] == "CK":
                 peer = Peer.find(ssid=ssid)
                 peer.scan_rssi = rssi
                 self.neighbors.append(peer)
-        self.neighbors.sort(key=lambda n: n.rssi, reverse=True)
+        if sort:
+            self.neighbors.sort(key=lambda n: n.rssi, reverse=True)
+        else:
+            shuffle(self.neighbors)
         return self.neighbors
 
     def send(self, message):
@@ -198,6 +201,12 @@ def hex_to_bin(hex_mac):
 def reverse(s):
     return "".join(reversed([c for c in s]))
 
+
+def shuffle(l):
+    n = len(l)
+    for i in range(n - 1, 0, -1):
+        j = randrange(i + 1)
+        l[i], l[j] = l[j], l[i]
 
 
 

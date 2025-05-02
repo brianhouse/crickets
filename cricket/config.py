@@ -5,12 +5,15 @@ MAX_HOOD = 8
 MIN_HOOD = 1
 FRIEND_LINK = .2
 GROUP_LEADER = .2
-SEVER = -3
+SEVER = -4
 
 # capacitor constants
 TICK = 10
 BUMP = 25
 REST = 250
+
+# motion
+MOSENS = 5
 
 # automatic constants
 PITCH_LOW, PITCH_HIGH = 3000, 4500
