@@ -11,12 +11,9 @@ while len(cricket_names):
     try:
         connect(f"CK_{cricket_name}")
         response = request("http://192.168.4.1/peers")
-        print(response)
         tokens = response.split()
         group = tokens[1]
-        print("group", group)
         peers = eval(" ".join(tokens[2:]))
-        print("peers", peers)
         network[cricket_name] = {'group': group, 'peers': peers}            
         print("Network:")
         print(json.dumps(network))
