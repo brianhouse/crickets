@@ -24,7 +24,7 @@ async def handle_request(reader, writer):
         headers = request.split('\r\n')
         page = headers[0].split()[1] if len(headers) > 0 else "/"
         if page == "/peers":
-            content = f"{cricket.name} {cricket.group} {cricket.peers}"
+            content = f"{cricket.name} {cricket.group} {[crk.name for crk in cricket.peers]}"
         elif page == "/reset":
             content = "resetting"
             reset = True

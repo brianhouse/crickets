@@ -7,6 +7,8 @@ class Cricket(Node):
     def __init__(self):
         super().__init__()
         SND.duty(0)
+        LED.off()
+        STS.off()
         self.phase = random()
         self.capacitor = self.f(self.phase)
         self.pitch = randint(PITCH_LOW, PITCH_HIGH)
