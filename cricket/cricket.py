@@ -71,7 +71,7 @@ class Cricket(Node):
             SND.freq(self.hum)
         await asyncio.sleep_ms(100)  # give connection a chance
         self.clear_peers()
-        neighbors = self.scan(RANGE)
+        neighbors = self.scan(RANGE, True)
         if len(neighbors):
             for i in range(MIN_HOOD):
                 if i < len(neighbors):
