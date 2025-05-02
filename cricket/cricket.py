@@ -109,7 +109,7 @@ class Cricket(Node):
             else:
                 if self.group == sender_group:
                     self.add_peer(sender)
-                    if friend != "null" and friend_name != self.name and random() < FRIEND_LINK:
+                    if friend_name != "null" and friend_name != self.name and random() < FRIEND_LINK:
                         friend = Peer.find(name=friend_name)
                         if friend.rssi is None or friend.rssi >= RANGE:
                             self.add_peer(friend)
