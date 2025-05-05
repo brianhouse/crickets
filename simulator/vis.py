@@ -69,6 +69,7 @@ class LiveGraphAnimator:
                 edge_colors.append('black')
             else:
                 edge_colors.append(self._get_node_color(u))
+                # edge_colors.append('white')
 
         # Draw everything
         nx.draw_networkx_nodes(self.G, self.pos, ax=self.ax, node_color=node_colors, node_size=400)

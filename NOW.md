@@ -1,15 +1,5 @@
-reload to make sure message dups works, test with double sends
 
-try the same thing with the close range, make sure the new scan limit works
-
-
-change config
-
-TEST WITH MANAGER
-
-test on the big boy
+make sure the new code works with three, and then load it
 
 
-/
-
-scan() could filter by distance before instantiating objects -- or maybe not, just to see if it will be a problem memory-wise
+see if there's a difference if we eliminate the bump returns, which would make the code cleaner

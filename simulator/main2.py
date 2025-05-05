@@ -6,11 +6,12 @@ from vis import LiveGraphAnimator
 
 
 NODES = 100
-MAX_HOOD = 8
-MIN_HOOD = 3
+MAX_HOOD = 10
+MIN_HOOD = 4
 FRIEND_LINK = .2
 GROUP_LEADER = .2
 SEVER = -4
+
 
 class Node():
 
@@ -20,16 +21,20 @@ class Node():
         self.y = name % 10
         self.peers = []
         self.group = "null"
+        self.leader = False
         self.recips = {}
 
     def look(self):
         self.group = "null"
         if random.random() < GROUP_LEADER:
+            self.leader = True
             self.group = "group_" + self.name
+        self.recips = {}
+        self.peers = []
         neighbors = list(nodes)
         neighbors.sort(key=lambda neighbor: self.distance(neighbor.name))
         i = 0
-        while len(self.peers) < MIN_HOOD:
+        while len(self.peers) < MAX_HOOD:
             self.add_peer(neighbors[i].name)
             i += 1
 
@@ -55,48 +60,56 @@ class Node():
             del self.recips[name]
 
     def flash(self):
-        if len(self.peers) < MIN_HOOD:
-            self.look()
+        group_size = 0
+        for key, value in self.recips.items():
+            if value > SEVER:
+                group_size += 1
+        if group_size < MIN_HOOD or len(self.peers) < MIN_HOOD:
+            print("island", self.name, self.recips, self.group)
+            self.group = "null"
         for name in self.peers:
             for node in nodes:
                 if node.name == name:
                     self.recips[name] -= 1
-                    if self.recips[name] < SEVER:
-                        self.remove_peer(name)
-                    else:
-                        friend = choice(self.peers)
-                        node.receive_flash(self.name, self.group, friend)
+                    # if self.recips[name] < SEVER:
+                    #     self.remove_peer(name)
+                    # else:
+                    node.receive_flash(self.name, self.group, [name for name in self.peers if self.recips[name] == 0])
 
-    def receive_flash(self, sender, sender_group, friend):
+    def receive_flash(self, sender, sender_group, friend_list):
 
-        if sender in self.peers:
-            self.recips[sender] = 0
+        # if sender in self.peers:
+        #     self.recips[sender] = 0
 
         # both unassigned
         if self.group == "null" and sender_group == "null":
-            # self.add_peer(sender)
+            # bump
             pass
 
         # self unassigned, sender assigned
         elif self.group == "null":
             self.group = sender_group
-            self.add_peer(sender)
+            # self.add_peer(sender)
+            # for friend in friend_list:
+            #     self.add_peer(friend)
             # bump
 
         # self assigned, sender unassigned
         elif sender_group == "null":
-            self.add_peer(sender)
+            # self.add_peer(sender)
+            pass
 
         # both have groups assigned
         else:
             if self.group == sender_group:
-                if sender not in self.peers:
-                    self.add_peer(sender)
-                if friend not in self.peers and random.random() < FRIEND_LINK:
-                    self.add_peer(friend, True)
+                self.recips[sender] = 0
+                # for friend in friend_list:
+                #     self.add_peer(friend)
+                pass
                 # bump
             else:
-                self.remove_peer(sender)
+                # self.remove_peer(sender)
+                pass
 
 
 # create nodes
@@ -105,9 +118,11 @@ for i in range(NODES):
     node = Node(i)
     nodes.append(node)
 for node in nodes:
-    for i in range(MIN_HOOD):
-        other = choice([other for other in nodes if other != node])
-        node.add_peer(other.name)
+    node.look()
+# for node in nodes:
+#     for i in range(MIN_HOOD):
+#         other = choice([other for other in nodes if other != node])
+#         node.add_peer(other.name)
 
 
 animator = LiveGraphAnimator()
