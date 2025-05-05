@@ -110,7 +110,6 @@ class Peer():
     def find(cls, name=None, ssid=None, bin_mac=None):
         for peer in cls.seen_peers:
             if peer.name == name or peer.ssid == ssid or peer.bin_mac == bin_mac:
-                peer.reset()
                 return peer
         peer = Peer(name=name, ssid=ssid, bin_mac=bin_mac)
         cls.seen_peers.append(peer)
@@ -134,12 +133,9 @@ class Peer():
             self.hex_mac = bin_to_hex(self.bin_mac)
             self.name = mac_to_name(self.hex_mac)
             self.ssid = name_to_ssid(self.name)
-        self.reset()
-        print("CREATED", self)
-
-    def reset(self):
         self.recips = 0
         self.scan_rssi = None
+        print("CREATED", self)
 
     @property
     def rssi(self):

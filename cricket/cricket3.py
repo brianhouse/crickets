@@ -7,6 +7,8 @@ class Cricket(Node):
     def __init__(self):
         super().__init__()
         SND.duty(0)
+        LED.off()
+        STS.off()
         self.phase = random()
         self.capacitor = self.f(self.phase)
         self.pitch = randint(PITCH_LOW, PITCH_HIGH)
@@ -80,7 +82,11 @@ class Cricket(Node):
     def listen(self):
         for sender, message in self.receive():
             O.print("GOT", message, "from", sender)
-            _, sender_group, friend_name = message.split(" ")
+            try:
+                _, sender_group, friend_name = message.split(" ")
+            except Exception as e:
+                print(f"BAD ({e}): \"{message}\"")
+                continue
 
             # make sure we have the closest peers
             if sender not in self.peers:
@@ -104,6 +110,7 @@ class Cricket(Node):
             # self unassigned, sender assigned
             elif self.group == "null":
                 self.group = sender_group
+                print("GROUP", self.group)
                 if self.bump():
                     return
 
