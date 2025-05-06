@@ -49,7 +49,7 @@ Pins are numbered clockwise when looking at the bottom, with #1 being just count
 
 ie
 
-- 1: gnd
+- 1:   knob
 - 2: 3V
 - 3: gnd
 - 4: 3v

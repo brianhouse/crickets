@@ -16,6 +16,7 @@ class Cricket(Node):
         self.t_previous = ticks_ms()
         self.peers = []
         self.group = "null"
+        self.motion = 0
         self.paused = False
         O.print(f"## {self.name} ##")
 
@@ -46,6 +47,17 @@ class Cricket(Node):
                     if self.capacitor >= 1.0:
                         self.flash()
                         continue
+                    if MOTION:
+                        if PIR.value():
+                            print("MOTION")
+                            self.motion += 1
+                            if self.motion >= MOSENS:
+                                print("TRIGGER")
+                                self.motion = 0
+                                await self.look()
+                                continue
+                        else:
+                            self.motion = 0
                     if self.group != "null" and self.get_group_size() < MIN_HOOD:
                         print("ISLAND")
                         self.group = "null"
@@ -68,13 +80,18 @@ class Cricket(Node):
             SND.duty(0)
             SND.duty(512)
             SND.freq(self.hum)
+        if STATUS:
+            STS.on()
         await asyncio.sleep_ms(100)  # give connection a chance
+        await asyncio.sleep_ms(randint(0, 1000))  # mess up the oscillator
         self.clear_peers()
         neighbors = self.scan(RANGE, True)  # sorting
         if len(neighbors):
             for i in range(MAX_HOOD):
                 if i < len(neighbors):
                     self.add_peer(neighbors[i])
+        if STATUS:
+            STS.off()
         if HUM:
             SND.duty(0)
         O.print("--> DONE")
@@ -93,9 +110,9 @@ class Cricket(Node):
                 if len(self.peers) < MAX_HOOD:
                     self.add_peer(sender)
                 else:
-                    furthest = get_furthest()
-                    if furthest is not None and furthest.rssi is not None and sender.rssi > peer.rssi:
-                        self.remove_peer(peer)
+                    furthest = self.get_furthest()
+                    if furthest is not None and furthest.rssi is not None and sender.rssi > furthest.rssi:
+                        self.remove_peer(furthest)
                         self.add_peer(sender)
 
             # both unassigned
