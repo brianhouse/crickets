@@ -5,11 +5,11 @@ from random import choice, randint
 from vis import LiveGraphAnimator
 
 
-NODES = 100
-MAX_HOOD = 10
-MIN_HOOD = 4
+NODES = 36
+MAX_HOOD = 6
+MIN_HOOD = 2
 FRIEND_LINK = .2
-GROUP_LEADER = .3
+GROUP_LEADER = .4
 SEVER = -4
 
 
@@ -17,8 +17,8 @@ class Node():
 
     def __init__(self, name):
         self.name = str(name)
-        self.x = (name // 10)# + (random.random() * 3 - 1.5)
-        self.y = (name % 10)# + (random.random() * 3 - 1.5)
+        self.x = name // 6
+        self.y = name % 6
         self.peers = []
         self.group = "null"
         self.leader = False
@@ -31,13 +31,12 @@ class Node():
             self.group = "group_" + self.name
         self.recips = {}
         self.peers = []
-        if self.leader:
-            neighbors = list(nodes)
-            neighbors.sort(key=lambda neighbor: self.distance(neighbor.name))
-            i = 0
-            while len(self.peers) < MAX_HOOD:
-                self.add_peer(neighbors[i].name)
-                i += 1
+        neighbors = list(nodes)
+        neighbors.sort(key=lambda neighbor: self.distance(neighbor.name))
+        i = 0
+        while len(self.peers) < MAX_HOOD:
+            self.add_peer(neighbors[i].name)
+            i += 1
 
     def distance(self, name):
         for node in nodes:
@@ -52,7 +51,7 @@ class Node():
             self.peers.append(name)
             self.recips[name] = 0
             self.peers.sort(key=lambda peer: self.distance(peer) if not friend else 1000)  # not exact, because this will refresh faster than the reality
-            while len(self.peers) > MAX_HOOD:
+            if len(self.peers) > MAX_HOOD:
                 self.remove_peer(self.peers[-1])
 
     def remove_peer(self, name):
@@ -61,40 +60,56 @@ class Node():
             del self.recips[name]
 
     def flash(self):
-        if len(self.peers) < MIN_HOOD:
-            self.look()
-        # if self.leader:
+        group_size = 0
+        for key, value in self.recips.items():
+            if value > SEVER:
+                group_size += 1
+        if group_size < MIN_HOOD or len(self.peers) < MIN_HOOD:
+            print("island", self.name, self.recips, self.group)
+            self.group = "null"
         for name in self.peers:
             for node in nodes:
                 if node.name == name:
-                    # self.recips[name] -= 1
-                    node.receive_flash(self.name, self.group, self.peers)
+                    self.recips[name] -= 1
+                    # if self.recips[name] < SEVER:
+                    #     self.remove_peer(name)
+                    # else:
+                    node.receive_flash(self.name, self.group, [name for name in self.peers if self.recips[name] == 0])
 
     def receive_flash(self, sender, sender_group, friend_list):
-        if sender_group != "null":
-            if self.group == "null":
-                self.group = sender_group
-            if sender_group == self.group:
-                self.add_peer(sender)
-                for name in friend_list:
-                    self.add_peer(name)
-            else:
-                self.remove_peer(sender)
-                for node in nodes:
-                    if node.name == sender:
-                        node.receive_break(self.name)
-                for name in friend_list:
-                    self.remove_peer(name)
-                    for node in nodes:
-                        if node.name == name:
-                            node.receive_break(self.name)
+
+        # if sender in self.peers:
+        #     self.recips[sender] = 0
+
+        # both unassigned
+        if self.group == "null" and sender_group == "null":
+            # bump
+            pass
+
+        # self unassigned, sender assigned
+        elif self.group == "null":
+            self.group = sender_group
+            # self.add_peer(sender)
+            # for friend in friend_list:
+            #     self.add_peer(friend)
+            # bump
+
+        # self assigned, sender unassigned
+        elif sender_group == "null":
+            # self.add_peer(sender)
+            pass
+
+        # both have groups assigned
         else:
-            self.add_peer(sender)
-
-        # bump()
-
-    def receive_break(self, sender):
-        self.remove_peer(sender)
+            if self.group == sender_group:
+                self.recips[sender] = 0
+                # for friend in friend_list:
+                #     self.add_peer(friend)
+                pass
+                # bump
+            else:
+                # self.remove_peer(sender)
+                pass
 
 
 # create nodes

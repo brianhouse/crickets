@@ -1,10 +1,9 @@
 # connection constants
 POWER = 6
 RANGE = -55
-MAX_HOOD = 10
-MIN_HOOD = 4
-FRIEND_LINK = .2
-GROUP_LEADER = .2
+MAX_HOOD = 6
+MIN_HOOD = 2
+GROUP_LEADER = .4
 SEVER = -4
 
 # capacitor constants
