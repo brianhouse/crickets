@@ -80,6 +80,7 @@ class Cricket(Node):
         O.print("--> DONE")
 
     def listen(self):
+        action = None
         for sender, message in self.receive():
             O.print("GOT", message, "from", sender)
             try:
