@@ -1,8 +1,8 @@
 # connection constants
 POWER = 6
 RANGE = -55
-MAX_HOOD = 8
-MIN_HOOD = 1
+MAX_HOOD = 10
+MIN_HOOD = 4
 FRIEND_LINK = .2
 GROUP_LEADER = .2
 SEVER = -4
@@ -21,7 +21,7 @@ HUM_LOW, HUM_HIGH = 10, 20
 
 # behavior constants
 MOTION = False
-STATUS = False
+STATUS = True
 BLINK = True
 CHIRP = False
 HUM = False
