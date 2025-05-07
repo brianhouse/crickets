@@ -87,14 +87,13 @@ class Cricket(Node):
                 peers = []
                 action, sender_group, peer_names = message.split(" ")
                 for peer_name in peer_names.split(","):
-                    if not len(peer_name) or peer_name == "NOP":
+                    if not len(peer_name) or peer_name == "NOP" or peer_name == self.name:
                         continue
                     peers.append(Peer.find(name=peer_name))
             except Exception as e:
                 print(f"BAD ({e}): \"{message}\"")
                 continue
         if action == "flash":
-            self.bump()
             if sender_group != "null":
                 if self.group == "null":
                     self.group = sender_group
@@ -111,6 +110,7 @@ class Cricket(Node):
             else:
                 self.add_peer(sender)
             self.cut_peers()
+            self.bump()
         elif action == "break":
             self.remove_peer(sender)
 
