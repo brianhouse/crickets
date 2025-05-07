@@ -44,9 +44,6 @@ class Cricket(Node):
                     O.reset()
                     self.phase = min(self.phase + (t_elapsed / 1000), 1.0)
                     self.capacitor = self.f(self.phase)
-                    if self.capacitor >= 1.0:
-                        self.flash()
-                        continue
                     if MOTION:
                         if PIR.value():
                             print("MOTION")
@@ -62,6 +59,8 @@ class Cricket(Node):
                         print("ISLAND")
                         self.group = "null"
                     self.listen()
+                    if self.capacitor >= 1.0:
+                        self.flash()
                     # O.print("MEM", gc.mem_free())
                     gc.collect()
             except Exception as e:
@@ -117,8 +116,7 @@ class Cricket(Node):
 
             # both unassigned
             if self.group == "null" and sender_group == "null":
-                if self.bump():
-                    return
+                self.bump()
 
             # self assigned, sender unassigned
             elif sender_group == "null":
@@ -128,16 +126,14 @@ class Cricket(Node):
             elif self.group == "null":
                 self.group = sender_group
                 print("GROUP", self.group)
-                if self.bump():
-                    return
+                self.bump()
 
             # both have groups assigned
             else:
                 if self.group == sender_group:
                     if sender in self.peers:
                         sender.recips = 0
-                    if self.bump():
-                        return
+                    self.bump()
 
     def add_peer(self, peer):
         if peer in self.peers:
@@ -199,14 +195,10 @@ class Cricket(Node):
     def bump(self):
         if self.phase * 1000 < REST:
             O.print("REST")
-            return False
+            return
         O.print("BUMP")
         self.capacitor = min(self.capacitor + (BUMP / 1000), 1.0)
         self.phase = self.f_inv(self.capacitor)
-        if self.capacitor >= 1.0:
-            self.flash()
-            return True
-        return False
 
     def f(self, x):
         return math.sin((math.pi / 2) * x)
