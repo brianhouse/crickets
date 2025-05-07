@@ -120,7 +120,7 @@ class Cricket(Node):
 
             # self assigned, sender unassigned
             elif sender_group == "null":
-                pass
+                print("IGNORE (null)")
 
             # self unassigned, sender assigned
             elif self.group == "null":
@@ -134,6 +134,8 @@ class Cricket(Node):
                     if sender in self.peers:
                         sender.recips = 0
                     self.bump()
+                else:
+                    print("IGNORE (other)")
 
     def add_peer(self, peer):
         if peer in self.peers:
