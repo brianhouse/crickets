@@ -79,8 +79,7 @@ class Cricket(Node):
             SND.duty(0)
             SND.duty(512)
             SND.freq(self.hum)
-        if STATUS:
-            STS.on()
+        STS.on()
         await asyncio.sleep_ms(100)  # give connection a chance
         await asyncio.sleep_ms(randint(0, 1000))  # mess up the oscillator
         self.clear_peers()
@@ -89,7 +88,7 @@ class Cricket(Node):
             for i in range(MAX_HOOD):
                 if i < len(neighbors):
                     self.add_peer(neighbors[i])
-        if STATUS:
+        if self.group != self.name:
             STS.off()
         if HUM:
             SND.duty(0)
@@ -177,7 +176,7 @@ class Cricket(Node):
         self.capacitor = 0.0
         if BLINK:
             LED.on()
-        if STATUS:
+        else:
             STS.on()
         self.send()
         if CHIRP:
@@ -191,7 +190,7 @@ class Cricket(Node):
             SND.duty(0)
         if BLINK:
             LED.off()
-        if STATUS:
+        else:
             STS.off()
 
     def bump(self):
