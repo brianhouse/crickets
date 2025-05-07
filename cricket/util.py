@@ -63,9 +63,12 @@ class Node():
             shuffle(self.neighbors)
         return self.neighbors
 
-    def send(self, message):
+    def send(self, message, peer=None):
         try:
-            self.mesh.send(None, message, False)
+            if peer is None:
+                self.mesh.send(None, message, False)
+            else:
+                self.mesh.send(peer.bin_mac, message, False)
         except Exception as e:
             print("Can't send", f"({e})")
 
