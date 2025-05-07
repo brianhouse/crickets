@@ -57,6 +57,7 @@ class Cricket(Node):
                             self.motion = 0
                     if self.group != "null" and self.get_group_size() < MIN_HOOD:
                         print("ISLAND")
+                        STS.off()
                         self.group = "null"
                     self.listen()
                     if self.capacitor >= 1.0:
