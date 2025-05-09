@@ -19,10 +19,10 @@ PITCH_LOW, PITCH_HIGH = 3000, 4500
 HUM_LOW, HUM_HIGH = 10, 20
 
 # behavior constants
-MOTION = False
+MOTION = True
 STATUS = True
 BLINK = True
-CHIRP = False
-HUM = False
+CHIRP = True
+HUM = True
 
 DEBUG = False
