@@ -1,6 +1,8 @@
 from util import *
 from config import *
 
+ALG.write(MOSENS)
+
 
 class Cricket(Node):
 
@@ -16,7 +18,6 @@ class Cricket(Node):
         self.t_previous = ticks_ms()
         self.peers = []
         self.group = "null"
-        self.motion = 0
         self.paused = False
         O.print(f"## {self.name} ##")
 
@@ -47,14 +48,8 @@ class Cricket(Node):
                     if MOTION:
                         if PIR.value():
                             print("MOTION")
-                            self.motion += 1
-                            if self.motion >= MOSENS:
-                                print("TRIGGER")
-                                self.motion = 0
-                                await self.look()
-                                continue
-                        else:
-                            self.motion = 0
+                            await self.look()
+                            continue
                     if self.group != "null" and self.get_group_size() < MIN_HOOD:
                         print("ISLAND")
                         STS.off()
@@ -81,7 +76,7 @@ class Cricket(Node):
             SND.duty(512)
             SND.freq(self.hum)
         STS.on()
-        await asyncio.sleep_ms(100)  # give connection a chance
+        await asyncio.sleep_ms(2000)  # needs to be at least 2s for the PIR
         await asyncio.sleep_ms(randint(0, 1000))  # mess up the oscillator
         self.clear_peers()
         neighbors = self.scan(RANGE, True)  # sorting

@@ -5,7 +5,7 @@ import espnow
 import bluetooth
 import ubinascii
 import network
-from machine import Pin, PWM
+from machine import Pin, PWM, DAC, reset
 from time import ticks_ms, ticks_diff, sleep_ms
 from random import random, randint, choice, randrange
 from config import *
@@ -14,6 +14,10 @@ from config import *
 STS = Pin(13, Pin.OUT)
 LED = Pin(21, Pin.OUT)
 PIR = Pin(33, Pin.IN)
+try:
+    ALG = DAC(Pin(25))
+except Exception:
+    reset()
 SND = PWM(Pin(27, Pin.OUT))
 SND.duty(0)
 

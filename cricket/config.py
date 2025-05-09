@@ -12,7 +12,7 @@ BUMP = 25
 REST = 250
 
 # motion
-MOSENS = 5
+MOSENS = 20
 
 # automatic constants
 PITCH_LOW, PITCH_HIGH = 3000, 4500

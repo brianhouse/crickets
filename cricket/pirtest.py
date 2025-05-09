@@ -1,6 +1,8 @@
 from util import *
 from config import *
 
+ALG.write(MOSENS)
+
 
 class Cricket(Node):
 
