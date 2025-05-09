@@ -19,8 +19,9 @@ Piezo https://www.adafruit.com/product/1739
 PIR https://www.adafruit.com/product/5578
 Power supply https://www.adafruit.com/product/658  
 Power connector https://www.adafruit.com/product/2880  
-Resistors https://www.adafruit.com/product/4293  
-
+Resistors https://a.co/d/iYcJ9PN
+Speaker Wire https://www.amazon.com/dp/B099P8TZD6
+Acrylic https://shop.glowforge.com/products/clear-acrylic-cast-transparent-glossy?variant=39434532323426
 
 ## Manager
 
