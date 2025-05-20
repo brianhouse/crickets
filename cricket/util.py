@@ -178,7 +178,7 @@ def name_to_ssid(name):
 
 
 def ssid_to_name(ssid):
-    return ssid.decode("utf-8").split("_")[-1]
+    return "_".join(ssid.decode("utf-8").split("_")[1:])
 
 
 def name_to_mac(name):
@@ -210,6 +210,7 @@ def shuffle(l):
     for i in range(n - 1, 0, -1):
         j = randrange(i + 1)
         l[i], l[j] = l[j], l[i]
+
 
 
 

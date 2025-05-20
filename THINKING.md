@@ -69,25 +69,33 @@ chop 10' off the front and 6' off all sides
 
 54 x 19 = 1,026 sq ft
 
-1026 / 300 = cricket every 3.42 ft (1.85 x 1.85)
+1026 / 300 = cricket every 3.42 sq ft = grid of 1.85 x 1.85, approx 2' grid
+
+11 longitudinally
+27 across
 
 /
 
 studio is 879 sq ft
 879 / 3.42 = 257 crickets
+(point is, 300 is going to be enough)
+
+/
+
+is it flat? yes.
+
+the far wall is closer to the ground, and it raises up
 
 
-point is, 300 is going to be enough
+
+## power
 
 
-## acrylic
-
-300-35 = 265 / 6 = 44 + 1 = 45
-
-18.50 * 45 = $832.50
 
 
-## group formation
+
+
+
 
 
 
