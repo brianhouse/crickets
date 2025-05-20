@@ -22,9 +22,15 @@ class Cricket(Node):
         O.print(f"## {self.name} ##")
 
     async def run(self):
-        await asyncio.sleep_ms(randint(1000, 3000))
-        await self.look()
-        self.receive()  # clear messages
+        try:
+            await asyncio.sleep_ms(randint(1000, 3000))
+            await self.look()
+            self.receive()  # clear messages
+        except Exception as e:
+            if DEBUG:
+                raise e
+            else:
+                O.print(e)
         self.t_previous = ticks_ms()
         while True:
             if self.paused:
