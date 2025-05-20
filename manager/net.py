@@ -24,7 +24,7 @@ def scan():
     neighbors = []
     for ssid, bssid, channel, rssi, security, hidden in sta.scan():
         if ssid.decode('utf-8').split("_")[0] == "CK":
-            neighbors.append({'name': ssid.decode("utf-8").split("_")[-1],
+            neighbors.append({'name': "_".join(ssid.decode("utf-8").split("_")[1:]),
                               'rssi': rssi}
                              )
     neighbors.sort(key=lambda n: n['rssi'], reverse=True)
