@@ -56,10 +56,10 @@ class Cricket(Node):
                             print("MOTION")
                             await self.look()
                             continue
-                    if self.group != "null" and self.get_group_size() < MIN_HOOD:
-                        print("ISLAND")
-                        STS.off()
-                        self.group = "null"
+                    # if self.group != "null" and self.get_group_size() < MIN_HOOD:
+                    #     print("ISLAND")
+                    #     STS.off()
+                    #     self.group = "null"
                     self.listen()
                     if self.capacitor >= 1.0:
                         self.flash()
