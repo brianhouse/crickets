@@ -13,3 +13,7 @@ hail mary strategies:
 - don't eliminate for islands. 
 
 what would this accomplish?
+
+
+
+instant island happens if there's not more than two unassigned peers
