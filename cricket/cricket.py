@@ -107,13 +107,13 @@ class Cricket(Node):
 
             # both unassigned
             if self.group == "null" and sender_group == "null":
-                # do nothing
-                pass
+                # bump anyway
+                self.bump()
 
             # self assigned, sender unassigned
             elif sender_group == "null":
                 # add the peer to try to get it in the group
-                # ...but don't bump, we're not there yet
+                # ...but don't bump until they're in the group
                 self.add_peer(sender)
 
             # self unassigned, sender assigned
@@ -127,6 +127,7 @@ class Cricket(Node):
             # both have groups assigned
             else:
                 if self.group == sender_group:
+                    self.add_peer(sender)
                     if sender in self.peers:
                         sender.recips = 0
                     self.bump()
