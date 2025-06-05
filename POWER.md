@@ -43,8 +43,20 @@ comes back as 25 AWG
 
 
 wire:
-- https://a.co/d/0ggxH0D (22 awg)
+- https://a.co/d/5orR81N (22 awg)
 
-or
-- https://a.co/d/aoXoifs (24 awg)
+
+
+## Antenna power
+
+wl = network.WLAN()
+wl.config(antenna=value)  # 0 internal 1 external
+wl.config(txpower=value)  # In dBm
+
+
+Yes, espnow will just use any txpower setting set in the wifi setup, so network.WLAN(network.STA_IF).config(txpower=17) will set the maximum txpower. (Note due to the wierd mappings used, I believe setting txpower=17 will actually yield a value of 16 due to the actual txpower mappings here (if the docs are correct and I've followed them correctly). Note that micropython mulltiplies the supplied value by 4 and passes that to esp_wifi_set_max_tx_power(). You can check, by calling network.WLAN(network.STA_IF).config("txpower") after setting the value.
+
+https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/network/esp_wifi.html#_CPPv425esp_wifi_set_max_tx_power6int8_t
+
+put this in config
 
