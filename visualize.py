@@ -28,7 +28,7 @@ def _get_node_color(node):
     group = node_data.get("group", 0)
     # Handle null group (either None or string "null")
     if group is None or group == "null":
-        return "#000000"
+        return "#cccccc"
     if group not in _group_color_map:
         _group_color_map[group] = cmap(_next_color_index % cmap.N)
         _next_color_index += 1

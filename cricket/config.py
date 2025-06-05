@@ -1,8 +1,8 @@
 # connection constants
-POWER = 6
-RANGE = -55
-MAX_HOOD = 6
-MIN_HOOD = 2
+POWER = 3
+RANGE = -70
+MAX_HOOD = 5
+MIN_HOOD = 1
 GROUP_LEADER = .4
 SEVER = -4
 
