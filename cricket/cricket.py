@@ -137,8 +137,9 @@ class Cricket(Node):
                     self.bump()
                 else:
                     # no longer friends
-                    self.remove_peer(sender)
+                    self.add_peer(sender)
                     self.reject(sender)
+                    self.remove_peer(sender)
 
     def add_peer(self, peer):
         if peer in self.peers:
