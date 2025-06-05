@@ -1,4 +1,15 @@
+# NOW
 
-load it all
 
-see if there's a difference if we eliminate the bump returns, which would make the code cleaner
+the tempo is potentially too fast. slowing it down would help isolate groups.
+
+/
+
+it's not syncing or forming groups
+
+
+hail mary strategies:
+
+- don't eliminate for islands. 
+
+what would this accomplish?
