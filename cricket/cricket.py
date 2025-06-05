@@ -100,31 +100,26 @@ class Cricket(Node):
         for sender, message in self.receive():
             O.print("GOT", message, "from", sender)
             try:
-                _, sender_group, friend_name = message.split(" ")
+                _, sender_group, NOP = message.split(" ")
             except Exception as e:
                 print(f"BAD ({e}): \"{message}\"")
                 continue
 
-            # make sure we have the closest peers
-            if sender not in self.peers:
-                if len(self.peers) < MAX_HOOD:
-                    self.add_peer(sender)
-                else:
-                    furthest = self.get_furthest()
-                    if furthest is not None and furthest.rssi is not None and sender.rssi > furthest.rssi:
-                        self.remove_peer(furthest)
-                        self.add_peer(sender)
-
             # both unassigned
             if self.group == "null" and sender_group == "null":
-                self.bump()
+                # do nothing
+                pass
 
             # self assigned, sender unassigned
             elif sender_group == "null":
-                print("IGNORE (null)")
+                # add the peer to try to get it in the group
+                # ...but don't bump, we're not there yet
+                self.add_peer(sender)
 
             # self unassigned, sender assigned
             elif self.group == "null":
+                # join this group
+                self.add_peer(sender)
                 self.group = sender_group
                 print("GROUP", self.group)
                 self.bump()
@@ -136,7 +131,8 @@ class Cricket(Node):
                         sender.recips = 0
                     self.bump()
                 else:
-                    print("IGNORE (other)")
+                    # no longer friends
+                    self.remove_peer(sender)
 
     def add_peer(self, peer):
         if peer in self.peers:
