@@ -100,10 +100,14 @@ class Cricket(Node):
         for sender, message in self.receive():
             O.print("GOT", message, "from", sender)
             try:
-                _, sender_group, NOP = message.split(" ")
+                kind, sender_group, NOP = message.split(" ")
             except Exception as e:
                 print(f"BAD ({e}): \"{message}\"")
                 continue
+
+            if kind == "reject":
+                self.remove_peer(sender)
+                return
 
             # both unassigned
             if self.group == "null" and sender_group == "null":
@@ -134,6 +138,7 @@ class Cricket(Node):
                 else:
                     # no longer friends
                     self.remove_peer(sender)
+                    self.reject(sender)
 
     def add_peer(self, peer):
         if peer in self.peers:
@@ -168,6 +173,10 @@ class Cricket(Node):
             super().send(f"flash {self.group} NOP")
             for peer in self.peers:
                 peer.recips -= 1
+
+    def reject(self, peer):
+        O.print(f"REJECT {peer}")
+        super().send(f"reject {self.group} NOP", peer)
 
     def flash(self):
         O.print("FLASH")
