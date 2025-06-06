@@ -76,11 +76,14 @@ class Cricket(Node):
     async def look(self):
         O.print("LEADER...")
         self.group = self.name
+        if STATUS:
+            STS.on()
+        if BLINK:
+            LED.on()
         if HUM:
             SND.duty(0)
             SND.duty(512)
             SND.freq(self.hum)
-        STS.on()
         await asyncio.sleep_ms(2000)  # needs to be at least 2s for the PIR
         await asyncio.sleep_ms(randint(0, 1000))  # mess up the oscillator
         self.clear_peers()
@@ -94,6 +97,8 @@ class Cricket(Node):
         self.receive()  # clear messages
         if not STATUS or (self.group != self.name):
             STS.off()
+        if BLINK:
+            LED.off()
         if HUM:
             SND.duty(0)
         O.print("--> DONE")
