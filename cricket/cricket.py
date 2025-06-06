@@ -116,9 +116,14 @@ class Cricket(Node):
                 self.remove_peer(sender)
             elif kind == "flash":
                 if sender_group == self.group:
+                    if sender.rssi < RANGE:
+                        O.print("REJECT TOO FAR")
+                        self.add_peer(sender)
+                        self.send(f"reject {self.group} NOP", sender)
+                        self.remove_peer(sender)
                     self.bump()
                 else:
-                    O.print("REJECT")
+                    O.print("REJECT OTHER GROUP")
                     self.add_peer(sender)
                     self.send(f"reject {self.group} NOP", sender)
                     self.remove_peer(sender)
