@@ -3,7 +3,7 @@ POWER = 3
 RANGE = -50
 MAX_HOOD = 5
 MIN_HOOD = 2
-GROUP_LEADER = .4
+GROUP_LEADER = .2
 SEVER = -4
 
 # capacitor constants
