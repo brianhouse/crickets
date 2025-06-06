@@ -143,11 +143,20 @@ class Cricket(Node):
             # both have groups assigned
             else:
                 if self.group == sender_group:
-                    if len(self.peers) < MAX_HOOD:  # soft limit
+                    furthest = get_furthest()
+                    if len(self.peers) < MAX_HOOD:
                         self.add_peer(sender)
-                    if len(self.peers) < MAX_HOOD and friend_name != self.name:
+                    elif sender.rssi > furthest.rssi:
+                        # we're not rejecting, just limiting sends
+                        self.remove_peer(furthest)
+                        self.add_peer(sender)
+                    if friend_name != self.name:
                         friend = Peer.find(name=friend_name)
-                        self.add_peer(friend)
+                        if len(self.peers) < MAX_HOOD:
+                            self.add_peer(friend)
+                        elif friend.rssi > furthest.rssi:
+                            self.remove_peer(furthest)
+                            self.add_peer(sender)
                     self.bump()
                 else:
                     # no longer friends
@@ -228,4 +237,9 @@ class Cricket(Node):
     def f_inv(self, y):
         return (2 / math.pi) * math.asin(y)
 
-
+    def get_furthest(self):
+        furthest = None
+        for peer in self.peers:
+            if peer.rssi is not None and (furthest is None or peer.rssi < furthest.rssi):
+                furthest = peer
+        return furthest
