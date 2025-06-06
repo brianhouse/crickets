@@ -23,8 +23,10 @@ class Cricket(Node):
 
     async def run(self):
         try:
+            STS.on()
             await asyncio.sleep_ms(randint(1000, 3000))
             self.receive()  # clear messages
+            STS.off()
         except Exception as e:
             if DEBUG:
                 raise e
