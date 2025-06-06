@@ -154,7 +154,7 @@ class Cricket(Node):
         if len(self.peers):
             super().send(message)
 
-    def send(self, peer, message):
+    def send(self, message, peer):
         O.print(f"SEND {peer}")
         super().send(message, peer)
 
