@@ -90,6 +90,7 @@ class Cricket(Node):
                 if i < len(neighbors):
                     self.add_peer(neighbors[i])
         self.send_all(f"group {self.group} {"*".join([peer.name for peer in self.peers])}")
+        O.print("CLEAR MESSAGES")
         self.receive()  # clear messages
         if not STATUS or (self.group != self.name):
             STS.off()
@@ -125,7 +126,7 @@ class Cricket(Node):
                         self.remove_peer(sender)
                     self.bump()
                 else:
-                    O.print("REJECT OTHER GROUP")
+                    O.print(f"REJECT OTHER GROUP ({sender_group} vs {self.group})")
                     self.add_peer(sender)
                     self.send(f"reject {self.group} GROUP", sender)
                     self.remove_peer(sender)
@@ -203,5 +204,6 @@ class Cricket(Node):
 
     def f_inv(self, y):
         return (2 / math.pi) * math.asin(y)
+
 
 
