@@ -123,7 +123,7 @@ class Cricket(Node):
                     self.remove_peer(sender)
 
     def add_peer(self, peer):
-        if peer in self.peers:
+        if peer in self.peers or peer.name == self.name:
             return
         O.print(f"ADD {peer}")
         self.peers.append(peer)
