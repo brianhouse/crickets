@@ -89,6 +89,7 @@ class Cricket(Node):
                 if i < len(neighbors):
                     self.add_peer(neighbors[i])
         self.send_all(f"group {self.group} {"*".join([peer.name for peer in self.peers])}")
+        self.receive()  # clear messages
         if not STATUS or (self.group != self.name):
             STS.off()
         if HUM:
