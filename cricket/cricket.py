@@ -150,12 +150,12 @@ class Cricket(Node):
         self.peers.clear()
 
     def send_all(self, message):
-        O.print("SEND", self.peers)
+        O.print("SEND", self.peers, message)
         if len(self.peers):
             super().send(message)
 
     def send(self, message, peer):
-        O.print(f"SEND {peer}")
+        O.print("SEND", peer, message)
         super().send(message, peer)
 
     def flash(self):
