@@ -144,7 +144,7 @@ class Cricket(Node):
                 if self.group == sender_group:
                     if len(self.peers) < MAX_HOOD:  # soft limit
                         self.add_peer(sender)
-                    if len(self.peers) < MAX_HOOD:
+                    if len(self.peers) < MAX_HOOD and friend_name != self.name:
                         friend = Peer.find(name=friend_name)
                         self.add_peer(friend)
                     self.bump()
