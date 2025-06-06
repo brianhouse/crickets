@@ -131,8 +131,6 @@ class Cricket(Node):
             else:
                 if self.group == sender_group:
                     self.add_peer(sender)
-                    if sender in self.peers:
-                        sender.recips = 0
                     self.bump()
                 else:
                     # no longer friends
@@ -171,8 +169,6 @@ class Cricket(Node):
         O.print("SEND", self.peers)
         if len(self.peers):
             super().send(f"flash {self.group} NOP")
-            for peer in self.peers:
-                peer.recips -= 1
 
     def reject(self, peer):
         O.print(f"REJECT {peer}")
@@ -214,19 +210,5 @@ class Cricket(Node):
 
     def f_inv(self, y):
         return (2 / math.pi) * math.asin(y)
-
-    def get_furthest(self):
-        furthest = None
-        for peer in self.peers:
-            if peer.rssi is not None and (furthest is None or peer.rssi < furthest.rssi):
-                furthest = peer
-        return furthest
-
-    def get_group_size(self):
-        group_size = 0
-        for peer in self.peers:
-            if peer.recips > SEVER:
-                group_size += 1
-        return group_size
 
 
