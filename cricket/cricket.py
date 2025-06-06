@@ -143,7 +143,7 @@ class Cricket(Node):
             # both have groups assigned
             else:
                 if self.group == sender_group:
-                    furthest = get_furthest()
+                    furthest = self.get_furthest()
                     if len(self.peers) < MAX_HOOD:
                         self.add_peer(sender)
                     elif sender.rssi > furthest.rssi:
