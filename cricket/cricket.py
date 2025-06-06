@@ -148,16 +148,17 @@ class Cricket(Node):
             else:
                 if self.group == sender_group:
                     furthest = self.get_furthest()
-                    if len(self.peers) < MAX_HOOD:
-                        print("LOW HOOD")
-                        self.add_peer(sender)
-                    elif sender.rssi > furthest.rssi:
-                        # we're not rejecting, just limiting sends
-                        print("CLOSER")
-                        self.remove_peer(furthest)
-                        self.add_peer(sender)
-                    if friend_name != self.name:
-                        friend = Peer.find(name=friend_name)
+                    friend = Peer.find(name=friend_name)
+                    if sender not in self.peers:
+                        if len(self.peers) < MAX_HOOD:
+                            print("LOW HOOD")
+                            self.add_peer(sender)
+                        elif sender.rssi > furthest.rssi:
+                            # we're not rejecting, just limiting sends
+                            print("CLOSER")
+                            self.remove_peer(furthest)
+                            self.add_peer(sender)
+                    if friend_name != self.name and friend not in self.peers:
                         if len(self.peers) < MAX_HOOD:
                             print("ROOM FOR FRIEND")
                             self.add_peer(friend)
