@@ -1,7 +1,7 @@
 # connection constants
 POWER = 3
 RANGE = -50
-MAX_HOOD = 5  # this is the start size, not max
+MAX_HOOD = 5
 MIN_HOOD = 2
 GROUP_LEADER = .4
 SEVER = -4

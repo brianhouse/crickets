@@ -54,7 +54,18 @@ class Cricket(Node):
                     if MOTION:
                         if PIR.value():
                             print("MOTION")
+                            if HUM:
+                                SND.duty(0)
+                                SND.duty(512)
+                                SND.freq(self.hum)
+                            STS.on()
+                            await asyncio.sleep_ms(2000)  # needs to be at least 2s for the PIR
+                            await asyncio.sleep_ms(randint(0, 1000))  # mess up the oscillator
                             await self.look()
+                            if self.group != self.name:
+                                STS.off()
+                            if HUM:
+                                SND.duty(0)
                             continue
                     if len(self.peers) < MIN_HOOD:
                         await self.look()
@@ -74,39 +85,29 @@ class Cricket(Node):
         self.group = "null"
         if random() < GROUP_LEADER:
             self.group = self.name
+            STS.on()
             O.print("LEADER")
         O.print("LOOK...")
-        if HUM:
-            SND.duty(0)
-            SND.duty(512)
-            SND.freq(self.hum)
-        STS.on()
-        await asyncio.sleep_ms(2000)  # needs to be at least 2s for the PIR
-        await asyncio.sleep_ms(randint(0, 1000))  # mess up the oscillator
         self.clear_peers()
         neighbors = self.scan(RANGE, True)  # sorting
         if len(neighbors):
             for i in range(MAX_HOOD):
                 if i < len(neighbors):
                     self.add_peer(neighbors[i])
-        if self.group != self.name:
-            STS.off()
-        if HUM:
-            SND.duty(0)
         O.print("--> DONE")
 
     def listen(self):
         for sender, message in self.receive():
             O.print("GOT", message, "from", sender)
             try:
-                kind, sender_group, NOP = message.split(" ")
+                kind, sender_group, friend_name = message.split(" ")
             except Exception as e:
                 print(f"BAD ({e}): \"{message}\"")
                 continue
 
             if kind == "reject":
                 self.remove_peer(sender)
-                return
+                continue
 
             # both unassigned
             if self.group == "null" and sender_group == "null":
@@ -124,13 +125,19 @@ class Cricket(Node):
                 # join this group
                 self.add_peer(sender)
                 self.group = sender_group
+                if self.group == self.name:
+                    STS.on()
                 print("GROUP", self.group)
                 self.bump()
 
             # both have groups assigned
             else:
                 if self.group == sender_group:
-                    self.add_peer(sender)
+                    if len(self.peers) < MAX_HOOD:  # soft limit
+                        self.add_peer(sender)
+                    if len(self.peers) < MAX_HOOD:
+                        friend = Peer.find(name=friend_name)
+                        self.add_peer(friend)
                     self.bump()
                 else:
                     # no longer friends
@@ -168,7 +175,7 @@ class Cricket(Node):
     def send(self):
         O.print("SEND", self.peers)
         if len(self.peers):
-            super().send(f"flash {self.group} NOP")
+            super().send(f"flash {self.group} {choice(self.peers).name}")
 
     def reject(self, peer):
         O.print(f"REJECT {peer}")

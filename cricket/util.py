@@ -140,7 +140,6 @@ class Peer():
             self.hex_mac = bin_to_hex(self.bin_mac)
             self.name = mac_to_name(self.hex_mac)
             self.ssid = name_to_ssid(self.name)
-        self.recips = 0
         self.scan_rssi = None
         print("CREATED", self)
 
