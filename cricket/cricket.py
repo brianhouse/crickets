@@ -59,6 +59,7 @@ class Cricket(Node):
                         print("BELOW MIN")
                         self.clear_peers()
                         self.group = None
+                        STS.off()
                     self.listen()
                     if self.capacitor >= 1.0:
                         self.flash()
@@ -73,8 +74,6 @@ class Cricket(Node):
     async def look(self):
         O.print("LEADER...")
         self.group = self.name
-        if STATUS:
-            STS.on()
         if HUM:
             SND.duty(0)
             SND.duty(512)
@@ -107,6 +106,7 @@ class Cricket(Node):
             if kind == "group":
                 O.print("GROUP", sender_group)
                 self.group = sender_group
+                STS.off()
                 self.clear_peers()
                 self.add_peer(sender)
                 for name in group_list.split("*"):
