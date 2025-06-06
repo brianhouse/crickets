@@ -153,7 +153,7 @@ class Cricket(Node):
                         if len(self.peers) < MAX_HOOD:
                             print("LOW HOOD")
                             self.add_peer(sender)
-                        elif sender.rssi > furthest.rssi:
+                        elif furthest is not None and sender.rssi > furthest.rssi:
                             # we're not rejecting, just limiting sends
                             print("CLOSER")
                             self.remove_peer(furthest)
@@ -162,7 +162,7 @@ class Cricket(Node):
                         if len(self.peers) < MAX_HOOD:
                             print("ROOM FOR FRIEND")
                             self.add_peer(friend)
-                        elif friend.rssi > furthest.rssi:
+                        elif furthest is not None and friend.rssi is not None and friend.rssi > furthest.rssi:
                             print("FRIEND IS CLOSER")
                             self.remove_peer(furthest)
                             self.add_peer(friend)
