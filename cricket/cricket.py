@@ -77,6 +77,7 @@ class Cricket(Node):
                                 SND.duty(0)
                             continue
                     if len(self.peers) < MIN_HOOD:
+                        print("BELOW MIN")
                         await self.look()
                         continue
                     self.listen()
