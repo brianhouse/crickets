@@ -119,8 +119,8 @@ class Cricket(Node):
                 self.remove_peer(sender)
             elif kind == "flash":
                 if sender_group == self.group:
-                    if sender.rssi < RANGE:
-                        O.print("REJECT TOO FAR")
+                    if self.group == self.name and sender.rssi < RANGE:
+                        O.print("REJECT TOO FAR")  # only leader culls by distance
                         self.add_peer(sender)
                         self.send(f"reject {self.group} DIST", sender)
                         self.remove_peer(sender)
