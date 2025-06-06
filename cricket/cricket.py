@@ -137,6 +137,8 @@ class Cricket(Node):
                 self.group = sender_group
                 if self.group == self.name:
                     STS.on()
+                else:
+                    STS.off()
                 print("GROUP", self.group)
                 self.bump()
 
@@ -191,6 +193,13 @@ class Cricket(Node):
                 O.print(e)
         self.peers.clear()
 
+    def get_furthest(self):
+        furthest = None
+        for peer in self.peers:
+            if peer.rssi is not None and (furthest is None or peer.rssi < furthest.rssi):
+                furthest = peer
+        return furthest
+
     def send(self):
         O.print("SEND", self.peers)
         if len(self.peers):
@@ -237,9 +246,4 @@ class Cricket(Node):
     def f_inv(self, y):
         return (2 / math.pi) * math.asin(y)
 
-    def get_furthest(self):
-        furthest = None
-        for peer in self.peers:
-            if peer.rssi is not None and (furthest is None or peer.rssi < furthest.rssi):
-                furthest = peer
-        return furthest
+
