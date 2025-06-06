@@ -121,13 +121,13 @@ class Cricket(Node):
                     if sender.rssi < RANGE:
                         O.print("REJECT TOO FAR")
                         self.add_peer(sender)
-                        self.send(f"reject {self.group} NOP", sender)
+                        self.send(f"reject {self.group} DIST", sender)
                         self.remove_peer(sender)
                     self.bump()
                 else:
                     O.print("REJECT OTHER GROUP")
                     self.add_peer(sender)
-                    self.send(f"reject {self.group} NOP", sender)
+                    self.send(f"reject {self.group} GROUP", sender)
                     self.remove_peer(sender)
 
     def add_peer(self, peer):
