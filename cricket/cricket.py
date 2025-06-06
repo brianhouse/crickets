@@ -164,7 +164,7 @@ class Cricket(Node):
                         elif friend.rssi > furthest.rssi:
                             print("FRIEND IS CLOSER")
                             self.remove_peer(furthest)
-                            self.add_peer(sender)
+                            self.add_peer(friend)
                     self.bump()
                 else:
                     # no longer friends
