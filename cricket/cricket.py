@@ -24,7 +24,16 @@ class Cricket(Node):
     async def run(self):
         try:
             await asyncio.sleep_ms(randint(1000, 3000))
+            if HUM:
+                SND.duty(0)
+                SND.duty(512)
+                SND.freq(self.hum)
+            STS.on()
             await self.look()
+            if self.group != self.name:
+                STS.off()
+            if HUM:
+                SND.duty(0)
             self.receive()  # clear messages
         except Exception as e:
             if DEBUG:
