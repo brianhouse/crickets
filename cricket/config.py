@@ -1,15 +1,15 @@
 # connection constants
 POWER = 3
-RANGE = -50
-MAX_HOOD = 5
-MIN_HOOD = 2
+RANGE = -40
+MAX_HOOD = 10
+MIN_HOOD = 3
 GROUP_LEADER = .2
 SEVER = -4
 
 # capacitor constants
 TICK = 10
-BUMP = 25
-REST = 250
+BUMP = 10
+REST = 100
 
 # motion
 MOSENS = 20
