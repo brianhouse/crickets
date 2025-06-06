@@ -30,7 +30,7 @@ class Cricket(Node):
                 SND.freq(self.hum)
             STS.on()
             await self.look()
-            if self.group != self.name:
+            if not STATUS or (self.group != self.name):
                 STS.off()
             if HUM:
                 SND.duty(0)
@@ -116,6 +116,7 @@ class Cricket(Node):
                 continue
 
             if kind == "reject":
+                print("REJECTED")
                 self.remove_peer(sender)
                 continue
 
@@ -128,6 +129,7 @@ class Cricket(Node):
             elif sender_group == "null":
                 # add the peer to try to get it in the group
                 # ...but don't bump until they're in the group
+                print("SENDER UNASSIGNED")
                 self.add_peer(sender)
 
             # self unassigned, sender assigned
@@ -147,16 +149,20 @@ class Cricket(Node):
                 if self.group == sender_group:
                     furthest = self.get_furthest()
                     if len(self.peers) < MAX_HOOD:
+                        print("LOW HOOD")
                         self.add_peer(sender)
                     elif sender.rssi > furthest.rssi:
                         # we're not rejecting, just limiting sends
+                        print("CLOSER")
                         self.remove_peer(furthest)
                         self.add_peer(sender)
                     if friend_name != self.name:
                         friend = Peer.find(name=friend_name)
                         if len(self.peers) < MAX_HOOD:
+                            print("ROOM FOR FRIEND")
                             self.add_peer(friend)
                         elif friend.rssi > furthest.rssi:
+                            print("FRIEND IS CLOSER")
                             self.remove_peer(furthest)
                             self.add_peer(sender)
                     self.bump()
