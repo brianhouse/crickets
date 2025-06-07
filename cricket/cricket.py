@@ -109,6 +109,7 @@ class Cricket(Node):
                     continue
                 O.print("GROUP", sender_group)
                 self.group = sender_group
+                STS.off()
                 for peer in self.peers:
                     self.send(f"reject {self.group} NOP", peer)
                 self.clear_peers()
