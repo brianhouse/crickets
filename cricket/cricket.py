@@ -28,7 +28,7 @@ class Cricket(Node):
             SND.duty(0)
             LED.off()
             STS.on()
-            await asyncio.sleep_ms(randint(1000, 3000))
+            await asyncio.sleep(2)
             self.receive()  # clear messages
             STS.off()
         except Exception as e:
@@ -64,11 +64,11 @@ class Cricket(Node):
                     if self.group is not None:
                         if len(self.peers) < MIN_HOOD:
                             print("BELOW MIN, DEGROUP")
-                            await self.reset()
+                            self.reset()
                             continue
                         if self.flashes == FLASHES:
                             print("REACHED FLASHES")
-                            await self.reset()
+                            self.reset()
                             continue
                     self.listen()
                     if self.capacitor >= 1.0:
@@ -128,13 +128,14 @@ class Cricket(Node):
                 else:
                     O.print("IGNORE")
 
-    async def reset(self):
+    def reset(self):
         O.print("RESET")
         self.clear_peers()
         self.group = None
         self.flashes = 0
         STS.off()
-        await asyncio.sleep_ms(randint(0, 1000))  # mess up the oscillator
+        self.phase = random()
+        self.capacitor = self.f(self.phase)
 
     def add_peer(self, peer):
         if peer in self.peers or peer.name == self.name:
