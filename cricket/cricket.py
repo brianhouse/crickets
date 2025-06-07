@@ -103,14 +103,14 @@ class Cricket(Node):
                 O.print(f"BAD ({e}): \"{message}\"")
                 continue
             if kind == "group" and self.group is None:
-                peers = group_list.split("*")
-                if self.name not in peers:
+                group_names = group_list.split("*")
+                if self.name not in group_names:
                     continue
                 O.print("GROUP", sender_group)
                 self.group = sender_group
                 self.clear_peers()
                 self.add_peer(sender)
-                for name in group_list.split("*"):
+                for name in group_names:
                     self.add_peer(Peer.find(name))
             elif kind == "flash":
                 if sender_group == self.group:
