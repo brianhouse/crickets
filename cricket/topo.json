@@ -37,6 +37,44 @@
             "kj4MqMB2": [3, 3, 3],
             "4CONqMB2": [3, 3, 3]
         }
+    },
+    "2": {
+        "channel": 4,
+        "grid": {
+            "s1GNqMB2": [1, 1, 1],
+            "g35MqMB2": [1, 1, 1],
+            "Q_GNqMB2": [1, 1, 1],
+            "EBI2jLEq": [1, 1, 1],
+            "cH3MqMB2": [1, 1, 1],
+            "IcpyvsCF": [1, 1, 1],
+            "4VpyvsCF": [1, 1, 1],
+            "Q55MqMB2": [1, 1, 1],
+            "oII2jLEq": [1, 1, 1],
+            "A0WNqMB2": [1, 1, 1],
+            "0RNNqMB2": [1, 1, 1],
+            "gv2MqMB2": [2, 2, 2],
+            "gcpyvsCF": [2, 2, 2],
+            "cloyvsCF": [2, 2, 2],
+            "8e7MqMB2": [2, 2, 2],
+            "8UpyvsCF": [2, 2, 2],
+            "0G-MqMB2": [2, 2, 2],
+            "U-myvsCF": [2, 2, 2],
+            "UcpyvsCF": [2, 2, 2],
+            "MWpyvsCF": [2, 2, 2],
+            "Ef8MqMB2": [2, 2, 2],
+            "sTnyvsCF": [2, 2, 2],
+            "o0H2jLEq": [3, 3, 3],
+            "wX7MqMB2": [3, 3, 3],
+            "MsXNqMB2": [3, 3, 3],
+            "QUGNqMB2": [3, 3, 3],
+            "wtCNqMB2": [3, 3, 3],
+            "kTnyvsCF": [3, 3, 3],
+            "I-nyvsCF": [3, 3, 3],
+            "wz0MqMB2": [3, 3, 3],
+            "UPANqMB2": [3, 3, 3],
+            "QdYNqMB2": [3, 3, 3],
+            "oV9MqMB2": [3, 3, 3]
+        }
     }
 }
 
