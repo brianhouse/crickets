@@ -22,6 +22,7 @@ class Cricket(Node):
         self.paused = False
         self.flashes = 0
         O.print(f"## {self.name} ##")
+        O.print(f"CHANNEL {self.channel}")
 
     async def run(self):
         try:

@@ -26,6 +26,3 @@ BLINK = True
 CHIRP = True
 HUM = True
 DEBUG = False
-
-CHANNEL = 0
-from topo import *

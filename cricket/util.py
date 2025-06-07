@@ -5,6 +5,7 @@ import espnow
 import bluetooth
 import ubinascii
 import network
+import ujson as json
 from machine import Pin, PWM, DAC, reset
 from time import ticks_ms, ticks_diff, sleep_ms
 from random import random, randint, choice, randrange
@@ -21,6 +22,12 @@ except Exception:
 SND = PWM(Pin(27, Pin.OUT))
 SND.duty(0)
 
+try:
+    with open("topo.json", 'r') as f:
+        topo = json.loads(f.read())
+except Exception as e:
+    print("Error loading topo:", e)
+
 
 class Node():
 
@@ -34,6 +41,7 @@ class Node():
         self.sta.active(True)
         self.mac = bin_to_hex(self.sta.config('mac'))
         self.name = mac_to_name(self.mac)
+        self.channel = find_channel(self.name)
 
         # start access point
         self.ap = network.WLAN(network.AP_IF)
@@ -42,13 +50,13 @@ class Node():
                        password="pulsecoupled",
                        authmode=network.AUTH_WPA2_PSK,
                        txpower=POWER,
-                       channel=CHANNEL)
+                       channel=self.channel)
         # print(self.ap.config("txpower"))
 
         # activate mesh
         self.mesh = espnow.ESPNow()
         self.mesh.active(True)
-        self.mesh.add_peer(b'\xff' * 6, channel=CHANNEL)
+        self.mesh.add_peer(b'\xff' * 6, channel=self.channel)
 
         # create objects
         self.messages = []
@@ -107,7 +115,7 @@ class Node():
         return self.messages
 
     def add_peer(self, bin_mac):
-        self.mesh.add_peer(bin_mac, channel=CHANNEL)
+        self.mesh.add_peer(bin_mac, channel=self.channel)
 
     def remove_peer(self, bin_mac):
         self.mesh.del_peer(bin_mac)
@@ -215,7 +223,26 @@ def shuffle(l):
         l[i], l[j] = l[j], l[i]
 
 
+def find_channel(name):
+    for section in topo:
+        for nm in topo[section]['grid']:
+            if nm == name:
+                return topo[section]['channel']
+    raise Exception(f"Channel not found! {name}")
 
 
-
+def get_neighbors(name):
+    for section in topo:
+        for nm in topo[section]['grid']:
+            if nm == name:
+                x1, y1, z1 = topo[section]['grid'][name]
+                distances = []
+                for key in topo[section]['grid']:
+                    if key == name:
+                        continue
+                    x2, y2, z2 = topo[section]['grid'][key]
+                    distances.append((key, math.sqrt((x1 - x2)**2 + (y1 - y2)**2 + (z1 - z2)**2)))
+                distances.sort(key=lambda d: d[1])
+                return [distance[0] for distance in distances]
+    raise Exception(f"Neighbors not found! {name}")
 
