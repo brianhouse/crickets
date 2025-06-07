@@ -57,7 +57,7 @@ class Cricket(Node):
                     self.phase = min(self.phase + (t_elapsed / 1000), 1.0)
                     self.capacitor = self.f(self.phase)
                     if MOTION:
-                        if PIR.value() and self.group is None:
+                        if self.group is None and PIR.value():
                             print("MOTION")
                             self.look()
                             continue
@@ -111,6 +111,7 @@ class Cricket(Node):
                     continue
                 O.print("GROUP", sender_group)
                 self.group = sender_group
+                self.flashes = 0
                 STS.off()
                 for peer in self.peers:
                     self.send(f"reject {self.group} NOP", peer)
