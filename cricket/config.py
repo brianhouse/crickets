@@ -1,7 +1,6 @@
 
 # connection constants
 POWER = 3
-RANGE = -40
 MAX_HOOD = 8
 MIN_HOOD = 3
 
