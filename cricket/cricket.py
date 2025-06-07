@@ -19,6 +19,7 @@ class Cricket(Node):
         self.peers = []
         self.group = None
         self.paused = False
+        self.flashes = 0
         O.print(f"## {self.name} ##")
 
     async def run(self):
@@ -53,15 +54,19 @@ class Cricket(Node):
                     self.phase = min(self.phase + (t_elapsed / 1000), 1.0)
                     self.capacitor = self.f(self.phase)
                     if MOTION:
-                        if PIR.value():
+                        if PIR.value() and self.group is None:
                             print("MOTION")
                             await self.look()
                             continue
-                    if self.group is not None and len(self.peers) < MIN_HOOD:
-                        print("BELOW MIN")
-                        self.clear_peers()
-                        self.group = None
-                        STS.off()
+                    if self.group is not None:
+                        if len(self.peers) < MIN_HOOD:
+                            print("BELOW MIN, DEGROUP")
+                            await self.reset()
+                            continue
+                        if self.flashes == FLASHES:
+                            print("REACHED FLASHES")
+                            await self.reset()
+                            continue
                     self.listen()
                     if self.capacitor >= 1.0:
                         self.flash()
@@ -74,33 +79,18 @@ class Cricket(Node):
                     O.print(e)
 
     async def look(self):
-        O.print("LEADER...")
+        O.print("LOOK...")
         self.group = self.name
         if STATUS:
             STS.on()
-        if BLINK:
-            LED.on()
-        if HUM:
-            SND.duty(0)
-            SND.duty(512)
-            SND.freq(self.hum)
-        await asyncio.sleep_ms(2000)  # needs to be at least 2s for the PIR
-        await asyncio.sleep_ms(randint(0, 1000))  # mess up the oscillator
         self.clear_peers()
-        neighbors = self.scan(RANGE, True)  # sorting
-        if len(neighbors):
-            for i in range(MAX_HOOD):
-                if i < len(neighbors):
-                    self.add_peer(neighbors[i])
+        for neighbor_name in get_neighbors(self.name)[:MAX_HOOD]:
+            self.add_peer(Peer.find(neighbor_name))
         self.send_all(f"group {self.group} {"*".join([peer.name for peer in self.peers])}")
         O.print("CLEAR MESSAGES")
         self.receive()  # clear messages
         if not STATUS or (self.group != self.name):
             STS.off()
-        if BLINK:
-            LED.off()
-        if HUM:
-            SND.duty(0)
         O.print("--> DONE")
 
     def listen(self):
@@ -111,30 +101,32 @@ class Cricket(Node):
             except Exception as e:
                 O.print(f"BAD ({e}): \"{message}\"")
                 continue
-            if kind == "group":
+            if kind == "group" and self.group is None:
                 O.print("GROUP", sender_group)
                 self.group = sender_group
-                STS.off()
                 self.clear_peers()
                 self.add_peer(sender)
                 for name in group_list.split("*"):
                     self.add_peer(Peer.find(name))
+            elif kind == "flash":
+                if sender_group == self.group:
+                    self.bump()
+                else:
+                    O.print(f"REJECT ({sender_group} vs {self.group})")
+                    self.add_peer(sender)
+                    self.send(f"reject {self.group} NOP", sender)
+                    self.remove_peer(sender)
             elif kind == "reject":
                 O.print("REJECTED")
                 self.remove_peer(sender)
-            elif kind == "flash":
-                if sender_group == self.group:
-                    if self.group == self.name and sender.rssi < RANGE:
-                        O.print("REJECT TOO FAR")  # only leader culls by distance
-                        self.add_peer(sender)
-                        self.send(f"reject {self.group} DIST", sender)
-                        self.remove_peer(sender)
-                    self.bump()
-                else:
-                    O.print(f"REJECT OTHER GROUP ({sender_group} vs {self.group})")
-                    self.add_peer(sender)
-                    self.send(f"reject {self.group} GROUP", sender)
-                    self.remove_peer(sender)
+
+    async def reset(self):
+        O.print("RESET")
+        self.clear_peers()
+        self.group = None
+        self.flashes = 0
+        STS.off()
+        await asyncio.sleep_ms(randint(0, 1000))  # mess up the oscillator
 
     def add_peer(self, peer):
         if peer in self.peers or peer.name == self.name:
@@ -177,6 +169,7 @@ class Cricket(Node):
         self.phase = 0.0
         self.capacitor = 0.0
         if self.group is not None:
+            self.flashes += 1
             if BLINK:
                 LED.on()
             else:

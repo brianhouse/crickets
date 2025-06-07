@@ -1,15 +1,15 @@
+
 # connection constants
 POWER = 3
 RANGE = -40
-MAX_HOOD = 10
+MAX_HOOD = 8
 MIN_HOOD = 3
-GROUP_LEADER = .2
-SEVER = -4
 
 # capacitor constants
 TICK = 10
 BUMP = 10
 REST = 100
+FLASHES = 120
 
 # motion
 MOSENS = 20
@@ -24,5 +24,7 @@ STATUS = True
 BLINK = True
 CHIRP = True
 HUM = True
-
 DEBUG = False
+
+CHANNEL = 0
+from topo import *

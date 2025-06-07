@@ -32,15 +32,18 @@ class Node():
         # start wifi receiver
         self.sta = network.WLAN(network.STA_IF)
         self.sta.active(True)
-        self.sta.config(txpower=POWER)
-        # print(sta.config("txpower"))
         self.mac = bin_to_hex(self.sta.config('mac'))
         self.name = mac_to_name(self.mac)
 
         # start access point
         self.ap = network.WLAN(network.AP_IF)
         self.ap.active(True)
-        self.ap.config(ssid=name_to_ssid(self.name), password="pulsecoupled", authmode=network.AUTH_WPA2_PSK)
+        self.ap.config(ssid=name_to_ssid(self.name),
+                       password="pulsecoupled",
+                       authmode=network.AUTH_WPA2_PSK,
+                       txpower=POWER,
+                       channel=CHANNEL)
+        # print(self.ap.config("txpower"))
 
         # activate mesh
         self.mesh = espnow.ESPNow()
@@ -103,7 +106,7 @@ class Node():
         return self.messages
 
     def add_peer(self, bin_mac):
-        self.mesh.add_peer(bin_mac)
+        self.mesh.add_peer(bin_mac, channel=CHANNEL)
 
     def remove_peer(self, bin_mac):
         self.mesh.del_peer(bin_mac)
