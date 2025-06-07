@@ -8,7 +8,6 @@ CHANNEL = 8
 
 grid = {
     "AB7MqMB2": (1, 2, 3),  # tester
-    "cH3MqMB2": (1, 2, 3),  # tester 2
 
     "0WpyvsCF": (1, 2, 3),
     "ESnyvsCF": (1, 2, 3),
