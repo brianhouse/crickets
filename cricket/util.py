@@ -48,6 +48,7 @@ class Node():
         # activate mesh
         self.mesh = espnow.ESPNow()
         self.mesh.active(True)
+        self.mesh.add_peer(b'\xff' * 6, channel=CHANNEL)
 
         # create objects
         self.messages = []
@@ -73,7 +74,7 @@ class Node():
     def send(self, message, peer=None):
         try:
             if peer is None:
-                self.mesh.send(None, message, False)
+                self.mesh.send(b'\xff' * 6, message, False)
             else:
                 self.mesh.send(peer.bin_mac, message, False)
         except Exception as e:

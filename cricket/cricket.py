@@ -175,10 +175,7 @@ class Cricket(Node):
                 LED.on()
             else:
                 STS.on()
-            if self.group == self.name:
-                self.send_all(f"flash {self.group} NOP")
-            else:
-                self.send(f"flash {self.group} NOP", choice(self.peers))
+            self.send_all(f"flash {self.group} NOP")
             if CHIRP:
                 SND.duty(512)
                 SND.freq(self.pitch * 2)
