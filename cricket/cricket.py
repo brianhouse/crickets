@@ -102,19 +102,27 @@ class Cricket(Node):
             except Exception as e:
                 O.print(f"BAD ({e}): \"{message}\"")
                 continue
-            if kind == "group" and self.group is None:
+            if kind == "group":
                 group_names = group_list.split("*")
                 if self.name not in group_names:
+                    O.print("IGNORE")
                     continue
                 O.print("GROUP", sender_group)
                 self.group = sender_group
+                for peer in self.peers:
+                    self.send(f"reject {self.group} NOP", peer)
                 self.clear_peers()
                 self.add_peer(sender)
                 for name in group_names:
                     self.add_peer(Peer.find(name))
+            if kind == "reject":
+                print("REJECTED")
+                self.remove_peer(sender)
             elif kind == "flash":
                 if sender_group == self.group:
                     self.bump()
+                else:
+                    O.print("IGNORE")
 
     async def reset(self):
         O.print("RESET")

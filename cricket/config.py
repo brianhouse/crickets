@@ -7,12 +7,11 @@ MIN_HOOD = 3
 
 # capacitor constants
 TICK = 10
-BUMP = 25
+BUMP = 10
 REST = 100
 
 # dynamics constants
 FLASHES = 120
-LEADER_MODE = False
 
 # motion
 MOSENS = 20

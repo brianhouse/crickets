@@ -1,19 +1,7 @@
 # NOW
 
-new mode is simplest
-
-interference is the issue
-
-different channels should help
-dont use the ones with other stuff on it
-1 6 11 don't overlap, but theyre probably kind of full
 
 zones
-1 2
-3 4
-5 6
-7 8
-
 
  8    4  
  2   10  
@@ -23,22 +11,21 @@ zones
  then upstairs use two of 1, 6, 11 that are the least used in the building
 
 
- ///
+## current
 
+the issue now is that if you trigger a bunch, the groups are too small
 
- ok. so good plan. do channels, and then use the hardcoded location information for proximity.
+so the GROUP command has to work even if you're already grouped
 
-- start it up and run diagnostics to see the channel use
-- upload new code on a few bays (util, config, topo) and try it; verify with the scanner
+that's fine, actually. but it results in orphans
 
- and if it doesn't work?
+the orphans will keep going just fine, except I want them to stop if there's too few
 
-basically I've lost the timing of communication
+they could know this if they received reject messages, which is fine
 
-==> only send flash messages if you're the leader
-would reduce the message volume by an order of magnitude
-kind of violates the spirit of it, doesn't it?
-but whatever, if it works, it works
+...but then there would be a reject message EVERY TIME we got a ping
 
-if I do this, raise the bump amount to 25
-could even make it a config option
+we don't even have peers anymore
+
+I guess we could send reject messages at the moment of group switching
+
