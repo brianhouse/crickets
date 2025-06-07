@@ -7,7 +7,7 @@ MIN_HOOD = 3
 
 # capacitor constants
 TICK = 10
-BUMP = 10
+BUMP = 25
 REST = 100
 FLASHES = 120
 
