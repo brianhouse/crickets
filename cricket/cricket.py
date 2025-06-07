@@ -2,6 +2,7 @@ from util import *
 from config import *
 
 ALG.write(MOSENS)
+FLASHES += randint(-10, 10)
 
 
 class Cricket(Node):
@@ -176,6 +177,8 @@ class Cricket(Node):
                 STS.on()
             if self.group == self.name:
                 self.send_all(f"flash {self.group} NOP")
+            else:
+                self.send(f"flash {self.group} NOP", choice(self.peers))
             if CHIRP:
                 SND.duty(512)
                 SND.freq(self.pitch * 2)

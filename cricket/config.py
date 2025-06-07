@@ -9,7 +9,10 @@ MIN_HOOD = 3
 TICK = 10
 BUMP = 25
 REST = 100
+
+# dynamics constants
 FLASHES = 120
+LEADER_MODE = False
 
 # motion
 MOSENS = 20
