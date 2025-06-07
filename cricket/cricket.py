@@ -25,6 +25,8 @@ class Cricket(Node):
 
     async def run(self):
         try:
+            SND.duty(0)
+            LED.off()
             STS.on()
             await asyncio.sleep_ms(randint(1000, 3000))
             self.receive()  # clear messages
@@ -57,7 +59,7 @@ class Cricket(Node):
                     if MOTION:
                         if PIR.value() and self.group is None:
                             print("MOTION")
-                            await self.look()
+                            self.look()
                             continue
                     if self.group is not None:
                         if len(self.peers) < MIN_HOOD:
@@ -79,7 +81,7 @@ class Cricket(Node):
                 else:
                     O.print(e)
 
-    async def look(self):
+    def look(self):
         O.print("LOOK...")
         self.group = self.name
         if STATUS:
