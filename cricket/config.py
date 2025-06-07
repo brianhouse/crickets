@@ -11,7 +11,7 @@ BUMP = 10
 REST = 100
 
 # dynamics constants
-FLASHES = 120
+FLASHES = 30
 
 # motion
 MOSENS = 20
