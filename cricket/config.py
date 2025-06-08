@@ -10,7 +10,9 @@ BUMP = 18
 REST = 100
 
 # dynamics constants
+GROUP_TIME = 3
 FLASHES = 45
+FLASH_VARY = 10
 
 # motion
 MOSENS = 20
@@ -21,8 +23,6 @@ HUM_LOW, HUM_HIGH = 10, 20
 
 # behavior constants
 MOTION = True
-STATUS = True
 BLINK = True
 CHIRP = True
-HUM = True
 DEBUG = False

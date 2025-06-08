@@ -2,7 +2,7 @@ from util import *
 from config import *
 
 ALG.write(MOSENS)
-FLASHES += randint(-10, 10)
+FLASHES += randint(-FLASH_VARY, FLASH_VARY)
 
 
 class Cricket(Node):
@@ -17,12 +17,13 @@ class Cricket(Node):
         self.pitch = randint(PITCH_LOW, PITCH_HIGH)
         self.hum = randint(HUM_LOW, HUM_HIGH)
         self.t_previous = ticks_ms()
-        self.peers = []
-        self.group = None
         self.paused = False
+        self.active = False
+        self.group = None
+        self.group_t = None
         self.flashes = 0
-        O.print(f"## {self.name} ##")
-        O.print(f"CHANNEL {self.channel}")
+        O.print("##", self.name, "##")
+        O.print("CHANNEL", self.channel)
 
     async def run(self):
         try:
@@ -53,31 +54,22 @@ class Cricket(Node):
                 if t_elapsed >= TICK:
                     self.t_previous = t
                     error = abs(t_elapsed - TICK)
-                    # O.print("TICK", t_elapsed)
                     if error > 15:  # perceptibility
                         O.print("*", error)
                     O.reset()
                     self.phase = min(self.phase + (t_elapsed / 1000), 1.0)
                     self.capacitor = self.f(self.phase)
-                    if MOTION:
-                        if self.group is None and PIR.value():
-                            print("MOTION")
-                            self.look()
-                            continue
-                    if self.group is not None:
-                        if len(self.peers) < MIN_HOOD:
-                            print("BELOW MIN, DEGROUP")
-                            self.reset()
-                            continue
-                        if self.flashes == FLASHES:
-                            print("REACHED FLASHES")
-                            self.reset()
-                            continue
+                    if self.active and self.flashes == FLASHES:
+                        O.print("REACHED FLASHES")
+                        self.active = False
+                        self.group = None
+                    if not self.active and ticks_diff(t, self.group_t) > GROUP_TIME * 1000:
+                        O.print("GROUP EXPIRED")
+                        self.group = None
+                    self.look()
                     self.listen()
                     if self.capacitor >= 1.0:
                         self.flash()
-                    # O.print("MEM", gc.mem_free())
-                    gc.collect()
             except Exception as e:
                 if DEBUG:
                     raise e
@@ -85,19 +77,30 @@ class Cricket(Node):
                     O.print(e)
 
     def look(self):
-        O.print("LOOK...")
-        self.group = self.name
-        if STATUS:
-            STS.on()
-        self.clear_peers()
-        for neighbor_name in get_neighbors(self.name)[:MAX_HOOD]:
-            self.add_peer(Peer.find(neighbor_name))
-        self.send_all(f"group {self.group} {"*".join([peer.name for peer in self.peers])}")
-        O.print("CLEAR MESSAGES")
-        self.receive()  # clear messages
-        if not STATUS or (self.group != self.name):
-            STS.off()
-        O.print("--> DONE")
+        if not MOTION:
+            return
+        if not self.active and PIR.value():
+            O.print("MOTION")
+            self.active = True
+            self.flashes = 0
+            self.phase = 1.0
+            self.capacitor = self.f(self.phase)
+            if self.group is None:
+                O.print("STARTING GROUP", self.name)
+                self.group = self.name
+                self.group_t = ticks_ms()
+                self.send_all(f"group {self.group} NOP")
+
+    # def look(self):
+    #     O.print("LOOK...")
+    #     self.group = self.name
+    #     self.clear_peers()
+    #     for neighbor_name in get_neighbors(self.name)[:MAX_HOOD]:
+    #         self.add_peer(Peer.find(neighbor_name))
+    #     self.send_all(f"group {self.group} {"*".join([peer.name for peer in self.peers])}")
+    #     O.print("CLEAR MESSAGES")
+    #     self.receive()  # clear messages
+    #     O.print("--> DONE")
 
     def listen(self):
         for sender, message in self.receive():
@@ -108,73 +111,23 @@ class Cricket(Node):
                 O.print(f"BAD ({e}): \"{message}\"")
                 continue
             if kind == "group":
-                group_names = group_list.split("*")
-                if self.name not in group_names:
-                    O.print("IGNORE")
-                    continue
-                O.print("GROUP", sender_group)
-                self.group = sender_group
-                self.flashes = 0
-                STS.off()
-                for peer in self.peers:
-                    self.send(f"reject {self.group} NOP", peer)
-                self.clear_peers()
-                self.add_peer(sender)
-                for name in group_names:
-                    self.add_peer(Peer.find(name))
-            if kind == "reject":
-                print("REJECTED")
-                self.remove_peer(sender)
+                if not self.active:
+                    O.print("GROUP", sender_group)
+                    self.group = sender_group
+                    self.group_t = ticks_ms()
             elif kind == "flash":
-                if sender_group == self.group:
-                    self.bump()
+                if self.active:
+                    if sender_group == self.group:
+                        self.bump()
+                    else:
+                        O.print("WRONG GROUP")
                 else:
-                    O.print("IGNORE")
-
-    def reset(self):
-        O.print("RESET")
-        self.clear_peers()
-        self.group = None
-        self.flashes = 0
-        STS.off()
-        self.phase = random()
-        self.capacitor = self.f(self.phase)
-
-    def add_peer(self, peer):
-        if peer in self.peers or peer.name == self.name:
-            return
-        O.print(f"ADD {peer}")
-        self.peers.append(peer)
-        try:
-            super().add_peer(peer.bin_mac)
-        except Exception as e:
-            O.print(e)
-
-    def remove_peer(self, peer):
-        if peer in self.peers:
-            O.print(f"REMOVE {peer}")
-            self.peers.remove(peer)
-            try:
-                super().remove_peer(peer.bin_mac)
-            except Exception as e:
-                O.print(e)
-
-    def clear_peers(self):
-        for peer in self.peers:
-            try:
-                super().remove_peer(peer.bin_mac)
-            except Exception as e:
-                O.print(e)
-        self.peers.clear()
+                    O.print("NOT ACTIVE")
 
     def send_all(self, message):
         O.print("SEND", self.peers, message)
         if len(self.peers):
             super().send(message)
-
-    def send(self, message, peer):
-        O.print("SEND", peer, message)
-        super().send(message, peer)
 
     def flash(self):
         O.print("FLASH")
