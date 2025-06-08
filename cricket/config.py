@@ -6,7 +6,7 @@ MIN_HOOD = 3
 
 # capacitor constants
 TICK = 10
-BUMP = 10
+BUMP = 18
 REST = 100
 
 # dynamics constants
