@@ -11,7 +11,7 @@ while len(cricket_names):
         response = request("http://192.168.4.1/pause")
         print(response)
         print(f"*** {cricket_name} ***")
-        sleep(3)
+        sleep(10)
         response = request("http://192.168.4.1/resume")
         print(response)
     except Exception as e:
