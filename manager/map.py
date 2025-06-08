@@ -8,7 +8,11 @@ while len(cricket_names):
     cricket_name = cricket_names.pop()
     try:
         connect(f"CK_{cricket_name}")
-        response = request("http://192.168.4.1/")
+        response = request("http://192.168.4.1/pause")
+        print(response)
+        print(f"*** {cricket_name} ***")
+        sleep(3)
+        response = request("http://192.168.4.1/resume")
         print(response)
     except Exception as e:
         print("Request failed:", e)
