@@ -3,6 +3,6 @@ __pycache__
 dev
 venv
 update.txt
+cricketer.txt
 peers.json
 crickets.json
-crickets_master.json

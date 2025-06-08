@@ -27,13 +27,13 @@ Acrylic https://shop.glowforge.com/products/clear-acrylic-cast-transparent-gloss
 
     $ run.py 01E483FC COMMAND
 
-`hello` -- ping crickets for "HELLO WORLD"  
-`peers` -- retrieve peer list from all crickets  
-`post` -- copy file to all visible crickets  
-
-
-https://docs.micropython.org/en/latest/reference/mpremote.html  
-https://wellys.com/posts/rp2040_mpremote/  
+`scan` -- find reachable crickets for crickets.json used in other commands
+`hello` -- ping for "HELLO WORLD"  
+`peers` -- retrieve peer list
+`post [file]` -- copy file
+`resume` -- start normal behavior after pause/upload
+`reset` -- soft reset of cricket
+`map` -- pause with light for 8 seconds and then resume
 
 
 ## PIR
@@ -47,12 +47,11 @@ Pins are numbered clockwise when looking at the bottom, with #1 being just count
 - Check signal on pin #5 (REL)
 - Connect pin #6 (ONTIME) to ground (min on time of 2 seconds) - or connect a resistor divider to increase up to one hour (3.3v)
 
-
 ie
-
 - 1:   knob
 - 2: 3V
 - 3: gnd
 - 4: 3v
 - 5:   read
 - 6: gnd
+
