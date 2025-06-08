@@ -40,10 +40,12 @@ class Cricket(Node):
         self.t_previous = ticks_ms()
         while True:
             if self.paused:
+                self.reset()
                 LED.on()
-                STS.on()
                 await asyncio.sleep(1)
                 continue
+            else:
+                LED.off()
             try:
                 await asyncio.sleep_ms(1)
                 t = ticks_ms()

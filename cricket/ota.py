@@ -98,3 +98,4 @@ async def start_ota(c):
             await asyncio.sleep(3600)
     except asyncio.CancelledError:
         pass
+
