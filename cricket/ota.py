@@ -29,8 +29,10 @@ async def handle_request(reader, writer):
             content = "resetting"
             reset = True
         elif page == "/pause":
+            content = "OK"
             updated = True
         elif page == "/resume":
+            content = "OK"
             resume = True
         elif page == "/file":
             content = "NO FILE DATA"
