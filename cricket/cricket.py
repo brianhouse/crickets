@@ -21,7 +21,6 @@ class Cricket(Node):
         self.group = None
         self.paused = False
         self.flashes = 0
-        self.trigger = False
         O.print(f"## {self.name} ##")
         O.print(f"CHANNEL {self.channel}")
 
@@ -61,17 +60,10 @@ class Cricket(Node):
                     self.phase = min(self.phase + (t_elapsed / 1000), 1.0)
                     self.capacitor = self.f(self.phase)
                     if MOTION:
-                        pir = PIR.value()
-                        if self.group is None and pir:
-                            if not self.trigger:
-                                self.trigger = True
-                                O.print("MOTION")
-                                if random() < LEADER:
-                                    O.print("LEADER")
-                                    self.look()
-                                    continue
-                        if not pir:
-                            self.trigger = False
+                        if self.group is None and PIR.value():
+                            print("MOTION")
+                            self.look()
+                            continue
                     if self.group is not None:
                         if len(self.peers) < MIN_HOOD:
                             print("BELOW MIN, DEGROUP")
@@ -222,6 +214,5 @@ class Cricket(Node):
 
     def f_inv(self, y):
         return (2 / math.pi) * math.asin(y)
-
 
 
