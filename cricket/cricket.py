@@ -29,7 +29,7 @@ class Cricket(Node):
             SND.duty(0)
             LED.off()
             STS.on()
-            await asyncio.sleep(2)
+            await asyncio.sleep(4)
             self.receive()  # clear messages
             STS.off()
         except Exception as e:
@@ -93,6 +93,8 @@ class Cricket(Node):
                 self.group = self.name
                 self.group_t = ticks_ms()
                 self.send_all(f"group {self.group} NOP")
+            for neighbor_name in get_neighbors(self.name)[:ACT_HOOD]:
+                self.send("activate NOP NOP", neighbor_name)
 
     # def look(self):
     #     O.print("LOOK...")
@@ -118,6 +120,11 @@ class Cricket(Node):
                     O.print("GROUP", sender_group)
                     self.group = sender_group
                     self.group_t = ticks_ms()
+            elif kind == "activate":
+                O.print("ACTIVATE")
+                self.active = True
+                self.flashes = 0
+                self.phase = 1.0
             elif kind == "flash":
                 if self.active:
                     if sender_group == self.group:
@@ -130,6 +137,15 @@ class Cricket(Node):
     def send_all(self, message):
         O.print("SEND", message)
         super().send(message)
+
+    def send(self, message, peer_name):
+        peer = Peer.find(name=peer_name)
+        O.print("SEND", message, peer)
+        try:
+            super().add_peer(peer.bin_mac)
+            super().send(message, peer)
+        except Exception as e:
+            O.print(e)
 
     def flash(self):
         O.print("FLASH")
