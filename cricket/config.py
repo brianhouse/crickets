@@ -4,13 +4,13 @@ POWER = 3
 
 # capacitor
 TICK = 10
-BUMP = 18
+BUMP = 15
 REST = 100
 
 # dynamics
 ACT_HOOD = 2
 GROUP_TIME = 4
-FLASHES = 45
+FLASHES = 55
 FLASH_VARY = 10
 
 # spontaneous
