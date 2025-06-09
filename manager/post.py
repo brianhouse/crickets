@@ -6,7 +6,7 @@ with open("crickets.json") as f:
 targets = ""
 with open("update.txt") as f:
     lines = [line.strip() for line in f]
-    filenames = lines
+    filenames = lines[0].split(' ')
 print(f"Posting {filenames}...")
 print()
 filedatas = []
@@ -21,8 +21,10 @@ while len(cricket_names):
         connect(f"CK_{cricket_name}")
         for f, filename in enumerate(filenames):
             filedata = filedatas[f]
+            print("Posting", filename)
             response = post_file("http://192.168.4.1/file", filename, filedata)
             print(response)
+            sleep(1)
     except Exception as e:
         print("Request failed:", e)
         cricket_names.insert(0, cricket_name)
