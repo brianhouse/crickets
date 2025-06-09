@@ -21,3 +21,9 @@ I want a trigger every FLASHES seconds
 
 so say 1/45/200 = .00011
 
+
+
+/
+
+tame with a single activation. it should activate HOOD neighbors.
+just send them individual messages, and then have a receipt for activate that activates them if they're not already.
