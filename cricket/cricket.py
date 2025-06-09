@@ -40,7 +40,10 @@ class Cricket(Node):
         self.t_previous = ticks_ms()
         while True:
             if self.paused:
-                self.reset()
+                self.active = False
+                self.group = None
+                self.group_t = None
+                self.phase = random()
                 LED.on()
                 await asyncio.sleep(1)
                 continue
@@ -61,6 +64,7 @@ class Cricket(Node):
                         O.print("REACHED FLASHES")
                         self.active = False
                         self.group = None
+                        self.group_t = None
                         self.phase = random()
                     if not self.active and self.group_t and ticks_diff(t, self.group_t) > GROUP_TIME * 1000:
                         O.print("GROUP EXPIRED")
