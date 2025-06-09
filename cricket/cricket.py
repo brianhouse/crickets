@@ -107,6 +107,13 @@ class Cricket(Node):
                 else:
                     O.print("NOT ACTIVE")
 
+    def spontaneous(self):
+        if not self.active and random() < SPONTANEOUS:
+            O.print("SPONTANEOUS")
+            self.activate()
+            for neighbor_name in get_neighbors(self.name)[:SPON_HOOD]:
+                self.send("activate NOP NOP", neighbor_name)
+
     def activate(self):
         O.print("ACTIVATE")
         self.active = True
@@ -143,6 +150,7 @@ class Cricket(Node):
 
     def flash(self):
         O.print("FLASH")
+        self.spontaneous()
         self.phase = 0.0
         if self.active:
             self.flashes += 1
