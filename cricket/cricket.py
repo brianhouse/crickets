@@ -81,7 +81,7 @@ class Cricket(Node):
         if not MOTION:
             return
         if not self.active and PIR.value():
-            O.print("MOTION")
+            O.print("ACTIVATE")
             self.active = True
             self.flashes = 0
             self.phase = 1.0
@@ -133,7 +133,7 @@ class Cricket(Node):
         O.print("FLASH")
         self.phase = 0.0
         self.capacitor = 0.0
-        if self.group is not None:
+        if self.active:
             self.flashes += 1
             if BLINK:
                 LED.on()
