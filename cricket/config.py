@@ -9,7 +9,7 @@ REST = 100
 
 # dynamics
 HOOD = 10
-GROUP_TIME = 3
+GROUP_TIME = 5
 FLASHES = 45
 FLASH_VARY = 10
 
