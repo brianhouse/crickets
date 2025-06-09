@@ -224,25 +224,33 @@ def shuffle(l):
 
 
 def find_channel(name):
-    for section in topo:
-        for nm in topo[section]['grid']:
-            if nm == name:
-                return topo[section]['channel']
-    raise Exception(f"Channel not found! {name}")
+    try:
+        for section in topo:
+            for nm in topo[section]['grid']:
+                if nm == name:
+                    return topo[section]['channel']
+        raise Exception(f"Channel not found! {name}")
+    except Exception as e:
+        print(e)
+    return 0
 
 
 def get_neighbors(name):
-    for section in topo:
-        for nm in topo[section]['grid']:
-            if nm == name:
-                x1, y1, z1 = topo[section]['grid'][name]
-                distances = []
-                for key in topo[section]['grid']:
-                    if key == name:
-                        continue
-                    x2, y2, z2 = topo[section]['grid'][key]
-                    distances.append((key, math.sqrt((x1 - x2)**2 + (y1 - y2)**2 + (z1 - z2)**2)))
-                distances.sort(key=lambda d: d[1])
-                return [distance[0] for distance in distances]
-    raise Exception(f"Neighbors not found! {name}")
+    try:
+        for section in topo:
+            for nm in topo[section]['grid']:
+                if nm == name:
+                    x1, y1, z1 = topo[section]['grid'][name]
+                    distances = []
+                    for key in topo[section]['grid']:
+                        if key == name:
+                            continue
+                        x2, y2, z2 = topo[section]['grid'][key]
+                        distances.append((key, math.sqrt((x1 - x2)**2 + (y1 - y2)**2 + (z1 - z2)**2)))
+                    distances.sort(key=lambda d: d[1])
+                    return [distance[0] for distance in distances]
+        raise Exception(f"Neighbors not found! {name}")
+    except Exception as e:
+        print(e)
+    return []
 
