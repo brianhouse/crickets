@@ -18,13 +18,12 @@ while len(cricket_names):
     print(json.dumps(cricket_names))
     cricket_name = cricket_names.pop()
     try:
-        connect(f"CK_{cricket_name}")
         for f, filename in enumerate(filenames):
+            connect(f"CK_{cricket_name}")
             filedata = filedatas[f]
             print("Posting", filename)
             response = post_file("http://192.168.4.1/file", filename, filedata)
             print(response)
-            sleep(1)
     except Exception as e:
         print("Request failed:", e)
         cricket_names.insert(0, cricket_name)

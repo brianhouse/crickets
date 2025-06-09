@@ -52,25 +52,26 @@ async def handle_request(reader, writer):
         headers = ("HTTP/1.1 200 OK",
                    "Content-Type: text/plain; charset=utf-8",
                    f"Content-Length: {len(content)}",
+                   "Connection: close",
                    "\r\n"
                    )
         print(content)
         writer.write("\r\n".join(headers).encode('utf-8'))
         writer.write(content.encode('utf-8'))
         await writer.drain()
-        await writer.wait_closed()
-        if updated:
-            cricket.paused = True
-        if resume:
-            cricket.paused = False
-        if reset:
-            sleep(2)
-            machine.reset()
     except Exception as e:
         if DEBUG:
             raise e
         else:
             print(e)
+    await writer.wait_closed()
+    if updated:
+        cricket.paused = True
+    if resume:
+        cricket.paused = False
+    if reset:
+        sleep(2)
+        machine.reset()
 
 
 async def extract_file(request, boundary):
