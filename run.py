@@ -15,13 +15,16 @@ if command == "post":
     if len(sys.argv) < 4:
         print("post [filename]")
         exit()
-    filename = sys.argv[3]
-    if filename in os.listdir("manager"):
-        print("--> conflicting filename!")
-        exit()
+    filenames = sys.argv[3:]
+    for filename in filenames:
+        print(filename)
+        if filename in os.listdir("manager"):
+            print("--> conflicting filename!")
+            exit()
+        run(f"venv/bin/mpremote connect {port} cp cricket/{filename} :{filename}")
     with open("cricket/update.txt", 'w') as f:
-        f.write(filename + "\n")
-    run(f"venv/bin/mpremote connect {port} cp cricket/{filename} :{filename}")
+        for filename in filenames:
+            f.write(filename + " ")
     run(f"venv/bin/mpremote connect {port} cp cricket/update.txt :update.txt")
 
 run(f"venv/bin/mpremote connect {port} cp manager/net.py :net.py")

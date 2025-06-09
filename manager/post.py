@@ -6,18 +6,23 @@ with open("crickets.json") as f:
 targets = ""
 with open("update.txt") as f:
     lines = [line.strip() for line in f]
-    filename = lines[0]
-print(f"Posting {filename}...")
+    filenames = lines
+print(f"Posting {filenames}...")
 print()
-filedata = open(filename).read()
+filedatas = []
+for filename in filenames:
+    filedata = open(filename).read()
+    filedatas.append(filedata)
 
 while len(cricket_names):
     print(json.dumps(cricket_names))
     cricket_name = cricket_names.pop()
     try:
         connect(f"CK_{cricket_name}")
-        response = post_file("http://192.168.4.1/file", filename, filedata)
-        print(response)            
+        for f, filename in enumerate(filenames):
+            filedata = filedatas[f]
+            response = post_file("http://192.168.4.1/file", filename, filedata)
+            print(response)
     except Exception as e:
         print("Request failed:", e)
         cricket_names.insert(0, cricket_name)
