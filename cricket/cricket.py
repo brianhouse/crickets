@@ -40,10 +40,7 @@ class Cricket(Node):
         self.t_previous = ticks_ms()
         while True:
             if self.paused:
-                self.active = False
-                self.group = None
-                self.group_t = None
-                self.phase = random()
+                self.deactivate()
                 LED.on()
                 await asyncio.sleep(1)
                 continue
@@ -62,10 +59,7 @@ class Cricket(Node):
                     self.phase = min(self.phase + (t_elapsed / 1000), 1.0)
                     if self.active and self.flashes == FLASHES:
                         O.print("REACHED FLASHES")
-                        self.active = False
-                        self.group = None
-                        self.group_t = None
-                        self.phase = random()
+                        self.deactivate()
                     if not self.active and self.group_t and ticks_diff(t, self.group_t) > GROUP_TIME * 1000:
                         O.print("GROUP EXPIRED")
                         self.group = None
@@ -84,28 +78,9 @@ class Cricket(Node):
         if not MOTION:
             return
         if not self.active and PIR.value():
-            O.print("ACTIVATE")
-            self.active = True
-            self.flashes = 0
-            self.phase = 1.0
-            if self.group is None:
-                O.print("STARTING GROUP", self.name)
-                self.group = self.name
-                self.group_t = ticks_ms()
-                self.send_all(f"group {self.group} NOP")
+            self.activate()
             for neighbor_name in get_neighbors(self.name)[:ACT_HOOD]:
                 self.send("activate NOP NOP", neighbor_name)
-
-    # def look(self):
-    #     O.print("LOOK...")
-    #     self.group = self.name
-    #     self.clear_peers()
-    #     for neighbor_name in get_neighbors(self.name)[:MAX_HOOD]:
-    #         self.add_peer(Peer.find(neighbor_name))
-    #     self.send_all(f"group {self.group} {"*".join([peer.name for peer in self.peers])}")
-    #     O.print("CLEAR MESSAGES")
-    #     self.receive()  # clear messages
-    #     O.print("--> DONE")
 
     def listen(self):
         for sender, message in self.receive():
@@ -121,10 +96,8 @@ class Cricket(Node):
                     self.group = sender_group
                     self.group_t = ticks_ms()
             elif kind == "activate":
-                O.print("ACTIVATE")
-                self.active = True
-                self.flashes = 0
-                self.phase = 1.0
+                if not self.active:
+                    self.activate()
             elif kind == "flash":
                 if self.active:
                     if sender_group == self.group:
@@ -133,6 +106,24 @@ class Cricket(Node):
                         O.print("WRONG GROUP")
                 else:
                     O.print("NOT ACTIVE")
+
+    def activate(self):
+        O.print("ACTIVATE")
+        self.active = True
+        self.flashes = 0
+        self.phase = 1.0
+        if self.group is None:
+            O.print("STARTING GROUP", self.name)
+            self.group = self.name
+            self.group_t = ticks_ms()
+            self.send_all(f"group {self.group} NOP")
+
+    def deactivate(self):
+        O.print("DEACTIVATE")
+        self.active = False
+        self.group = None
+        self.group_t = None
+        self.phase = random()
 
     def send_all(self, message):
         O.print("SEND", message)
@@ -143,6 +134,9 @@ class Cricket(Node):
         O.print("SEND", message, peer)
         try:
             super().add_peer(peer.bin_mac)
+        except Exception:
+            pass
+        try:
             super().send(message, peer)
         except Exception as e:
             O.print(e)
