@@ -1,15 +1,14 @@
 
-# connection constants
+# radio
 POWER = 3
-MAX_HOOD = 8
-MIN_HOOD = 3
 
-# capacitor constants
+# capacitor
 TICK = 10
 BUMP = 18
 REST = 100
 
-# dynamics constants
+# dynamics
+HOOD = 10
 GROUP_TIME = 3
 FLASHES = 45
 FLASH_VARY = 10
@@ -17,11 +16,11 @@ FLASH_VARY = 10
 # motion
 MOSENS = 20
 
-# automatic constants
+# sound
 PITCH_LOW, PITCH_HIGH = 3000, 4500
 HUM_LOW, HUM_HIGH = 10, 20
 
-# behavior constants
+# enable behavior
 MOTION = True
 BLINK = True
 CHIRP = True

@@ -63,9 +63,10 @@ class Cricket(Node):
                         O.print("REACHED FLASHES")
                         self.active = False
                         self.group = None
-                    if not self.active and ticks_diff(t, self.group_t) > GROUP_TIME * 1000:
+                    if not self.active and self.group_t and ticks_diff(t, self.group_t) > GROUP_TIME * 1000:
                         O.print("GROUP EXPIRED")
                         self.group = None
+                        self.group_t = None
                     self.look()
                     self.listen()
                     if self.capacitor >= 1.0:
@@ -125,9 +126,8 @@ class Cricket(Node):
                     O.print("NOT ACTIVE")
 
     def send_all(self, message):
-        O.print("SEND", self.peers, message)
-        if len(self.peers):
-            super().send(message)
+        O.print("SEND", message)
+        super().send(message)
 
     def flash(self):
         O.print("FLASH")
