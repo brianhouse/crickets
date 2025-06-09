@@ -13,7 +13,6 @@ class Cricket(Node):
         LED.off()
         STS.off()
         self.phase = random()
-        self.capacitor = self.f(self.phase)
         self.pitch = randint(PITCH_LOW, PITCH_HIGH)
         self.hum = randint(HUM_LOW, HUM_HIGH)
         self.t_previous = ticks_ms()
@@ -58,11 +57,11 @@ class Cricket(Node):
                         O.print("*", error)
                     O.reset()
                     self.phase = min(self.phase + (t_elapsed / 1000), 1.0)
-                    self.capacitor = self.f(self.phase)
                     if self.active and self.flashes == FLASHES:
                         O.print("REACHED FLASHES")
                         self.active = False
                         self.group = None
+                        self.phase = random()
                     if not self.active and self.group_t and ticks_diff(t, self.group_t) > GROUP_TIME * 1000:
                         O.print("GROUP EXPIRED")
                         self.group = None
@@ -85,7 +84,6 @@ class Cricket(Node):
             self.active = True
             self.flashes = 0
             self.phase = 1.0
-            self.capacitor = self.f(self.phase)
             if self.group is None:
                 O.print("STARTING GROUP", self.name)
                 self.group = self.name
@@ -132,7 +130,6 @@ class Cricket(Node):
     def flash(self):
         O.print("FLASH")
         self.phase = 0.0
-        self.capacitor = 0.0
         if self.active:
             self.flashes += 1
             if BLINK:
@@ -160,7 +157,24 @@ class Cricket(Node):
             return
         O.print("BUMP")
         self.capacitor = min(self.capacitor + (BUMP / 1000), 1.0)
-        self.phase = self.f_inv(self.capacitor)
+
+    @property
+    def phase(self):
+        return self._phase
+
+    @phase.setter
+    def phase(self, value):
+        self._phase = value
+        self._capacitor = self.f(value)
+
+    @property
+    def capacitor(self):
+        return self._capacitor
+
+    @capacitor.setter
+    def capacitor(self, value):
+        self._capacitor = value
+        self._phase = self.f_inv(value)
 
     def f(self, x):
         return math.sin((math.pi / 2) * x)
