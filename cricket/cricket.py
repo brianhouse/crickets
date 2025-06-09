@@ -118,7 +118,6 @@ class Cricket(Node):
         O.print("ACTIVATE")
         self.active = True
         self.flashes = 0
-        self.phase = 1.0
         if self.group is None:
             O.print("STARTING GROUP", self.name)
             self.group = self.name
